@@ -40,7 +40,8 @@ class IngresoCajaController extends Controller
                     ->orderBy('id', 'DESC')->first();
 
                 //return view('inicioFinCaja.index',compact('datosCaja','datoValidarCaja'));
-                return view('formIngreso.index', compact('sucursales', 'datosContaDiario', 'fechaActual', 'datoValidarCaja'));
+                $resFechaProximo = date("d-m-Y", strtotime($fechaActual . "+ 1 days"));
+                return view('formIngreso.index', compact('sucursales', 'datosContaDiario', 'fechaActual', 'resFechaProximo', 'datoValidarCaja'));
             } else {
                 return view("layout.login", compact('sucursales'));
             }
@@ -228,6 +229,20 @@ class IngresoCajaController extends Controller
                     ])->id;
 
                     /*REGISTRAR PARTE CONTABLE*/
+                    $ddlTipoMovimiento = $request["ddlTipoMovimiento"];
+                    $cuenta1 = "Caja sucursales";
+                    $cod_deno1 = "11102";
+                    $cuenta2 = "Caja general";
+                    $cod_deno2 = "11101";
+                    if ($ddlTipoMovimiento == 3) {
+                        $cuenta1 = "Traspaso de caja";
+                        $cod_deno1 = "11103";
+                    }
+                    if ($ddlTipoMovimiento == 4) {
+                        $cuenta1 = "Otros ingresos adicionales";
+                        $cod_deno1 = "11104";
+                    }
+
                     $numComprobante = ContaDiario::max('num_comprobante');
                     $idContaDiario = ContaDiario::create([
                         'contrato_id'        => 0,
@@ -236,8 +251,8 @@ class IngresoCajaController extends Controller
                         'fecha_a'            => Carbon::parse($request['txtFecha'])->format('Y-m-d'),
                         'fecha_b'            => Carbon::parse($request['txtFecha'])->format('Y-m-d'),
                         'glosa'              => $request['txtGlosa'],
-                        'cod_deno'              => '11102',
-                        'cuenta'                => 'Caja sucursales',
+                        'cod_deno'              => $cod_deno1,
+                        'cuenta'                => $cuenta1,
                         'debe'                  => round($request['txtMonto'], 2),
                         'haber'                 => '0.00',
                         'caja'                  => $idCaja,
@@ -259,8 +274,8 @@ class IngresoCajaController extends Controller
                         'fecha_a'            => Carbon::parse($request['txtFecha'])->format('Y-m-d'),
                         'fecha_b'            => Carbon::parse($request['txtFecha'])->format('Y-m-d'),
                         'glosa'              => $request['txtGlosa'],
-                        'cod_deno'              => '11101',
-                        'cuenta'                => 'Caja general',
+                        'cod_deno'              => $cod_deno2,
+                        'cuenta'                => $cuenta2,
                         'debe'                  => '0.00',
                         'haber'                 => round($request['txtMonto'], 2),
                         'caja'                  => $idCaja,

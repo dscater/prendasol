@@ -55,6 +55,8 @@
                     <div class="input-group-btn" style="display:flex;">
                         <button class="btn btn-success" data-dismiss="modal" type="button"
                             onclick="fnImprimirSolicitudesPDF();">Imprimir PDF</button><br>
+                        <a href="{{ route('retiros_pendientes_excel.retiros_pendientes_excel') }}" class="btn btn-success"
+                            data-dismiss="modal" style="margin-left:5px;" id="btnExportarExcel">Exportar EXCEL</a><br>
                     </div>
                 </div>
             </div>
@@ -139,13 +141,12 @@
 
         /********************** IMPRIMIR ************************/
         function fnImprimirSolicitudesPDF() {
-                let sucursal = $('#sucursal');
+            let sucursal = $('#sucursal');
             var validarReporte = $("#frmRepComprobantes").data('bootstrapValidator');
             validarReporte.validate();
             if (validarReporte.isValid()) {
                 $('#reporteModalSolicitudes').modal()
-                var src = "/retiros_pendientes/reporte/pdf?fecha_ini=" + $('#txtFechaInicio').val() + "&fecha_fin=" + $(
-                    '#txtFechaFin').val() + "&sucursal=" + sucursal.val();
+                var src = "/retiros_pendientes/reporte/pdf?fecha_ini=" + $('#txtFechaInicio').val() + "&fecha_fin=" + $('#txtFechaFin').val() + "&sucursal=" + sucursal.val();
                 var object = "<object data=\"{src}\" type=\"application/pdf\" width=\"850px\" height=\"600px\">";
                 object += "</object>";
                 object = object.replace(/{src}/g, src);
@@ -153,5 +154,18 @@
                 $("#dialogS").show();
             }
         }
+
+        $('#btnExportarExcel').click(function(e) {
+            e.preventDefault();
+            let sucursal = $('#sucursal');
+            var validarReporte = $("#frmRepComprobantes").data('bootstrapValidator');
+            validarReporte.validate();
+            if (validarReporte.isValid()) {
+                let url = $(this).attr('href') + "?fecha_ini=" + $('#txtFechaInicio').val() + "&fecha_fin=" + $('#txtFechaFin').val() + "&sucursal=" + sucursal.val();
+                window.location.href = url;
+                $('#frmRepComprobantes').bootstrapValidator('resetForm', true);
+            }
+        });
+
     </script>
 @endsection

@@ -832,10 +832,8 @@
                             'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
                             ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
                                 totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
                         var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
@@ -883,14 +881,13 @@
                         var totalInteres = parseFloat(totalInteresValor1);
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'El Capital mas el interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b>';
                     }
 
                     if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
@@ -966,11 +963,11 @@
                                     'fecha_pago': $("#txtFechaActualT").val(),
                                     'fecha_fin': contrato.fecha_fin,
                                     'fecha_Incio': contrato.fecha_contrato,
-                                    'total_capital': contrato.total_capital,
-                                    'capital': parseFloat(capital).toFixed(2),
-                                    'interes': parseFloat(interes).toFixed(2),
-                                    'comision': parseFloat(comision).toFixed(2),
-                                    'cuotaMora': parseFloat(cuotaMora).toFixed(2),
+                                    'total_capital': ajustaDecimal(parseFloat(contrato.total_capital).toFixed(2)),
+                                    'capital': ajustaDecimal(parseFloat(capital).toFixed(2)),
+                                    'interes': ajustaDecimal(parseFloat(interes).toFixed(2)),
+                                    'comision': ajustaDecimal(parseFloat(comision).toFixed(2)),
+                                    'cuotaMora': ajustaDecimal(parseFloat(cuotaMora).toFixed(2)),
                                     //'comision':0,
                                     'idContrato': contrato.id,
                                 },
@@ -1211,13 +1208,13 @@
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor);
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) +
+                            'El Interes seria un total de::<b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
+                            'El total del interes a pagar es de:<b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
@@ -1283,13 +1280,13 @@
                         var totalInteres = parseFloat(totalInteresValor1);
                         var totalGeneral = parseFloat(totalInteres);
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
+                            'El total del interes a pagar es de:<b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b>';
                         // }
                     }
@@ -1369,11 +1366,11 @@
                                     'fecha_pago': $("#txtFechaActualI").val(),
                                     'fecha_fin': contrato.fecha_fin,
                                     'fecha_Incio': contrato.fecha_contrato,
-                                    'total_capital': contrato.total_capital,
-                                    'capital': parseFloat(capital).toFixed(2),
-                                    'interes': parseFloat(interes).toFixed(2),
-                                    'comision': parseFloat(comision).toFixed(2),
-                                    'cuotaMora': parseFloat(cuotaMora).toFixed(2),
+                                    'total_capital': ajustaDecimal(parseFloat(contrato.total_capital).toFixed(2)),
+                                    'capital': ajustaDecimal(parseFloat(capital).toFixed(2)),
+                                    'interes': ajustaDecimal(parseFloat(interes).toFixed(2)),
+                                    'comision': ajustaDecimal(parseFloat(comision).toFixed(2)),
+                                    'cuotaMora': ajustaDecimal(parseFloat(cuotaMora).toFixed(2)),
                                     'idContrato': contrato.id,
                                 },
                                 success: function(data) {
@@ -1545,11 +1542,11 @@
                 }
 
                 if (global_monedaContrato == 1) {
-                    $('#txtTotalA').val(Number(totalPagar).toFixed(2));
-                    $('#txtTotalA2').val(parseFloat((totalPagar / global_cambioMonedas.valor_bs)).toFixed(2))
+                    $('#txtTotalA').val(ajustaDecimal(Number(totalPagar).toFixed(2)));
+                    $('#txtTotalA2').val(ajustaDecimal(parseFloat((totalPagar / global_cambioMonedas.valor_bs)).toFixed(2)))
                 } else {
-                    $('#txtTotalA').val(parseFloat((totalPagar * global_cambioMonedas.valor_bs)).toFixed(2))
-                    $('#txtTotalA2').val(Number(totalPagar).toFixed(2));
+                    $('#txtTotalA').val(ajustaDecimal(parseFloat((totalPagar * global_cambioMonedas.valor_bs)).toFixed(2)))
+                    $('#txtTotalA2').val(ajustaDecimal(Number(totalPagar).toFixed(2)));
                 }
             } else {
                 $("#txtAmortizacion").val('');
@@ -1601,8 +1598,8 @@
                         interes_capital.val(resta.toFixed(2));
                         interes_capital2.val((parseFloat(resta / global_cambioMonedas.valor_bs)).toFixed(2));
                     }
-                    $('#txtTotalAI').val(parseFloat(valor).toFixed(2));
-                    $('#txtTotalAI2').val((parseFloat(valor / global_cambioMonedas.valor_bs)).toFixed(2));
+                    $('#txtTotalAI').val(ajustaDecimal(parseFloat(valor).toFixed(2)));
+                    $('#txtTotalAI2').val(ajustaDecimal((parseFloat(valor / global_cambioMonedas.valor_bs)).toFixed(2)));
                 } else {
                     $("#txtAmortizacionInteres").val('');
                     interes_capital.val(interes_capital.attr('data-val'))
@@ -1647,11 +1644,11 @@
                 valor +=  parseFloat(valorAI);
                 // valor +=  parseFloat(valorIM);
                 if (global_monedaContrato == 1) {
-                    $('#txtTotalAI').val(Number(valor).toFixed(2));
-                    $('#txtTotalAI2').val(parseFloat((valor / global_cambioMonedas.valor_bs)).toFixed(2))
+                    $('#txtTotalAI').val(ajustaDecimal(Number(valor).toFixed(2)));
+                    $('#txtTotalAI2').val(ajustaDecimal(parseFloat((valor / global_cambioMonedas.valor_bs)).toFixed(2)))
                 } else {
-                    $('#txtTotalAI').val(parseFloat((valor * global_cambioMonedas.valor_bs)).toFixed(2))
-                    $('#txtTotalAI2').val(Number(valor).toFixed(2));
+                    $('#txtTotalAI').val(ajustaDecimal(parseFloat((valor * global_cambioMonedas.valor_bs)).toFixed(2)))
+                    $('#txtTotalAI2').val(ajustaDecimal(Number(valor).toFixed(2)));
                 }
             } else {
                 $("#txtAmortizacionInteres").val('');
@@ -1683,11 +1680,11 @@
                 valor +=  parseFloat(valorAI);
                 valor +=  parseFloat(valorGA);
                 if (global_monedaContrato == 1) {
-                    $('#txtTotalAI').val(Number(valor).toFixed(2));
-                    $('#txtTotalAI2').val(parseFloat((valor / global_cambioMonedas.valor_bs)).toFixed(2))
+                    $('#txtTotalAI').val(ajustaDecimal(Number(valor).toFixed(2)));
+                    $('#txtTotalAI2').val(ajustaDecimal(parseFloat((valor / global_cambioMonedas.valor_bs)).toFixed(2)))
                 } else {
-                    $('#txtTotalAI').val(parseFloat((valor * global_cambioMonedas.valor_bs)).toFixed(2))
-                    $('#txtTotalAI2').val(Number(valor).toFixed(2));
+                    $('#txtTotalAI').val(ajustaDecimal(parseFloat((valor * global_cambioMonedas.valor_bs)).toFixed(2)))
+                    $('#txtTotalAI2').val(ajustaDecimal(Number(valor).toFixed(2)));
                 }
             } else {
                 $("#txtAmortizacionInteres").val('');
@@ -1958,14 +1955,13 @@
                         var totalInteres = parseFloat(totalInteresValor1);
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(amortizacion);
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
-                            data.Resultado.desc_corta + '</b><br>' + 'La Amortización de <b>' + parseFloat(
-                                amortizacion).toFixed(2) + ' ' + data.Resultado.desc_corta +
-                            '</b> mas el interes  seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + ' a pagar</b>';
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) + ' ' +
+                            data.Resultado.desc_corta + '</b><br>' + 'La Amortización de <b>' + ajustaDecimal(parseFloat(
+                                amortizacion).toFixed(2)) + ' ' + data.Resultado.desc_corta +
+                            '</b> mas el interes  seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + ' a pagar</b>';
                     }
 
                     if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
@@ -2058,17 +2054,17 @@
                                     //'fecha_pago':moment().format("YYYY-MM-DD"),
                                     'fecha_pago': $("#txtFechaActualA").val(),
                                     'fecha_fin': contrato.fecha_fin,
-                                    'capitalActual': $("#txtCapitalPagoTotalA").val(),
+                                    'capitalActual': ajustaDecimal(parseFloat($("#txtCapitalPagoTotalA").val()).toFixed(2)),
                                     //'fecha_Incio':contrato.fecha_contrato,
-                                    'total_capital': globalContratoJson.total_capital,
-                                    'capital': parseFloat(nuevoCapital).toFixed(2),
-                                    // 'interes':parseFloat(interes).toFixed(2),
+                                    'total_capital': ajustaDecimal(parseFloat(globalContratoJson.total_capital).toFixed(2)),
+                                    'capital': ajustaDecimal(parseFloat(nuevoCapital).toFixed(2)),
+                                    // 'interes':ajustaDecimal(parseFloat(interes).toFixed(2)),
 
-                                    'interes': parseFloat(interes).toFixed(2),
+                                    'interes': ajustaDecimal(parseFloat(interes).toFixed(2)),
                                     // 'interes':$("#txtInteresFechaA").val(),
-                                    // 'comision': parseFloat(comision).toFixed(2),
-                                    'comision':$("#txtGastosAdministrativosA").val(),
-                                    'cuotaMora': parseFloat(cuotaMora).toFixed(2),
+                                    // 'comision': ajustaDecimal(parseFloat(comision).toFixed(2)),
+                                    'comision': ajustaDecimal(parseFloat($("#txtGastosAdministrativosA").val()).toFixed(2)),
+                                    'cuotaMora': ajustaDecimal(parseFloat(cuotaMora).toFixed(2)),
                                     // 'cuotaMora':$("#txtInteresMoratorioA").val(),
                                     //'comision':0,
                                     'idContrato': contrato.id,
@@ -2218,7 +2214,7 @@
                             txtInteresMoratorio = interes_moratorios2.attr('data-val');
                         }
 
-                        var mensaje = 'El contrato tiene un capital de :<b>'+ data.Resultado.desc_corta +' '+ parseFloat(capital).toFixed(2) + '</b> con un interes de <b>' + parseFloat(contrato.interes).toFixed(2) + '</b> mas gastos administrativos de <b>' + parseFloat(data.Resultado.comision) +'</b> mas intereses moratorios de <b> '+ parseFloat(txtInteresMoratorio).toFixed(2) +' </b> haciendo un total de <b>' + parseFloat(total_ic).toFixed(2) + '</b><br>' +'El nuevo interes tendra un total de: <b> Bs.' + parseFloat(interes_capital.val()).toFixed(2) + '  </b> mas el nuevo valor de gastos administrativos de <b>'+parseFloat(gastos_administrativos.val()).toFixed(2)+' Bs.</b> mas el nuevo interes moratorio de <b>'+parseFloat(interes_moratorios.val()).toFixed(2)+'</b>por lo que el nuevo monto total es de <b>'+total_nuevo_ic+' Bs.</b><br>Total a pagar es de: <b>' +parseFloat($('#txtTotalAI').val()).toFixed(2) + ' Bs. / ' + parseFloat($('#txtTotalAI2').val()).toFixed(2) + ' $us';
+                        var mensaje = 'El contrato tiene un capital de :<b>'+ data.Resultado.desc_corta +' '+ ajustaDecimal(parseFloat(capital).toFixed(2)) + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(contrato.interes).toFixed(2)) + '</b> mas gastos administrativos de <b>' + ajustaDecimal(parseFloat(data.Resultado.comision).toFixed(2)) +'</b> mas intereses moratorios de <b> '+ ajustaDecimal(parseFloat(txtInteresMoratorio).toFixed(2)) +' </b> haciendo un total de <b>' + ajustaDecimal(parseFloat(total_ic).toFixed(2)) + '</b><br>' +'El nuevo interes tendra un total de: <b> Bs.' + ajustaDecimal(parseFloat(interes_capital.val()).toFixed(2)) + '  </b> mas el nuevo valor de gastos administrativos de <b>'+ ajustaDecimal(parseFloat(gastos_administrativos.val()).toFixed(2)) +' Bs.</b> mas el nuevo interes moratorio de <b>' + ajustaDecimal(parseFloat(interes_moratorios.val()).toFixed(2))+'</b>por lo que el nuevo monto total es de <b>'+ ajustaDecimal(parseFloat(total_nuevo_ic).toFixed(2)) +' Bs.</b><br>Total a pagar es de: <b>' + ajustaDecimal(parseFloat($('#txtTotalAI').val()).toFixed(2)) + ' Bs. / ' + ajustaDecimal(parseFloat($('#txtTotalAI2').val()).toFixed(2)) + ' $us';
 
                         var route = "/PagoContratoAmortizacionInteres";
                         Swal.fire({
@@ -2229,7 +2225,6 @@
                             confirmButtonColor: "#3085d6",
                             cancelButtonColor: '#d33',
                             confirmButtonText: "Si, Pagar!",
-                            closeOnConfirm: false
                         }).then((result) => {
                             if (result.value) {
                                 $.ajax({
@@ -2241,17 +2236,17 @@
                                     dataType: 'json',
                                     data: {
                                         'fecha_pago': $("#txtFechaActualAI").val(),
-                                        'interes': parseFloat(interes).toFixed(2),
-                                        'resultado_nuevo_interes_bs':parseFloat(interes_capital.val()).toFixed(2),
-                                        'resultado_nuevo_interes_sus':parseFloat(interes_capital2.val()).toFixed(2),
-                                        'resultado_nuevo_gasto_bs':parseFloat(gastos_administrativos.val()).toFixed(2),
-                                        'resultado_nuevo_gasto_sus':parseFloat(gastos_administrativos2.val()).toFixed(2),
-                                        'moratorio_calculado_bs':parseFloat(interes_moratorios.attr('data-val')).toFixed(2),
-                                        'moratorio_calculado_sus':parseFloat(interes_moratorios2.attr('data-val')).toFixed(2),
-                                        'interes_moratorios':parseFloat(interes_moratorios.val()).toFixed(2),
-                                        'interes_moratorios2':parseFloat(interes_moratorios2.val()).toFixed(2),
-                                        'cancelado_bs': parseFloat($('#txtTotalAI').val()).toFixed(2),
-                                        'cancelado_sus': parseFloat($('#txtTotalAI2').val()).toFixed(2),
+                                        'interes': ajustaDecimal(parseFloat(contrato.interes).toFixed(2)),
+                                        'resultado_nuevo_interes_bs':ajustaDecimal(parseFloat(interes_capital.val()).toFixed(2)),
+                                        'resultado_nuevo_interes_sus':ajustaDecimal(parseFloat(interes_capital2.val()).toFixed(2)),
+                                        'resultado_nuevo_gasto_bs':ajustaDecimal(parseFloat(gastos_administrativos.val()).toFixed(2)),
+                                        'resultado_nuevo_gasto_sus':ajustaDecimal(parseFloat(gastos_administrativos2.val()).toFixed(2)),
+                                        'moratorio_calculado_bs':ajustaDecimal(parseFloat(interes_moratorios.attr('data-val')).toFixed(2)),
+                                        'moratorio_calculado_sus':ajustaDecimal(parseFloat(interes_moratorios2.attr('data-val')).toFixed(2)),
+                                        'interes_moratorios':ajustaDecimal(parseFloat(interes_moratorios.val()).toFixed(2)),
+                                        'interes_moratorios2':ajustaDecimal(parseFloat(interes_moratorios2.val()).toFixed(2)),
+                                        'cancelado_bs': ajustaDecimal(parseFloat($('#txtTotalAI').val()).toFixed(2)),
+                                        'cancelado_sus': ajustaDecimal(parseFloat($('#txtTotalAI2').val()).toFixed(2)),
                                         'idContrato': contrato.id,
                                     },
                                     success: function(data) {
@@ -2741,10 +2736,8 @@
                             'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
                             ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
                                 totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
                         var diaAtrasados1 = 0;
@@ -2754,23 +2747,6 @@
                         var valorDiasAtrasados = diaAtrasados;
                         console.log("diasRango", diasRango);
                         var cuotaMora = 0;
-                        // if (diasRango <= 15) {                   
-                        //  var totalInteres = parseFloat(totalInteresValor) / 2;   
-                        //  var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);  
-                        //  if (parseFloat(capital)<= 3499) {                       
-                        //      var interes = ((capital/2) data.Resultado.p_interes)/100;
-                        //      var comision = ((capital/2) * 7.4)/100;                     
-                        //     }
-                        //     else{                        
-                        //          var interes = ((capital/2) data.Resultado.p_interes)/100;
-                        //      var comision = ((capital/2) * 4.4)/100;                     
-                        //     }                        
-                        //  var mensaje = 'El contrato tiene <b>'+diasRango+' dias </b> habiles y es menor a 15 días,<br> ' +
-                        //  'Tiene un capital de :<b>'+parseFloat(capital).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> con un interes de <b>'+parseFloat(totalInteresValor).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> <br>'+
-                        //  'El Interes seria un total de: <b>'+totalInteres+' '+ data.Resultado.desc_corta+'</b><br>'+
-                        //  'El Capital mas el interes seria un total de: <b>'+totalGeneral+' '+ data.Resultado.desc_corta+'</b>'; 
-                        // }
-                        // else{
 
                         var valor_comparacion1 = 3499;
                         var valor_comparacion2 = 10000;
@@ -2809,13 +2785,10 @@
                         var totalInteres = parseFloat(totalInteresValor1 + interes);
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado
-                            .desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'El Capital mas el interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b>';
                         // }
                     }
 
@@ -2899,69 +2872,56 @@
                     }
 
                     if (moneda_pago == 1) {
-                        $("#txtInteresFecha").val(parseFloat(interes).toFixed(2));
-                        $("#txtInteresFecha2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(
-                        2));
+                        $("#txtInteresFecha").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
+                        $("#txtInteresFecha2").val(ajustaDecimal(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresFechaTD").val(parseFloat(interesDescuento).toFixed(2));
-                        $("#txtInteresFechaTD2").val(parseFloat(interesDescuento / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtInteresFechaTD").val(ajustaDecimal(parseFloat(interesDescuento).toFixed(2)));
+                        $("#txtInteresFechaTD2").val(ajustaDecimal(parseFloat(interesDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtGastosAdministrativos").val(parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativos2").val(parseFloat(comision / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtGastosAdministrativos").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
+                        $("#txtGastosAdministrativos2").val(ajustaDecimal(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtGastosAdministrativosTD").val(parseFloat(comisionDescuento).toFixed(2));
-                        $("#txtGastosAdministrativosTD2").val(parseFloat(comisionDescuento / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtGastosAdministrativosTD").val(ajustaDecimal(parseFloat(comisionDescuento).toFixed(2)));
+                        $("#txtGastosAdministrativosTD2").val(ajustaDecimal(parseFloat(comisionDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresMoratorio").val(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorio2").val(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus)
-                            .toFixed(2));
+                        $("#txtInteresMoratorio").val(ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorio2").val(ajustaDecimal(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2)));
 
-                        $("#txtInteresMoratorioTD").val(parseFloat(cutotaMoraDescuento).toFixed(2));
-                        $("#txtInteresMoratorioTD2").val(parseFloat(cutotaMoraDescuento / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtInteresMoratorioTD").val(ajustaDecimal(parseFloat(cutotaMoraDescuento).toFixed(2)));
+                        $("#txtInteresMoratorioTD2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtTotal").val(parseFloat(totalGeneral).toFixed(2));
-                        $("#txtTotal2").val(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtTotal").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
+                        $("#txtTotal2").val(ajustaDecimal(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtCapitalPagoTotal").val(parseFloat(capital).toFixed(2));
-                        $("#txtCapitalPagoTotal2").val(parseFloat(capital / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtCapitalPagoTotal").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
+                        $("#txtCapitalPagoTotal2").val(ajustaDecimal((capital / data.cambioMonedas.valor_bs).toFixed(2)));
 
                         $("#txtMontoTotal").val($("#txtTotal").val());
                         $("#txtMontoTotal2").val($("#txtTotal2").val());
                     } else {
-                        $("#txtInteresFecha").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresFecha2").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFecha").val(ajustaDecimal(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFecha2").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
 
-                        $("#txtInteresFechaTD").val(parseFloat(interesDescuento * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtInteresFechaTD2").val(parseFloat(interesDescuento).toFixed(2));
+                        $("#txtInteresFechaTD").val(ajustaDecimal(parseFloat(interesDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaTD2").val(ajustaDecimal(parseFloat(interesDescuento).toFixed(2)));
 
-                        $("#txtGastosAdministrativos").val(parseFloat(comision * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtGastosAdministrativos2").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativos").val(ajustaDecimal(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativos2").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
 
-                        $("#txtGastosAdministrativosTD").val(parseFloat(comisionDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosTD2").val(parseFloat(comisionDescuento).toFixed(2));
+                        $("#txtGastosAdministrativosTD").val(ajustaDecimal(parseFloat(comisionDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosTD2").val(ajustaDecimal(parseFloat(comisionDescuento).toFixed(2)));
 
-                        $("#txtInteresMoratorio").val(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs)
-                            .toFixed(2));
-                        $("#txtInteresMoratorio2").val(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
+                        $("#txtInteresMoratorio").val(ajustaDecimal(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorio2").val(ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2)));
 
-                        $("#txtInteresMoratorioTD").val(parseFloat(cutotaMoraDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtInteresMoratorioTD2").val(parseFloat(cutotaMoraDescuento).toFixed(2));
+                        $("#txtInteresMoratorioTD").val(ajustaDecimal(parseFloat(cutotaMoraDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresMoratorioTD2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento).toFixed(2)));
 
-                        $("#txtTotal").val(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtTotal2").val(parseFloat(totalGeneral).toFixed(2));
+                        $("#txtTotal").val(ajustaDecimal(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtTotal2").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
 
-                        $("#txtCapitalPagoTotal").val(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(
-                            2));
-                        $("#txtCapitalPagoTotal2").val(parseFloat(capital).toFixed(2));
+                        $("#txtCapitalPagoTotal").val(ajustaDecimal(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtCapitalPagoTotal2").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
 
                         $("#txtMontoTotal").val($('#txtTotal').val());
                         $("#txtMontoTotal2").val($("#txtTotal2").val());
@@ -3190,13 +3150,13 @@
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor);
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) +
+                            'El Interes seria un total de::<b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
+                            'El total del interes a pagar es de:<b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
@@ -3209,22 +3169,7 @@
                         var valorDiasAtrasados = diaAtrasados;
                         console.log("diasRango VALO", diasRango);
                         var cuotaMora = 0;
-                        // if (diasRango <= 15) {                   
-                        //  var totalInteres = parseFloat(totalInteresValor) / 2;   
-                        //  var totalGeneral = parseFloat(totalInteres);    
-                        //  if (parseFloat(capital)<= 3499) {                       
-                        //      var interes = ((capital/2) * 3)/100;
-                        //      var comision = ((capital/2) * 7.4)/100;                     
-                        //     }
-                        //     else{                        
-                        //          var interes = ((capital/2) * 3)/100;
-                        //      var comision = ((capital/2) * 4.4)/100;                     
-                        //     }                        
-                        //  var mensaje = 'El contrato tiene <b>'+diasRango+' dias </b> habiles y es menor a 15 días,<br> ' +
-                        //  'Tiene un capital de :<b>'+parseFloat(capital).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> con un interes de <b>'+parseFloat(totalInteresValor).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> <br>'+
-                        //  'El Interes seria un total de: <b>'+totalInteres+' '+ data.Resultado.desc_corta+'</b><br>'+
-                        //  'El total del interes a pagar es de:<b>'+totalGeneral+' '+ data.Resultado.desc_corta+'</b>'; 
-                        // }
+
                         var valor_comparacion1 = 3499;
                         var valor_comparacion2 = 10000;
                         var valor_comparacion3 = 15000;
@@ -3264,13 +3209,13 @@
                         var totalInteres = parseFloat(totalInteresValor1);
                         var totalGeneral = parseFloat(totalInteres + interes);
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) + ' ' +
                             data.Resultado.desc_corta + '</b><br>' + 'El total del interes a pagar es de:<b>' +
-                            parseFloat(totalGeneral).toFixed(2) +
+                                ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b>';
                     }
 
@@ -3353,73 +3298,59 @@
                     }
 
                     if (moneda_pago == 1) {
-                        $("#txtInteresFechaI").val(parseFloat(interes).toFixed(2));
-                        $("#txtInteresFechaI2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(
-                            2));
+                        $("#txtInteresFechaI").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
+                        $("#txtInteresFechaI2").val(ajustaDecimal(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresFechaID").val(parseFloat(interesDescuento).toFixed(2));
-                        $("#txtInteresFechaID2").val(parseFloat(interesDescuento / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtInteresFechaID").val(ajustaDecimal(parseFloat(interesDescuento).toFixed(2)));
+                        $("#txtInteresFechaID2").val(ajustaDecimal(parseFloat(interesDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtGastosAdministrativosI").val(parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativosI2").val(parseFloat(comision / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtGastosAdministrativosI").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
+                        $("#txtGastosAdministrativosI2").val(ajustaDecimal(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtGastosAdministrativosID").val(parseFloat(comisionDescuento).toFixed(2));
-                        $("#txtGastosAdministrativosID2").val(parseFloat(comisionDescuento / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtGastosAdministrativosID").val(ajustaDecimal(parseFloat(comisionDescuento).toFixed(2)));
+                        $("#txtGastosAdministrativosID2").val(ajustaDecimal(parseFloat(comisionDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresMoratorioI").val(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioI2").val(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus)
-                            .toFixed(2));
+                        $("#txtInteresMoratorioI").val(ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorioI2").val(ajustaDecimal(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2)));
 
-                        $("#txtInteresMoratorioID").val(parseFloat(cutotaMoraDescuento).toFixed(2));
-                        $("#txtInteresMoratorioID2").val(parseFloat(cutotaMoraDescuento / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtInteresMoratorioID").val(ajustaDecimal(parseFloat(cutotaMoraDescuento).toFixed(2)));
+                        $("#txtInteresMoratorioID2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtTotalI").val(parseFloat(totalGeneral).toFixed(2));
-                        $("#txtTotalI2").val(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtTotalI").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
+                        $("#txtTotalI2").val(ajustaDecimal(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtCapitalPagoTotalI").val(parseFloat(capital).toFixed(2));
-                        $("#txtCapitalPagoTotalI2").val(parseFloat(capital / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtCapitalPagoTotalI").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
+                        $("#txtCapitalPagoTotalI2").val(ajustaDecimal(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtMontoTotalI").val((parseFloat($("#txtCapitalPagoTotalI").val()) + parseFloat($("#txtInteresFechaI").val()) + parseFloat($('#txtGastosAdministrativosI').val()) + parseFloat($("#txtInteresMoratorioI").val())).toFixed(2));
-                        $("#txtMontoTotalI2").val((parseFloat($("#txtCapitalPagoTotalI2").val()) + parseFloat($("#txtInteresFechaI2").val()) + parseFloat($('#txtGastosAdministrativosI2').val()) + parseFloat($("#txtInteresMoratorioI2").val())).toFixed(2));
+                        $("#txtMontoTotalI").val((ajustaDecimal((parseFloat($("#txtCapitalPagoTotalI").val()) + parseFloat($("#txtInteresFechaI").val()) + parseFloat($('#txtGastosAdministrativosI').val()) + parseFloat($("#txtInteresMoratorioI").val())).toFixed(2))));
+                        $("#txtMontoTotalI2").val((ajustaDecimal((parseFloat($("#txtCapitalPagoTotalI2").val()) + parseFloat($("#txtInteresFechaI2").val()) + parseFloat($('#txtGastosAdministrativosI2').val()) + parseFloat($("#txtInteresMoratorioI2").val())).toFixed(2))));
                     } else {
-                        $("#txtInteresFechaI").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(
-                        2));
-                        $("#txtInteresFechaI2").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFechaI").val(ajustaDecimal(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaI2").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
 
-                        $("#txtInteresFechaID").val(parseFloat(interesDescuento * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtInteresFechaID2").val(parseFloat(interesDescuento).toFixed(2));
+                        $("#txtInteresFechaID").val(ajustaDecimal(parseFloat(interesDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaID2").val(ajustaDecimal(parseFloat(interesDescuento).toFixed(2)));
 
-                        $("#txtGastosAdministrativosI").val(parseFloat(comision * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtGastosAdministrativosI2").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativosI").val(ajustaDecimal(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosI2").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
 
-                        $("#txtGastosAdministrativosID").val(parseFloat(comisionDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosID2").val(parseFloat(comisionDescuento).toFixed(2));
+                        $("#txtGastosAdministrativosID").val(ajustaDecimal(parseFloat(comisionDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosID2").val(ajustaDecimal(parseFloat(comisionDescuento).toFixed(2)));
 
-                        $("#txtInteresMoratorioI").val(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs)
-                            .toFixed(2));
-                        $("#txtInteresMoratorioI2").val(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
+                        $("#txtInteresMoratorioI").val(ajustaDecimal(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorioI2").val(ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2)));
 
-                        $("#txtInteresMoratorioID").val(parseFloat(cutotaMoraDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtInteresMoratorioID2").val(parseFloat(cutotaMoraDescuento).toFixed(2));
+                        $("#txtInteresMoratorioID").val(ajustaDecimal(parseFloat(cutotaMoraDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresMoratorioID2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento).toFixed(2)));
 
-                        $("#txtTotalI").val(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtTotalI2").val(parseFloat(totalGeneral).toFixed(2));
+                        $("#txtTotalI").val(ajustaDecimal(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtTotalI2").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
 
-                        $("#txtCapitalPagoTotalI").val(parseFloat(capital * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtCapitalPagoTotalI2").val(parseFloat(capital).toFixed(2));
+                        $("#txtCapitalPagoTotalI").val(ajustaDecimal(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtCapitalPagoTotalI2").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
 
-                        $("#txtMontoTotalI").val((parseFloat($("#txtCapitalPagoTotalI").val()) + parseFloat($("#txtInteresFechaI").val()) + parseFloat($('#txtGastosAdministrativosI').val()) + parseFloat($("#txtInteresMoratorioI").val())).toFixed(2));
-                        $("#txtMontoTotalI2").val((parseFloat($("#txtCapitalPagoTotalI2").val()) + parseFloat($("#txtInteresFechaI2").val()) + parseFloat($('#txtGastosAdministrativosI2').val()) + parseFloat($("#txtInteresMoratorioI2").val())).toFixed(2));
+                        $("#txtMontoTotalI").val((ajustaDecimal((parseFloat($("#txtCapitalPagoTotalI").val()) + parseFloat($("#txtInteresFechaI").val()) + parseFloat($('#txtGastosAdministrativosI').val()) + parseFloat($("#txtInteresMoratorioI").val())).toFixed(2))));
+                        $("#txtMontoTotalI2").val((ajustaDecimal((parseFloat($("#txtCapitalPagoTotalI2").val()) + parseFloat($("#txtInteresFechaI2").val()) + parseFloat($('#txtGastosAdministrativosI2').val()) + parseFloat($("#txtInteresMoratorioI2").val())).toFixed(2))));
                     }
 
                     $('#txtMonedaI').val(data.Resultado.desc_corta);
@@ -3680,14 +3611,13 @@
                             parseFloat(amortizacion);
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
-                            data.Resultado.desc_corta + '</b><br>' + 'La Amortización de <b>' + parseFloat(
-                                amortizacion).toFixed(2) + ' ' + data.Resultado.desc_corta +
-                            '</b> mas el interes  seria un total de: <b>' + parseFloat(totalGeneral).toFixed(
-                            2) + ' ' + data.Resultado.desc_corta + ' a pagar</b>';
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'El Interes seria un total de::<b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) + ' ' +
+                            data.Resultado.desc_corta + '</b><br>' + 'La Amortización de <b>' + ajustaDecimal(parseFloat(
+                                amortizacion).toFixed(2)) + ' ' + data.Resultado.desc_corta +
+                            '</b> mas el interes  seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + ' a pagar</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
                         var diaAtrasados1 = 0;
@@ -3700,23 +3630,7 @@
                         var valorDiasAtrasados = diaAtrasados;
                         console.log("diasRango", diasRango);
                         var cuotaMora = 0;
-                        // if (diasRango <= 15) {                   
-                        //  var totalInteres = parseFloat(totalInteresValor) / 2;   
-                        //  var totalGeneral = parseFloat(totalInteres) + parseFloat(amortizacion);
-                        //  if (parseFloat(capital)<= 3499) {                       
-                        //      var interes = ((capital/2) * 3)/100;
-                        //      var comision = ((capital/2) * 7.4)/100;                     
-                        //     }
-                        //     else{                        
-                        //          var interes = ((capital/2) * 3)/100;
-                        //      var comision = ((capital/2) * 4.4)/100;                     
-                        //     }
 
-                        //  var mensaje = 'El contrato tiene <b>'+diasRango+' dias </b> habiles y es menor a 15 días,<br> ' +
-                        //  'Tiene un capital de :<b>'+parseFloat(capital).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> con un interes de <b>'+parseFloat(totalInteresValor).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> <br>'+
-                        //  'El Interes seria un total de: <b>'+totalInteres+' '+ data.Resultado.desc_corta+'</b><br>'+
-                        //  'La Amortización de <b>'+parseFloat(amortizacion).toFixed(2)+' '+ data.Resultado.desc_corta+'</b> mas el interes  seria un total de: <b>'+parseFloat(totalGeneral).toFixed(2)+' '+ data.Resultado.desc_corta+' a pagar</b>'; 
-                        // }
                         var valor_comparacion1 = 3499;
                         var valor_comparacion2 = 10000;
                         var valor_comparacion3 = 15000;
@@ -3755,15 +3669,15 @@
                         var totalInteres = parseFloat(totalInteresValor1 + interes);
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(amortizacion);
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'La Amortización de <b>' + parseFloat(amortizacion).toFixed(2) +
+                            'La Amortización de <b>' + ajustaDecimal(parseFloat(amortizacion).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> mas el interes  seria un total de: <b>' +
-                            parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta +
+                                ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta +
                             ' a pagar</b>';
                     }
 
@@ -3852,74 +3766,59 @@
                     }
 
                     if (moneda_pago == 1) {
-                        $("#txtMontoTotalA").val(parseFloat(contrato.total_capital).toFixed(2));
-                        $("#txtMontoTotalA2").val((parseFloat(contrato.total_capital) / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtMontoTotalA").val(ajustaDecimal(parseFloat(contrato.total_capital).toFixed(2)));
+                        $("#txtMontoTotalA2").val(ajustaDecimal((parseFloat(contrato.total_capital) / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresFechaA").val(parseFloat(interes).toFixed(2));
-                        $("#txtInteresFechaA2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(
-                            2));
+                        $("#txtInteresFechaA").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
+                        $("#txtInteresFechaA2").val(ajustaDecimal(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresFechaAD").val(parseFloat(interesDescuento).toFixed(2));
-                        $("#txtInteresFechaAD2").val(parseFloat(interesDescuento / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtInteresFechaAD").val(ajustaDecimal(parseFloat(interesDescuento).toFixed(2)));
+                        $("#txtInteresFechaAD2").val(ajustaDecimal(parseFloat(interesDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtGastosAdministrativosA").val(parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativosA2").val(parseFloat(comision / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtGastosAdministrativosA").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
+                        $("#txtGastosAdministrativosA2").val(ajustaDecimal(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtGastosAdministrativosAD").val(parseFloat(comisionDescuento).toFixed(2));
-                        $("#txtGastosAdministrativosAD2").val(parseFloat(comisionDescuento / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtGastosAdministrativosAD").val(ajustaDecimal(parseFloat(comisionDescuento).toFixed(2)));
+                        $("#txtGastosAdministrativosAD2").val(ajustaDecimal(parseFloat(comisionDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresMoratorioA").val(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioA2").val(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus)
-                            .toFixed(2));
+                        $("#txtInteresMoratorioA").val(ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorioA2").val(ajustaDecimal(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2)));
 
-                        $("#txtInteresMoratorioAD").val(parseFloat(cutotaMoraDescuento).toFixed(2));
-                        $("#txtInteresMoratorioAD2").val(parseFloat(cutotaMoraDescuento / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtInteresMoratorioAD").val(ajustaDecimal(parseFloat(cutotaMoraDescuento).toFixed(2)));
+                        $("#txtInteresMoratorioAD2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtTotalA").val(parseFloat(totalGeneral).toFixed(2));
-                        $("#txtTotalA2").val(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtTotalA").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
+                        $("#txtTotalA2").val(ajustaDecimal(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtCapitalPagoTotalA").val(parseFloat(capital).toFixed(2));
-                        $("#txtCapitalPagoTotalA2").val(parseFloat(capital / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtCapitalPagoTotalA").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
+                        $("#txtCapitalPagoTotalA2").val(ajustaDecimal(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2)));
                     } else {
-                        $("#txtMontoTotalA").val((parseFloat(contrato.total_capital) * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtMontoTotalA2").val(parseFloat(contrato.total_capital).toFixed(2));
+                        $("#txtMontoTotalA").val(ajustaDecimal((parseFloat(contrato.total_capital) * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtMontoTotalA2").val(ajustaDecimal(parseFloat(contrato.total_capital).toFixed(2)));
 
-                        $("#txtInteresFechaA").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(
-                        2));
-                        $("#txtInteresFechaA2").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFechaA").val(ajustaDecimal(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaA2").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
 
-                        $("#txtInteresFechaAD").val(parseFloat(interesDescuento * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtInteresFechaAD2").val(parseFloat(interesDescuento).toFixed(2));
+                        $("#txtInteresFechaAD").val(ajustaDecimal(parseFloat(interesDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaAD2").val(ajustaDecimal(parseFloat(interesDescuento).toFixed(2)));
 
-                        $("#txtGastosAdministrativosA").val(parseFloat(comision * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtGastosAdministrativosA2").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativosA").val(ajustaDecimal(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosA2").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
 
-                        $("#txtGastosAdministrativosAD").val(parseFloat(comisionDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosAD2").val(parseFloat(comisionDescuento).toFixed(2));
+                        $("#txtGastosAdministrativosAD").val(ajustaDecimal(parseFloat(comisionDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosAD2").val(ajustaDecimal(parseFloat(comisionDescuento).toFixed(2)));
 
-                        $("#txtInteresMoratorioA").val(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioA2").val(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
+                        $("#txtInteresMoratorioA").val(ajustaDecimal(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorioA2").val(ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2)));
 
-                        $("#txtInteresMoratorioAD").val(parseFloat(cutotaMoraDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtInteresMoratorioAD2").val(parseFloat(cutotaMoraDescuento).toFixed(2));
+                        $("#txtInteresMoratorioAD").val(ajustaDecimal(parseFloat(cutotaMoraDescuento * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresMoratorioAD2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento).toFixed(2)));
 
-                        $("#txtTotalA").val(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtTotalA2").val(parseFloat(totalGeneral).toFixed(2));
+                        $("#txtTotalA").val(ajustaDecimal(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtTotalA2").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
 
-                        $("#txtCapitalPagoTotalA").val(parseFloat(capital * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtCapitalPagoTotalA2").val(parseFloat(capital).toFixed(2));
+                        $("#txtCapitalPagoTotalA").val(ajustaDecimal(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtCapitalPagoTotalA2").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
                     }
                     $('#txtMonedaA').val(data.Resultado.desc_corta);
                 },
@@ -4166,13 +4065,13 @@
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor);
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) +
+                            'El Interes seria un total de::<b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
+                            'El total del interes a pagar es de:<b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
@@ -4185,22 +4084,7 @@
                         var valorDiasAtrasados = diaAtrasados;
                         console.log("diasRango VALO", diasRango);
                         var cuotaMora = 0;
-                        // if (diasRango <= 15) {                   
-                        //  var totalInteres = parseFloat(totalInteresValor) / 2;   
-                        //  var totalGeneral = parseFloat(totalInteres);    
-                        //  if (parseFloat(capital)<= 3499) {                       
-                        //      var interes = ((capital/2) * 3)/100;
-                        //      var comision = ((capital/2) * 7.4)/100;                     
-                        //     }
-                        //     else{                        
-                        //          var interes = ((capital/2) * 3)/100;
-                        //      var comision = ((capital/2) * 4.4)/100;                     
-                        //     }                        
-                        //  var mensaje = 'El contrato tiene <b>'+diasRango+' dias </b> habiles y es menor a 15 días,<br> ' +
-                        //  'Tiene un capital de :<b>'+parseFloat(capital).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> con un interes de <b>'+parseFloat(totalInteresValor).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> <br>'+
-                        //  'El Interes seria un total de: <b>'+totalInteres+' '+ data.Resultado.desc_corta+'</b><br>'+
-                        //  'El total del interes a pagar es de:<b>'+totalGeneral+' '+ data.Resultado.desc_corta+'</b>'; 
-                        // }
+
                         var valor_comparacion1 = 3499;
                         var valor_comparacion2 = 10000;
                         var valor_comparacion3 = 15000;
@@ -4240,13 +4124,13 @@
                         var totalInteres = parseFloat(totalInteresValor1);
                         var totalGeneral = parseFloat(totalInteres + interes);
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) + ' ' +
                             data.Resultado.desc_corta + '</b><br>' + 'El total del interes a pagar es de:<b>' +
-                            parseFloat(totalGeneral).toFixed(2) +
+                                ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b>';
                     }
 
@@ -4315,53 +4199,53 @@
                     }
 
                     if (moneda_pago == 1) {
-                        $("#txtInteresFechaAI").attr('data-val',parseFloat(interes).toFixed(2));
-                        $("#txtInteresFechaAI2").attr('data-val',parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresFechaAI").val(parseFloat(interes).toFixed(2));
-                        $("#txtInteresFechaAI2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtInteresFechaAI").attr('data-val',ajustaDecimal(parseFloat(interes).toFixed(2)));
+                        $("#txtInteresFechaAI2").attr('data-val',ajustaDecimal(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaAI").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
+                        $("#txtInteresFechaAI2").val(ajustaDecimal(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtGastosAdministrativosAI").attr('data-val',parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativosAI2").attr('data-val',parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosAI").val(parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativosAI2").val(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtGastosAdministrativosAI").attr('data-val',ajustaDecimal(parseFloat(comision).toFixed(2)));
+                        $("#txtGastosAdministrativosAI2").attr('data-val',ajustaDecimal(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosAI").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
+                        $("#txtGastosAdministrativosAI2").val(ajustaDecimal(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresMoratorioAI").attr('data-val',parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioAI2").attr('data-val',parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2));
-                        $("#txtInteresMoratorioAI").val(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioAI2").val(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2));
+                        $("#txtInteresMoratorioAI").attr('data-val',ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorioAI2").attr('data-val',ajustaDecimal(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2)));
+                        $("#txtInteresMoratorioAI").val(ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorioAI2").val(ajustaDecimal(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2)));
                         
-                        $("#txtTotalAI").val(parseFloat('0.00').toFixed(2));
-                        $("#txtTotalAI2").val(parseFloat('0.00').toFixed(2));
+                        $("#txtTotalAI").val(ajustaDecimal(parseFloat('0.00').toFixed(2)));
+                        $("#txtTotalAI2").val(ajustaDecimal(parseFloat('0.00').toFixed(2)));
 
-                        $("#txtCapitalPagoTotalAI").val(parseFloat(capital).toFixed(2));
-                        $("#txtCapitalPagoTotalAI2").val(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtCapitalPagoTotalAI").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
+                        $("#txtCapitalPagoTotalAI2").val(ajustaDecimal(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtMontoTotalAI").val((parseFloat($("#txtCapitalPagoTotalAI").val()) + parseFloat($("#txtInteresFechaAI").val()) + parseFloat($('#txtGastosAdministrativosAI').val()) + parseFloat($("#txtInteresMoratorioAI").val())).toFixed(2));
-                        $("#txtMontoTotalAI2").val((parseFloat($("#txtCapitalPagoTotalAI2").val()) + parseFloat($("#txtInteresFechaAI2").val()) + parseFloat($('#txtGastosAdministrativosAI2').val()) + parseFloat($("#txtInteresMoratorioAI2").val())).toFixed(2));
+                        $("#txtMontoTotalAI").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI").val()) + parseFloat($("#txtInteresFechaAI").val()) + parseFloat($('#txtGastosAdministrativosAI').val()) + parseFloat($("#txtInteresMoratorioAI").val())).toFixed(2)));
+                        $("#txtMontoTotalAI2").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI2").val()) + parseFloat($("#txtInteresFechaAI2").val()) + parseFloat($('#txtGastosAdministrativosAI2').val()) + parseFloat($("#txtInteresMoratorioAI2").val())).toFixed(2)));
                     } else {
-                        $("#txtInteresFechaAI").attr('data-val',parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresFechaAI2").attr('data-val',parseFloat(interes).toFixed(2));
-                        $("#txtInteresFechaAI").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresFechaAI2").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFechaAI").attr('data-val',ajustaDecimal(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaAI2").attr('data-val',ajustaDecimal(parseFloat(interes).toFixed(2)));
+                        $("#txtInteresFechaAI").val(ajustaDecimal(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaAI2").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
 
-                        $("#txtInteresMoratorioAI").attr('data-val',parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioAI2").attr('data-val',parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
-                        $("#txtInteresMoratorioAI").val(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioAI2").val(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
+                        $("#txtInteresMoratorioAI").attr('data-val',ajustaDecimal(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorioAI2").attr('data-val',ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2)));
+                        $("#txtInteresMoratorioAI").val(ajustaDecimal(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2)));
+                        $("#txtInteresMoratorioAI2").val(ajustaDecimal(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2)));
 
-                        $("#txtGastosAdministrativosAI").attr('data-val',parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosAI2").attr('data-val',parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativosAI").val(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosAI2").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativosAI").attr('data-val',ajustaDecimal(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosAI2").attr('data-val',ajustaDecimal(parseFloat(comision).toFixed(2)));
+                        $("#txtGastosAdministrativosAI").val(ajustaDecimal(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosAI2").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
 
-                        $("#txtTotalAI").val(parseFloat('0.00').toFixed(2));
-                        $("#txtTotalAI2").val(parseFloat('0.00').toFixed(2));
+                        $("#txtTotalAI").val(ajustaDecimal(parseFloat('0.00').toFixed(2)));
+                        $("#txtTotalAI2").val(ajustaDecimal(parseFloat('0.00').toFixed(2)));
 
-                        $("#txtCapitalPagoTotalAI").val(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtCapitalPagoTotalAI2").val(parseFloat(capital).toFixed(2));
+                        $("#txtCapitalPagoTotalAI").val(ajustaDecimal(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtCapitalPagoTotalAI2").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
                         
-                        $("#txtMontoTotalAI").val((parseFloat($("#txtCapitalPagoTotalAI").val()) + parseFloat($("#txtInteresFechaAI").val()) + parseFloat($('#txtGastosAdministrativosAI').val()) + parseFloat($("#txtInteresMoratorioAI").val())).toFixed(2));
-                        $("#txtMontoTotalAI2").val((parseFloat($("#txtCapitalPagoTotalAI2").val()) + parseFloat($("#txtInteresFechaAI2").val()) + parseFloat($('#txtGastosAdministrativosAI2').val()) + parseFloat($("#txtInteresMoratorioAI2").val())).toFixed(2));
+                        $("#txtMontoTotalAI").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI").val()) + parseFloat($("#txtInteresFechaAI").val()) + parseFloat($('#txtGastosAdministrativosAI').val()) + parseFloat($("#txtInteresMoratorioAI").val())).toFixed(2)));
+                        $("#txtMontoTotalAI2").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI2").val()) + parseFloat($("#txtInteresFechaAI2").val()) + parseFloat($('#txtGastosAdministrativosAI2').val()) + parseFloat($("#txtInteresMoratorioAI2").val())).toFixed(2)));
                     }
                     $('#txtMonedaA').val(data.Resultado.desc_corta);
                 },
@@ -4573,10 +4457,8 @@
                             'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
                             ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
                                 totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
                         var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
@@ -4640,13 +4522,10 @@
                         var totalInteres = parseFloat(totalInteresValor1);
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado
-                            .desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
                             'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
                         // }
                     }
 
@@ -4667,49 +4546,39 @@
                     $("#txtDiasTranscurridosR").val(diasTranscurridos);
                     if (moneda_pago == 1) {
                         $("#txtMontoTotalR").val(parseFloat(contrato.total_capital).toFixed(2));
-                        $("#txtMontoTotalR2").val((parseFloat(contrato.total_capital) / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtMontoTotalR2").val((parseFloat(contrato.total_capital) / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtInteresFechaR").val(parseFloat(interes).toFixed(2));
-                        $("#txtInteresFechaR2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(
-                            2));
+                        $("#txtInteresFechaR2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtGastosAdministrativosR").val(parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativosR2").val(parseFloat(comision / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtGastosAdministrativosR2").val(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtInteresMoratorioR").val(parseFloat(cuotaMora).toFixed(2));
-                        $("#txtInteresMoratorioR2").val(parseFloat(cuotaMora / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtInteresMoratorioR2").val(parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtTotalR").val(parseFloat(totalGeneral).toFixed(2));
                         $("#txtTotalR2").val(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtCapitalPagoTotalR").val(parseFloat(capital).toFixed(2));
-                        $("#txtCapitalPagoTotalR2").val(parseFloat(capital / data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtCapitalPagoTotalR2").val(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2));
                     } else {
-                        $("#txtMontoTotalR").val((parseFloat(contrato.total_capital) * data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtMontoTotalR").val((parseFloat(contrato.total_capital) * data.cambioMonedas.valor_bs).toFixed(2));
                         $("#txtMontoTotalR2").val(parseFloat(contrato.total_capital).toFixed(2));
 
-                        $("#txtInteresFechaR").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(
-                        2));
+                        $("#txtInteresFechaR").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2));
                         $("#txtInteresFechaR2").val(parseFloat(interes).toFixed(2));
 
-                        $("#txtGastosAdministrativosR").val(parseFloat(comision * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtGastosAdministrativosR").val(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2));
                         $("#txtGastosAdministrativosR2").val(parseFloat(comision).toFixed(2));
 
-                        $("#txtInteresMoratorioR").val(parseFloat(cuotaMora * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtInteresMoratorioR").val(parseFloat(cuotaMora * data.cambioMonedas.valor_bs).toFixed(2));
                         $("#txtInteresMoratorioR2").val(parseFloat(cuotaMora).toFixed(2));
 
                         $("#txtTotalR").val(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2));
                         $("#txtTotalR2").val(parseFloat(totalGeneral).toFixed(2));
 
-                        $("#txtCapitalPagoTotalR").val(parseFloat(capital * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
+                        $("#txtCapitalPagoTotalR").val(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2));
                         $("#txtCapitalPagoTotalR2").val(parseFloat(capital).toFixed(2));
                     }
                     $('#txtMonedaR').val(data.Resultado.desc_corta);
@@ -4867,10 +4736,8 @@
                             'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
                             ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
                                 totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
                         var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
@@ -4923,8 +4790,7 @@
                                 totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
                             'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
                     }
 
                     console.log("interes", interes);

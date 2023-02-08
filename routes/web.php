@@ -86,12 +86,14 @@ Route::get('Contrato/EnviaRenovacion/{contrato}', 'Contrato\ContratoController@E
 
 Route::get('contratos_vigentes', 'Contrato\ContratoController@contratos_vigentes')->name('contrato.contratos_vigentes');
 Route::get('contratos_vigentes/contratos_vigentes_pdf', 'Contrato\ContratoController@contratos_vigentes_pdf')->name('contrato.contratos_vigentes_pdf');
+Route::get('contratos_vigentes/contratos_vigentes_excel', 'Contrato\ContratoController@contratos_vigentes_excel')->name('contrato.contratos_vigentes_excel');
 
 Route::get('resumen_prestamos', 'Contrato\ContratoController@resumen_prestamos')->name('contrato.resumen_prestamos');
 Route::get('resumen_prestamos/resumen_prestamos_pdf', 'Contrato\ContratoController@resumen_prestamos_pdf')->name('contrato.resumen_prestamos_pdf');
 
 Route::get('resumen_ingresos', 'Contrato\ContratoController@resumen_ingresos')->name('contrato.resumen_ingresos');
 Route::get('resumen_ingresos/resumen_ingresos_pdf', 'Contrato\ContratoController@resumen_ingresos_pdf')->name('contrato.resumen_ingresos_pdf');
+Route::get('resumen_ingresos/resumen_ingresos_excel', 'Contrato\ContratoController@resumen_ingresos_excel')->name('contrato.resumen_ingresos_excel');
 
 /* MÓDULO DE CAMBIO DE DÓLARES */
 Route::get('cambio_dolares', 'CambioDolarController@index')->name('cambios.index');
@@ -112,6 +114,7 @@ Route::get('solicitud_retiros/reporte_excel', 'SolicitudRetiroController@reporte
 
 Route::get('retiros_pendientes/reporte', 'SolicitudRetiroController@retiros_pendientes')->name('retiros_pendientes.reporte');
 Route::get('retiros_pendientes/reporte/pdf', 'SolicitudRetiroController@retiros_pendientes_pdf')->name('retiros_pendientes_pdf.retiros_pendientes_pdf');
+Route::get('retiros_pendientes/reporte/excel', 'SolicitudRetiroController@retiros_pendientes_excel')->name('retiros_pendientes_excel.retiros_pendientes_excel');
 
 /*PRECIO ORO*/
 Route::resource('PrecioOro', 'Parametro\PrecioOroController');

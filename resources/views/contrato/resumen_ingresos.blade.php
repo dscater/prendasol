@@ -50,6 +50,8 @@
                     <div class="input-group-btn" style="display:flex;">
                         <button class="btn btn-success" data-dismiss="modal" type="button"
                             onclick="fnImprimirIngresosPDF();">Generar Pdf</button><br>
+                        <a href="{{ route('contrato.resumen_ingresos_excel') }}" class="btn btn-success"
+                            data-dismiss="modal" style="margin-left:5px;" id="btnExportarExcel">Exportar EXCEL</a><br>
                     </div>
                 </div>
             </div>
@@ -72,7 +74,7 @@
         function fnImprimirIngresosPDF() {
             let mes = $('#mes');
             let anio = $('#anio');
-            var src = "/resumen_ingresos/resumen_ingresos_pdf?mes=" + mes.val()+ "&anio="+anio.val();
+            var src = "/resumen_ingresos/resumen_ingresos_pdf?mes=" + mes.val() + "&anio=" + anio.val();
             var object = "<object data=\"{src}\" type=\"application/pdf\" width=\"850px\" height=\"600px\">";
             object += "</object>";
             $('#reporteModalContratosCancelados').modal()
@@ -81,5 +83,12 @@
             $("#dialogCC").show();
         }
 
+        $('#btnExportarExcel').click(function(e) {
+            e.preventDefault();
+            let mes = $('#mes');
+            let anio = $('#anio');
+            let url = $(this).attr('href') + "?mes=" + mes.val() + '&anio=' + anio.val();
+            window.location.href = url;
+        });
     </script>
 @endsection

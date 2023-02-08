@@ -10,11 +10,17 @@
 				<h3>
 					INGRESO A CAJA
 					@if($datoValidarCaja)
-					@if($datoValidarCaja->estado_id == 1)
-					<small>
-						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateIngresoCaja"><i class="icon-new-tab position-left"></i>Nuevo</button>
-					</small>
-					@endif
+						@if($datoValidarCaja->estado_id == 1)
+						<small>
+							<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateIngresoCaja"><i class="icon-new-tab position-left"></i>Nuevo</button>
+						</small>
+						@else
+							@if(Session::get('ID_ROL') == 1)
+							<small>
+								<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateIngresoCaja"><i class="icon-new-tab position-left"></i>Registrar capitalización {{$resFechaProximo}}</button>
+							</small>
+							@endif
+						@endif
 					@else
 					<small>
 						<button type="button" class="btn btn-primary" data-toggle="modal" data-target="#modalCreateIngresoCaja"><i class="icon-new-tab position-left"></i>Nuevo</button>
@@ -314,7 +320,8 @@
             $("#dialog").show();     
 	    };	    
 
-	    
+		function limpiarControles(){
+		}	    
 	</script>
 @endsection
 

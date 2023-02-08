@@ -2091,79 +2091,6 @@ class ContratoController extends Controller
         $pdf::SetXY(95, 68);
         $pdf::Cell($w = 100, $h = 0,  $nl->numtoletras((float)$total_capital_convertido) . ' Dolares', $complex_cell_border);
 
-        // $pdf::SetFont('helvetica', 'N', 8);
-        // $pdf::SetXY(15, 66.1);
-        // $pdf::Cell($w = 25, $h = 0, 'TOTAL PIEZAS', $complex_cell_border);
-        // $pdf::SetTextColor(0, 0, 0);
-        // $pdf::SetXY(15, 74);
-        // $pdf::Cell($w = 25, $h = 0, $total_piezas->total_piezas, $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-
-        // $pdf::SetTextColor(5, 117, 5);
-        // $pdf::SetXY(40, 70);
-        // $pdf::Cell($w = 15, $h = 0, 'P. B.(GR)', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        // $pdf::SetTextColor(0, 0, 0);
-        // $pdf::SetXY(40, 74);
-        // $pdf::Cell($w = 15, $h = 0, $peso_b->peso_b, $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-
-        // $credito_convertido = 0;
-        // $pdf::SetTextColor(5, 117, 5);
-        // if ($contrato->moneda_id == 1) {
-        //     // DOLARES
-        //     $credito_convertido = round((float)$contrato->total_capital / (float) $valores_cambio->valor_bs, 2);
-
-        //     $pdf::SetXY(55, 70);
-        //     $pdf::Cell($w = 70, $h = 0, 'VALOR ACORDADO DEL (DE LOS) BIENES', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        //     $pdf::SetTextColor(0, 0, 0);
-        //     $pdf::SetXY(55, 74);
-        //     $pdf::Cell($w = 70, $h = 0, $credito_convertido . ' $us', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        // } else {
-        //     // DOLARES
-        //     $pdf::SetXY(55, 70);
-        //     $pdf::Cell($w = 70, $h = 0, 'VALOR ACORDADO DEL (DE LOS) BIENES', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        //     $pdf::SetTextColor(0, 0, 0);
-        //     $pdf::SetXY(55, 74);
-        //     $pdf::Cell($w = 70, $h = 0, $contrato->total_capital . ' $us', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        //     $credito_convertido = $contrato->total_capital;
-        // }
-
-        // $valor_comparacion1 = 3499;
-        // $valor_comparacion2 = 10000;
-        // if ($contrato->moneda_id == 2) {
-        //     $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-        //     $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-        // }
-
-        // $tasa_interes = 6;
-        // if ($contrato->total_capital <= $valor_comparacion1) {
-        //     $tasa_interes = 9.04;
-        // } elseif ($contrato->total_capital < $valor_comparacion2) {
-        //     $tasa_interes = 6.7;
-        // }
-
-        // $pdf::SetTextColor(5, 117, 5);
-        // $pdf::SetXY(125, 70);
-        // $pdf::Cell($w = 30, $h = 0, 'TASA DE INTERÉS', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        // $pdf::SetTextColor(0, 0, 0);
-        // $pdf::SetXY(125, 74);
-        // $pdf::Cell($w = 30, $h = 0, $contrato->p_interes, $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        // $pdf::SetTextColor(5, 117, 5);
-        // $pdf::SetXY(155, 70);
-        // $pdf::Cell($w = 20, $h = 0, 'INTERÉS', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        // $pdf::SetTextColor(0, 0, 0);
-        // $pdf::SetXY(155, 74);
-        // $pdf::Cell($w = 20, $h = 0, $tasa_interes, $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-
-        // $gastos_deuda = 0;
-        // $porcentaje_deuda = $tasa_interes - $contrato->p_interes;
-        // $gastos_deuda = number_format($credito_convertido * ($porcentaje_deuda / 100), 2, '.', ',');
-
-        // $pdf::SetTextColor(5, 117, 5);
-        // $pdf::SetXY(175, 70);
-        // $pdf::Cell($w = 27, $h = 0, 'GASTOS DEUDA', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-        // $pdf::SetTextColor(0, 0, 0);
-        // $pdf::SetXY(175, 74);
-        // $pdf::Cell($w = 27, $h = 0, $gastos_deuda . ' $us', $border = 1, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
-
         $pdf::SetTextColor(5, 76);
         $pdf::SetFont('helvetica', 'N', 7);
         $pdf::SetXY(14, 80);
@@ -2863,6 +2790,191 @@ class ContratoController extends Controller
         PDF::writeHTML("", true, false, true, false, '');
         PDF::Output('Comprobate.pdf');
     }
+    public function contratos_vigentes_excel(Request $request)
+    {
+        $fecha = $request->fecha;
+        $sucursal = $request->sucursal;
+        $fecha_fin = $request->fecha_fin;
+
+        $contratos = Contrato::where('estado_id', 1)
+            ->where('estado_pago', '!=', 'Credito cancelado')
+            ->get();
+
+        if ($fecha != 'todos' && $sucursal != 'todos') {
+            $fecha_fin = Carbon::parse($request->fecha_fin)->format('Y-m-d');
+            $contratos = Contrato::where('estado_id', 1)
+                ->where('estado_pago', '!=', 'Credito cancelado')
+                ->where('sucursal_id', $sucursal)
+                ->where('fecha_contrato', '<=', $fecha_fin)
+                ->get();
+        } else if ($fecha != 'todos' && $sucursal == 'todos') {
+            $fecha_fin = Carbon::parse($request->fecha_fin)->format('Y-m-d');
+            $contratos = Contrato::where('estado_id', 1)
+                ->where('estado_pago', '!=', 'Credito cancelado')
+                ->where('fecha_contrato', '<=', $fecha_fin)
+                ->get();
+        } else if ($fecha == 'todos' && $sucursal != 'todos') {
+            $contratos = Contrato::where('estado_id', 1)
+                ->where('estado_pago', '!=', 'Credito cancelado')
+                ->where('sucursal_id', $sucursal)
+                ->get();
+        }
+        $valores_cambio = CambioMoneda::first();
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setCreator("PrendaSol")
+            ->setLastModifiedBy('Administración')
+            ->setTitle('Reporte de Contratos Vigentes')
+            ->setSubject('Contratos vigentes')
+            ->setDescription('Excel donde muestra los contratos vigentes')
+            ->setKeywords('PHPSpreadsheet')
+            ->setCategory('Listado');
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 12
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('B1:M1')->applyFromArray($styleArray);
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        // LLENADO DEL REPORTE
+        $sheet->setCellValue('B1', 'REPORTE DE CONTRATOS VIGENTES');
+        $sheet->mergeCells("B1:M1");  //COMBINAR CELDAS
+        // ENCABEZADO
+        $sheet->setCellValue('B2', 'Nº');
+        $sheet->setCellValue('C2', 'SUCURSAL');
+        $sheet->setCellValue('D2', 'CÓDIGO DE CONTRATO');
+        $sheet->setCellValue('E2', 'PESO BRUTO');
+        $sheet->setCellValue('F2', 'PESO NETO');
+        $sheet->setCellValue('G2', 'VALOR DE TASACIÓN');
+        $sheet->setCellValue('H2', 'IMPORTE TOTAL');
+        $sheet->setCellValue('I2', 'IMPORTE AMORTIZADO');
+        $sheet->setCellValue('J2', 'SALDO');
+        $sheet->setCellValue('K2', 'DÍAS DE MORA');
+        $sheet->setCellValue('L2', 'FECHA DE IGNRESO A PRENDA SOL');
+        $sheet->setCellValue('M2', 'INGRESO DE FECHA A CUSTODIA');
+
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+        $sheet->getStyle('B2:M2')->applyFromArray($styleArray);
+
+        // RECORRER LOS REGISTROS
+        $nro_fila = 3;
+        $cont = 1;
+        $suma_peso_bruto = 0;
+        $suma_peso_neto = 0;
+        $suma_tasacion = 0;
+        $suma_importe = 0;
+        $suma_amortizado = 0;
+        $suma_saldo = 0;
+        foreach ($contratos as $contrato) {
+            $styleArray = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+            $sheet->setCellValue('B' . $nro_fila, $cont++);
+            $sheet->setCellValue('C' . $nro_fila, $contrato->sucural->nombre);
+            $sheet->setCellValue('D' . $nro_fila, $contrato->codigo);
+            $sheet->setCellValue('E' . $nro_fila, $contrato->peso_total);
+
+            $detallesContrato = ContratoDetalle::where('contrato_id', $contrato->id)->where('estado_id', 1)->get();
+            $peso_neto = 0;
+            foreach ($detallesContrato as $detalleContrato) {
+                if ($detalleContrato->dies) {
+                    $peso_neto += (float)$detalleContrato->dies;
+                }
+                if ($detalleContrato->catorce) {
+                    $peso_neto += (float)$detalleContrato->catorce;
+                }
+                if ($detalleContrato->dieciocho) {
+                    $peso_neto += (float)$detalleContrato->dieciocho;
+                }
+                if ($detalleContrato->veinticuatro) {
+                    $peso_neto += (float)$detalleContrato->veinticuatro;
+                }
+            }
+            $sheet->setCellValue('F' . $nro_fila, $peso_neto);
+            $sheet->setCellValue('G' . $nro_fila, \number_format($contrato->total_capital, 2, '.', ''));
+
+            // ----- pago inicial, amortizacion
+            $pago_ini = Pagos::where('contrato_id', $contrato->id)->get()->first();
+            $pago_amortizacion = Pagos::where('contrato_id', $contrato->id)
+                ->where('estado', 'AMORTIZACIÓN')
+                ->get()
+                ->last();
+            $amortización = 0;
+            $pago_ultimo = Pagos::where('contrato_id', $contrato->id)
+                ->get()
+                ->last();
+            if ($pago_amortizacion) {
+                $amortización = $pago_ini['capital'] - $pago_amortizacion['capital'];
+            }
+            $saldo = $pago_ultimo['capital'] + $pago_ultimo['interes'] + $pago_ultimo['comision'] + $pago_ultimo['cuota_mora'];
+
+            $sheet->setCellValue('H' . $nro_fila, \number_format($pago_ini['capital'], 2, '.', ''));
+            $sheet->setCellValue('I' . $nro_fila, \number_format($amortización, 2, '.', ''));
+            $sheet->setCellValue('J' . $nro_fila, \number_format($saldo, 2, '.', ''));
+            $sheet->setCellValue('K' . $nro_fila, $pago_ultimo['dias_atraso']);
+            $sheet->setCellValue('L' . $nro_fila, date('d/m/Y', strtotime($contrato->fecha_contrato)));
+            $sheet->setCellValue('M' . $nro_fila, date('d/m/Y', strtotime($contrato->fecha_contrato)));
+
+            $suma_peso_bruto += $contrato->peso_total;
+            $suma_peso_neto += $peso_neto;
+            $suma_tasacion += (float)\number_format($contrato->total_capital, 2, '.', '');
+            $suma_importe += (float)\number_format($pago_ini['capital'], 2, '.', '');
+            $suma_amortizado += (float)\number_format($amortización, 2, '.', '');
+            $suma_saldo += (float)\number_format($saldo, 2, '.', '');
+
+            $sheet->getStyle('B' . $nro_fila . ':M' . $nro_fila)->applyFromArray($styleArray);
+            $nro_fila++;
+        }
+        $sheet->setCellValue('B' . $nro_fila, 'TOTALES');
+        $sheet->mergeCells("B" . $nro_fila . ":D" . $nro_fila);  //COMBINAR CELDAS
+        $sheet->setCellValue('E' . $nro_fila, $suma_peso_bruto);
+        $sheet->setCellValue('F' . $nro_fila, $suma_peso_neto);
+        $sheet->setCellValue('G' . $nro_fila, $suma_tasacion);
+        $sheet->setCellValue('H' . $nro_fila, $suma_importe);
+        $sheet->setCellValue('I' . $nro_fila, $suma_amortizado);
+        $sheet->setCellValue('J' . $nro_fila, $suma_saldo);
+
+        $sheet->getStyle('B' . $nro_fila . ':J' . $nro_fila)->applyFromArray($styleArray);
+
+        // AJUSTAR EL ANCHO DE LAS CELDAS
+        foreach (range('B', 'J') as $columnID) {
+            $sheet->getColumnDimension($columnID)
+                ->setAutoSize(true);
+        }
+
+        // DESCARGA DEL ARCHIVO
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        header('Content-Disposition: attachment;filename="ContratosVigentes.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+    }
+
 
     public function resumen_prestamos()
     {
@@ -3339,7 +3451,7 @@ class ContratoController extends Controller
         $pdf::Cell($w = 0, $h = 0, $txt = 'RESUMEN INGRESOS', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
 
         $pdf::SetXY(80, 37);
-        $pdf::Cell($w = 0, $h = 5.5, $txt = 'Por el Periodo comprendido entre el 1 de ' . $array_meses[$mes_aux] . ' al' . $total_dias . ' de ' . $array_meses[$mes_aux] . ' ' . $anio, $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
+        $pdf::Cell($w = 0, $h = 5.5, $txt = 'Por el Periodo comprendido entre el 1 de ' . $array_meses[$mes_aux] . ' al ' . $total_dias . ' de ' . $array_meses[$mes_aux] . ' ' . $anio, $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
 
         $pdf::SetXY(120, 44);
         $pdf::Cell($w = 0, $h = 0, $txt = '(Expresado en Bolivianos)', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
@@ -3433,6 +3545,264 @@ class ContratoController extends Controller
         //PDF::AddPage('L', 'A4');
         PDF::writeHTML("", true, false, true, false, '');
         PDF::Output('Comprobate.pdf');
+    }
+
+    public function resumen_ingresos_excel(Request $request)
+    {
+        $array_meses = [
+            '01' => 'Enero',
+            '02' => 'Febrero',
+            '03' => 'Marzo',
+            '04' => 'Abril',
+            '05' => 'Mayo',
+            '06' => 'Junio',
+            '07' => 'Julio',
+            '08' => 'Agosto',
+            '09' => 'Septiembre',
+            '10' => 'Octubre',
+            '11' => 'Noviembre',
+            '12' => 'Diciembre',
+        ];
+        $mes = $request->mes;
+        $mes_aux = $mes;
+        $nro_mes = (int)$mes;
+        $mes_anterior = 0;
+        $mes_anterior_aux = $mes_anterior;
+        $nro_mes--;
+        $anio = $request->anio;
+        $mes_anterior = $anio . '-' . $nro_mes;
+        $mes_anterior_aux = $nro_mes;
+        if ($nro_mes < 1) {
+            $nro_mes = '12';
+            $mes_anterior = ((int)$anio - 1) . '-' . $nro_mes;
+            $mes_anterior_aux = $nro_mes;
+        } elseif ($nro_mes < 10) {
+            $mes_anterior_aux = '0' . $nro_mes;
+            $mes_anterior = $anio . '-0' . $nro_mes;
+        }
+
+        $mes = $anio . '-' . $mes;
+        if ($mes < 10) {
+            $mes = $anio . '-0' . $mes;
+        }
+
+        $total_dias = date('t', strtotime($mes . '-01'));
+        $sucursales = Sucursal::where('estado_id', 1)->get();
+        $array_contratos = [];
+        $array_cajas = [];
+
+        $array_totales = [0, 0, 0, 0];
+
+        foreach ($sucursales as $sucursal) {
+            $array_contratos[$sucursal->id] = [
+                0 => [
+                    'mes_anterior' => 0.00,
+                    'mes_actual' => 0.00,
+                ],
+                1 => [
+                    'mes_anterior' => 0.00,
+                    'mes_actual' => 0.00,
+                ]
+            ];
+            $array_cajas[$sucursal->id] = [];
+
+            $id_sucursal = $sucursal->id;
+            if ((int)$id_sucursal == 1) {
+                $idCaja = [11, 12];
+            }
+
+            if ((int)$id_sucursal == 2) {
+                $idCaja = [31, 32];
+            }
+
+            if ((int)$id_sucursal == 3) {
+                $idCaja = [51, 52];
+            }
+
+            if ((int)$id_sucursal == 5) {
+                $idCaja = [41, 42];
+            }
+            if ((int)$id_sucursal == 6) {
+                $idCaja = [61, 62];
+            }
+            if ((int)$id_sucursal == 7) {
+                $idCaja = [71, 72];
+            }
+
+            if ((int)$id_sucursal == 4) {
+                $idCaja = [21, 22];
+            }
+
+            if ($id_sucursal == 8) {
+                $idCaja = [81, 82];
+            }
+
+            if ($id_sucursal == 9) {
+                $idCaja = [91, 92];
+            }
+
+            if ($id_sucursal == 10) {
+                $idCaja = [101, 102];
+            }
+
+            if ($id_sucursal == 11) {
+                $idCaja = [111, 112];
+            }
+
+            $array_cajas[$sucursal->id] = $idCaja;
+
+            for ($i = 0; $i < count($idCaja); $i++) {
+                $pagos_anterior_interes = Pagos::where('fecha_pago', 'LIKE', "$mes_anterior%")
+                    ->where('caja', $idCaja[$i])
+                    ->where('estado', '!=', 'DESEMBOLSO')
+                    ->sum('interes');
+                $pagos_anterior_comision = Pagos::where('fecha_pago', 'LIKE', "$mes_anterior%")
+                    ->where('caja', $idCaja[$i])
+                    ->where('estado', '!=', 'DESEMBOLSO')
+                    ->sum('comision');
+                $ingresos_anterior = (float)$pagos_anterior_interes + (float)$pagos_anterior_comision;
+
+                $ingresos_interes = Pagos::where('fecha_pago', 'LIKE', "$mes%")
+                    ->where('caja', $idCaja[$i])
+                    ->where('estado', '!=', 'DESEMBOLSO')
+                    ->sum('interes');
+                $ingresos_comision = Pagos::where('fecha_pago', 'LIKE', "$mes%")
+                    ->where('caja', $idCaja[$i])
+                    ->where('estado', '!=', 'DESEMBOLSO')
+                    ->sum('comision');
+                $ingresos = (float)$ingresos_interes + (float)$ingresos_comision;
+
+                $array_contratos[$sucursal->id][$i]['mes_anterior'] = (float)$ingresos_anterior;
+                $array_contratos[$sucursal->id][$i]['mes_actual'] = (float)$ingresos;
+
+                $array_totales[0] +=  (float)$array_contratos[$sucursal->id][$i]['mes_anterior'];
+                $array_totales[1] +=  (float)$array_contratos[$sucursal->id][$i]['mes_actual'];
+            }
+        }
+
+        $valores_cambio = CambioMoneda::first();
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setCreator("PrendaSol")
+            ->setLastModifiedBy('Administración')
+            ->setTitle('Resumen de ingresos')
+            ->setSubject('Resumen de ingresos')
+            ->setDescription('Excel donde muestra el resumen de ingresos')
+            ->setKeywords('PHPSpreadsheet')
+            ->setCategory('Listado');
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 12
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('B1:J1')->applyFromArray($styleArray);
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        // LLENADO DEL REPORTE
+        // ENCABEZADO
+        $sheet->setCellValue('B1', 'RESUMEN DE INGRESOS');
+        $sheet->mergeCells("B1:G1");  //COMBINAR CELDAS
+        $sheet->setCellValue('B2', 'Por el periodo comprendido entre el 1 de ' . $array_meses[$mes_aux] . ' al ' . $total_dias . ' de ' . $array_meses[$mes_aux]);
+        $sheet->mergeCells("B2:G2");  //COMBINAR CELDAS
+        $sheet->setCellValue('B3', '(Expresado en Bolivianos)');
+        $sheet->mergeCells("B3:G3");  //COMBINAR CELDAS
+
+        $sheet->setCellValue('B5', 'Código Sucursal');
+        $sheet->setCellValue('C5', 'Nombre Sucursal');
+        $sheet->setCellValue('D5', $array_meses[$mes_anterior_aux]);
+        $sheet->setCellValue('E5', $array_meses[$mes_aux]);
+        $sheet->setCellValue('F5', '%');
+        $sheet->setCellValue('G5', 'AH%');
+
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+        $sheet->getStyle('B5:G5')->applyFromArray($styleArray);
+
+        // RECORRER LOS REGISTROS
+        $nro_fila = 6;
+        $suma_total = 0;
+        $cont = 1;
+        $suma_porcentajes = 0;
+        $suma_ah = 0;
+        $styleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+        foreach ($sucursales as $sucursal) {
+            for ($i = 0; $i < count($array_cajas[$sucursal->id]); $i++) {
+                $sheet->setCellValue('B' . $nro_fila, $array_cajas[$sucursal->id][$i]);
+                $sheet->setCellValue('C' . $nro_fila, $sucursal->nombre);
+                $sheet->setCellValue('D' . $nro_fila, round($array_contratos[$sucursal->id][$i]['mes_anterior'], 2));
+                $sheet->setCellValue('E' . $nro_fila, round($array_contratos[$sucursal->id][$i]['mes_actual'], 2));
+
+                $porcentaje = 0;
+                if ($array_totales[1] > 0) {
+                    $porcentaje = ((float)$array_contratos[$sucursal->id][$i]['mes_actual'] / $array_totales[1]) * 100;
+                }
+                $suma_porcentajes += round($porcentaje, 2);
+                $ah = 0;
+                if ((float)$array_contratos[$sucursal->id][$i]['mes_anterior'] == 0 && (float)$array_contratos[$sucursal->id][$i]['mes_actual'] > 0) {
+                    $ah = 100;
+                } else if ((float)$array_contratos[$sucursal->id][$i]['mes_anterior'] > 0 && (float)$array_contratos[$sucursal->id][$i]['mes_actual'] == 0) {
+                    $ah = -100;
+                } else if ((float)$array_contratos[$sucursal->id][$i]['mes_anterior'] == 0 && (float)$array_contratos[$sucursal->id][$i]['mes_actual'] == 0) {
+                    $ah = 100;
+                } else {
+                    $ah = (((float)round($array_contratos[$sucursal->id][$i]['mes_actual'], 2) - (float)round($array_contratos[$sucursal->id][$i]['mes_anterior'], 2)) / (float)round($array_contratos[$sucursal->id][$i]['mes_anterior'], 2)) * 100;
+                }
+                $suma_ah += round($ah, 2);
+
+                $sheet->setCellValue('F' . $nro_fila, round($porcentaje, 2));
+                $sheet->setCellValue('G' . $nro_fila, round($ah, 2));
+
+                $sheet->getStyle('B' . $nro_fila . ':G' . $nro_fila)->applyFromArray($styleArray);
+                $nro_fila++;
+            }
+        }
+        $suma_total = \number_format($suma_total, 2, '.', ',');
+        $sheet->setCellValue('B' . $nro_fila, 'TOTALLES');
+        $sheet->mergeCells("B" . $nro_fila . ":C" . $nro_fila);  //COMBINAR CELDAS
+        $sheet->setCellValue('D' . $nro_fila, $array_totales[0]);
+        $sheet->setCellValue('E' . $nro_fila, $array_totales[1]);
+        $sheet->setCellValue('F' . $nro_fila, round($suma_porcentajes, 2));
+        $sheet->setCellValue('G' . $nro_fila, round($suma_ah, 2));
+
+        $sheet->getStyle('B' . $nro_fila . ':G' . $nro_fila)->applyFromArray($styleArray);
+
+        // AJUSTAR EL ANCHO DE LAS CELDAS
+        foreach (range('B', 'J') as $columnID) {
+            $sheet->getColumnDimension($columnID)
+                ->setAutoSize(true);
+        }
+
+        // DESCARGA DEL ARCHIVO
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        header('Content-Disposition: attachment;filename="ResumenIngresos.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
     }
 
     public function EnviaRenovacion(Contrato $contrato)

@@ -48,6 +48,8 @@
                     <div class="input-group-btn" style="display:flex;">
                         <button class="btn btn-success" data-dismiss="modal" type="button"
                             onclick="fnImprimirVigentesPDF();">Generar Pdf</button><br>
+                        <a href="{{ route('contrato.contratos_vigentes_excel') }}" class="btn btn-success"
+                            data-dismiss="modal" style="margin-left:5px;" id="btnExportarExcel">Exportar EXCEL</a><br>
                     </div>
                 </div>
             </div>
@@ -174,5 +176,20 @@
                 $("#dialogCC").show();
             }
         }
+
+        $('#btnExportarExcel').click(function(e) {
+            e.preventDefault();
+            var validarReporteContratosCancelados = $("#frmRepContratosVigentes").data('bootstrapValidator');
+            validarReporteContratosCancelados.validate();
+            if (validarReporteContratosCancelados.isValid()) {
+                let sucursal = $('#sucursal');
+                let fecha = $('#fecha');
+                let txtFechaFinal = $('#txtFechaFinal');
+                validarReporteContratosCancelados.validate();
+                let url = $(this).attr('href') + "?sucursal="+sucursal.val()+'&fecha='+fecha.val()+'&fecha_fin=' + txtFechaFinal.val();
+                window.location.href = url;
+                $('#frmRepContratosVigentes').bootstrapValidator('resetForm', true);
+            }
+        });
     </script>
 @endsection

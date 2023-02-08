@@ -29,21 +29,19 @@ class ContaDiarioController extends Controller
     public function index(Request $request)
     {
         if (Session::has('AUTENTICADO')) {
-            $sucursales = Sucursal::where('estado_id',1)->get();
+            $sucursales = Sucursal::where('estado_id', 1)->get();
             if (session::get('ID_ROL') == 1 || session::get('ID_ROL') == 3) {
-                $datosContaDiario = ContaDiario::where('tcom','EGRESO1')->where('ref','T126')->get();
+                $datosContaDiario = ContaDiario::where('tcom', 'EGRESO1')->where('ref', 'T126')->get();
                 if ($request->ajax()) {
                     //return view('formEgreso.modals.listadoEgreso', ['sucursales' => $sucursales,'datosContaDiario'=>$datosContaDiario,'cuentas'=>$cuentas])->render(); 
                 }
                 //return view('inicioFinCaja.index',compact('datosCaja','datoValidarCaja'));
-                return view('contabilidad.contaDiario.index',compact('datosContaDiario'));
+                return view('contabilidad.contaDiario.index', compact('datosContaDiario'));
+            } else {
+                return view("layout.login", compact('sucursales'));
             }
-            else{
-                return view("layout.login",compact('sucursales'));
-            }
-            
-        }else{
-            return view("layout.login",compact('sucursales'));
+        } else {
+            return view("layout.login", compact('sucursales'));
         }
     }
 
@@ -102,35 +100,32 @@ class ContaDiarioController extends Controller
         \DB::enableQueryLog();
         if (Session::has('AUTENTICADO')) {
             if ($request->ajax()) {
-                
-                    $datoC= ContaDiario::find($id);
-                    $datoC->debe                         = $request['txtDebe'];
-                    $datoC->haber                        = $request['txtHaber'];
-                    $datoC->estado_id                    = 1;
-                    $datoC->usuario_id                   = session::get('ID_USUARIO');
-                    $datoC->save();
 
-                    $bitacora = \DB::getQueryLog();
-                    foreach ($bitacora as $i => $query) {
-                        $resultado = json_encode($query);
-                    }
-                    \DB::disableQueryLog();
-                    LogSeguimiento::create([
-                        'usuario_id'   => session::get('ID_USUARIO'),
-                        'metodo'   => 'POST',
-                        'accion'   => 'ACTUALIZACION',
-                        'detalle'  => "el usuario" . session::get('USUARIO') . " actualizo un registro",
-                        'modulo'   => 'CONTA DIARIO',
-                        'consulta' => $resultado,
-                    ]);
-                    return response()->json(["Mensaje" => "1"]);
-                
-            }
-            else{
+                $datoC = ContaDiario::find($id);
+                $datoC->debe                         = $request['txtDebe'];
+                $datoC->haber                        = $request['txtHaber'];
+                $datoC->estado_id                    = 1;
+                $datoC->usuario_id                   = session::get('ID_USUARIO');
+                $datoC->save();
+
+                $bitacora = \DB::getQueryLog();
+                foreach ($bitacora as $i => $query) {
+                    $resultado = json_encode($query);
+                }
+                \DB::disableQueryLog();
+                LogSeguimiento::create([
+                    'usuario_id'   => session::get('ID_USUARIO'),
+                    'metodo'   => 'POST',
+                    'accion'   => 'ACTUALIZACION',
+                    'detalle'  => "el usuario" . session::get('USUARIO') . " actualizo un registro",
+                    'modulo'   => 'CONTA DIARIO',
+                    'consulta' => $resultado,
+                ]);
+                return response()->json(["Mensaje" => "1"]);
+            } else {
                 return response()->json(["Mensaje" => "0"]);
             }
-        }
-        else{
+        } else {
             return response()->json(["Mensaje" => "-1"]);
         }
     }
@@ -143,57 +138,56 @@ class ContaDiarioController extends Controller
      */
     public function destroy($id)
     {
-        if (Session::has('AUTENTICADO')) {     
+        if (Session::has('AUTENTICADO')) {
             //ACTUALIZAMOS PERSONA
-            $contaDiario= ContaDiario::find($id);
-            $contaDiario->estado_id=2;        
+            $contaDiario = ContaDiario::find($id);
+            $contaDiario->estado_id = 2;
             $contaDiario->save();
-            return response()->json(["Mensaje" => "1"]);            
-        }
-        else{
+            return response()->json(["Mensaje" => "1"]);
+        } else {
             return response()->json(["Mensaje" => "-1"]);
         }
     }
 
     public function buscarContaDiario(Request $request)
     {
+        ini_set('memory_limit', '1024M');
         $fechaI = $request['txtFechaInicio'];
         $fechaF = $request['txtFechaFin'];
         if (Session::has('AUTENTICADO')) {
             $fechaInicio = Carbon::parse($fechaI)->format('Y-m-d');
             $fechaFinal = Carbon::parse($fechaF)->format('Y-m-d');
             //$datosContaDiario = ContaDiario::whereBetween('fecha_a',[$fechaI,$fechaF])->get();
-            $datosContaDiario = ContaDiario::whereBetween('fecha_a',[$fechaInicio,$fechaFinal])
-                ->where('estado_id',1)
+            $datosContaDiario = ContaDiario::whereBetween('fecha_a', [$fechaInicio, $fechaFinal])
+                ->where('estado_id', 1)
                 //->orderBy('fecha_a','ASC')
-                ->orderBy('num_comprobante','ASC')
+                ->orderBy('num_comprobante', 'ASC')
                 ->get();
-            
+
             //dd($datosContaDiario);
-            if ($datosContaDiario) {                
+            if ($datosContaDiario) {
                 if ($request->ajax()) {
                     //dd($actoVacunaciones);
-                    return view('contabilidad.contaDiario.modals.listadoContaDiario', ['datosContaDiario' => $datosContaDiario,'fechaI' => $fechaI,'fechaF' => $fechaF])->render();
-                }     
-                return view('contabilidad.contaDiario.index',compact('datosContaDiario','fechaI','fechaF'));                           
+                    return view('contabilidad.contaDiario.modals.listadoContaDiario', ['datosContaDiario' => $datosContaDiario, 'fechaI' => $fechaI, 'fechaF' => $fechaF])->render();
+                }
+                return view('contabilidad.contaDiario.index', compact('datosContaDiario', 'fechaI', 'fechaF'));
             }
-            
-        }else{
+        } else {
             return view("layout.login");
-        }       
+        }
     }
-    public function exportarContaDiario($fechaI,$fechaF)
-    { 
+    public function exportarContaDiario($fechaI, $fechaF)
+    {
         if (Session::has('AUTENTICADO')) {
             $fechaInicio = Carbon::parse($fechaI)->format('Y-m-d');
             $fechaFinal = Carbon::parse($fechaF)->format('Y-m-d');
             //$datosContaDiario = ContaDiario::whereBetween('fecha_a',[$fechaI,$fechaF])->get();
-            $datosContaDiario = ContaDiario::whereBetween('fecha_a',[$fechaInicio,$fechaFinal])
+            $datosContaDiario = ContaDiario::whereBetween('fecha_a', [$fechaInicio, $fechaFinal])
                 //->orderBy('fecha_a','ASC')
-                ->where('estado_id',1)
-                ->orderBy('num_comprobante','ASC')
+                ->where('estado_id', 1)
+                ->orderBy('num_comprobante', 'ASC')
                 ->get();
-            
+
             $documento = new Spreadsheet();
             /*FIRMA DE DOCUMENTO*/
             $documento
@@ -210,7 +204,7 @@ class ContaDiarioController extends Controller
             $hoja = $documento->getActiveSheet();
             /*NOMBRE DE LA HOJA*/
             $hoja->setTitle('ContaDiario');
-            
+
             /*ARMAMOS TITULO DE LOS CAMPOS*/
             $hoja->setCellValue('A1', "#");
             $hoja->setCellValue('B1', "CI");
@@ -238,20 +232,18 @@ class ContaDiarioController extends Controller
                     if ($dato->ci) {
                         $hoja->setCellValue('B' . $i, $dato->ci);
                         $hoja->setCellValue('C' . $i, $dato->nom);
-                    }
-                    else{
+                    } else {
                         $hoja->setCellValue('B' . $i, 2773500);
                         $hoja->setCellValue('C' . $i, "MARIO ROJAS YUCRA");
                     }
 
-                    if ($dato->contrato_id ==0) {
-                        $hoja->setCellValue('D' . $i, $dato->correlativo .' - '. $dato->gestion);
-                    }
-                    else{
+                    if ($dato->contrato_id == 0) {
+                        $hoja->setCellValue('D' . $i, $dato->correlativo . ' - ' . $dato->gestion);
+                    } else {
                         $hoja->setCellValue('D' . $i, $dato->contrato_id);
                     }
-                    
-                    
+
+
                     $hoja->setCellValue('E' . $i, $dato->sucural->nombre);
                     $hoja->setCellValue('F' . $i, $dato->periodo);
                     $hoja->setCellValue('G' . $i, $dato->fecha_a);
@@ -265,9 +257,7 @@ class ContaDiarioController extends Controller
                     $hoja->setCellValue('O' . $i, $dato->tcom);
                     $hoja->setCellValue('P' . $i, $dato->ref);
                     $i++;
-                   
-                }
-                else{
+                } else {
                     if ($dato->contrato1) {
                         $j++;
                         $hoja->setCellValue('A' . $i, $j);
@@ -276,16 +266,14 @@ class ContaDiarioController extends Controller
                         if ($dato->contrato_id > 0) {
                             if ($dato->contrato1->codigo) {
                                 $hoja->setCellValue('D' . $i, $dato->contrato1->codigo);
+                            } else {
+                                $hoja->setCellValue('D' . $i, $dato->sucural->nuevo_codigo . "" . Carbon::parse($dato->contrato1->fecha_contrato)->format('y') . "" . $dato->contrato1->codigo_num);
                             }
-                            else{
-                                $hoja->setCellValue('D' . $i, $dato->sucural->nuevo_codigo ."".Carbon::parse($dato->contrato1->fecha_contrato)->format('y') ."". $dato->contrato1->codigo_num);
-                            }
-                        }
-                        else{
+                        } else {
                             $hoja->setCellValue('D' . $i, $dato->contrato_id);
                         }
-                        
-                        
+
+
                         $hoja->setCellValue('E' . $i, $dato->sucural->nombre);
                         $hoja->setCellValue('F' . $i, $dato->periodo);
                         $hoja->setCellValue('G' . $i, $dato->fecha_a);
@@ -300,7 +288,7 @@ class ContaDiarioController extends Controller
                         $hoja->setCellValue('P' . $i, $dato->ref);
                         $i++;
                     }
-                }                                
+                }
             }
 
             // $writer = \PhpOffice\PhpSpreadsheet\IOFactory::createWriter($documento, "Xlsx");
@@ -309,7 +297,7 @@ class ContaDiarioController extends Controller
             // header('Cache-Control: max-age=0');
             // $writer->save("php://output");
             $nombreDelDocumento = "Libro_Dario.xlsx";
- 
+
             $writer = new Xlsx($documento);
             header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
             header('Content-Disposition: attachment;filename="' . $nombreDelDocumento . '"');
@@ -322,14 +310,12 @@ class ContaDiarioController extends Controller
             ob_end_clean();
 
             $response =  array(
-                    'op' => 'ok',
-                    'file' => "data:application/vnd.ms-excel;base64,".base64_encode($xlsData)
-                );
+                'op' => 'ok',
+                'file' => "data:application/vnd.ms-excel;base64," . base64_encode($xlsData)
+            );
             die(json_encode($response));
-            
-            
-        }else{
+        } else {
             return view("layout.login");
-        } 
+        }
     }
 }

@@ -66,11 +66,13 @@
                                     <td>{{ $datoCaja->ref }}</td>
                                     <td>{{ $datoCaja->created_at }}</td>
                                     @if ($datoCaja->moneda_id == 2)
-                                        <td>{{ number_format((float) $datoCaja->inicio_caja_bs * $valores_cambio->valor_bs, 2, '.', ',') }} Bs</td>
+                                        <td>{{ number_format((float) $datoCaja->inicio_caja_bs * $valores_cambio->valor_bs, 2, '.', ',') }}
+                                            Bs</td>
                                         <td>{{ number_format(((float) $datoCaja->inicio_caja_bs), 2, '.', ',') }} $us</td>
                                     @else
                                         <td>{{ number_format($datoCaja->inicio_caja_bs, 2, '.', ',') }} Bs</td>
-                                        <td>{{ number_format((float) $datoCaja->inicio_caja_bs / $valores_cambio->valor_bs, 2, '.', ',') }} $us</td>
+                                        <td>{{ number_format((float) $datoCaja->inicio_caja_bs / $valores_cambio->valor_bs, 2, '.', ',') }}
+                                            $us</td>
                                     @endif
                                     <td>{{ $datoCaja->ingreso_bs }}</td>
                                     <td>{{ $datoCaja->egreso_bs }}</td>
@@ -138,6 +140,15 @@
                                 fnImprimirInicioFinCajaCerrar();
                             }
 
+                            if (resultado == 2) {
+                                Swal.fire({
+                                    title: "ATENCIÓN",
+                                    text: "Ya se realizó el cierre de cajas",
+                                    confirmButtonColor: "#EF5350",
+                                    confirmButtonText: 'Aceptar',
+                                    type: "info"
+                                });
+                            }
 
                             /*resultado = 0  PROBLEMAS EN LA BASE DE DATOS*/
                             if (resultado == 0) {

@@ -354,4 +354,176 @@ class SolicitudRetiroController extends Controller
         PDF::writeHTML("", true, false, true, false, '');
         PDF::Output('RetirosPendientes_' . time() . '.pdf');
     }
+
+    public function retiros_pendientes_excel(Request $request)
+    {
+        $sucursal  = $request->sucursal;
+        $fecha_ini = Carbon::parse($request->fecha_ini)->format('Y-m-d');
+        $fecha_fin = Carbon::parse($request->fecha_fin)->format('Y-m-d');
+
+        $contratos = Contrato::whereBetween('fecha_contrato', [$fecha_ini, $fecha_fin])
+            ->where('sucursal_id', $sucursal)
+            ->where('estado_pago', 'Credito cancelado')
+            ->where('estado_entrega', 'Prenda en custodia')
+            ->orderBy('id', 'ASC')
+            ->get();
+        $o_sucursal = Sucursal::find($sucursal);
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setCreator("PrendaSol")
+            ->setLastModifiedBy('Administración')
+            ->setTitle('Reporte de Solicitud de retiros de prendas')
+            ->setSubject('Solicitud de retiros de prendas')
+            ->setDescription('Excel donde muestra la solicitud de retiros de prendas')
+            ->setKeywords('PHPSpreadsheet')
+            ->setCategory('Listado');
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 12
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ];
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        // LLENADO DEL REPORTE
+        // ENCABEZADO
+        $sheet->setCellValue('B1', 'REPORTE RETIRO PENDIENTE DE JOYAS O PRENDAS');
+        $sheet->mergeCells("B1:I1");  //COMBINAR CELDAS
+        $sheet->getStyle('B1:I1')->applyFromArray($styleArray);
+        $sheet->setCellValue('B2', $o_sucursal->nombre);
+        $sheet->mergeCells("B2:I2");  //COMBINAR CELDAS
+        $sheet->getStyle('B2:I2')->applyFromArray($styleArray);
+        $sheet->setCellValue('B3', 'FECHA DE EMISIÓN: ' . Carbon::now('America/La_Paz')->format('Y-m-d'));
+        $sheet->mergeCells("B3:I3");  //COMBINAR CELDAS
+        $sheet->getStyle('B3:I3')->applyFromArray($styleArray);
+
+        // RECORRER LOS REGISTROS
+        $styleArrayCeldas = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_LEFT,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+
+        ];
+        $styleArrayBold = [
+            'font' => [
+                'bold' => true,
+            ],
+        ];
+
+
+        $styleArraySeparador = [
+            'font' => [
+                'bold' => true,
+                'color' => ['argb' => 'ffffff'],
+            ],
+            'fill' => [
+                'fillType' => \PhpOffice\PhpSpreadsheet\Style\Fill::FILL_SOLID,
+                'color' => ['rgb' => '007236']
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+                'vertical' => \PhpOffice\PhpSpreadsheet\Style\Alignment::VERTICAL_CENTER,
+            ],
+        ];
+
+        $styleArrayCeldasBold = [
+            'font' => [
+                'bold' => true,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+        $nro_fila = 5;
+
+        foreach ($contratos as $value) {
+            $sheet->setCellValue('B' . $nro_fila, "CÓDIGO: ");
+            $sheet->getStyle('B' . $nro_fila)->applyFromArray($styleArrayCeldasBold);
+            $sheet->setCellValue('C' . $nro_fila, $value->codigo);
+            $sheet->mergeCells("C" . $nro_fila . ":I" . $nro_fila);  //combinar celdas
+            $sheet->getStyle('C' . $nro_fila . ":I" . $nro_fila)->applyFromArray($styleArrayCeldas);
+
+            $nro_fila++;
+            $sheet->setCellValue('B' . $nro_fila, "CLIENTE: ");
+            $sheet->getStyle('B' . $nro_fila)->applyFromArray($styleArrayCeldasBold);
+            $sheet->setCellValue('C' . $nro_fila, $value->cliente->persona->nombres . ' ' . $value->cliente->persona->primerapellido . ' ' . $value->cliente->persona->segundoapellido);
+            $sheet->mergeCells("C" . $nro_fila . ":I" . $nro_fila);  //combinar celdas
+            $sheet->getStyle('C' . $nro_fila . ":I" . $nro_fila)->applyFromArray($styleArrayCeldas);
+
+            $nro_fila++;
+            $sheet->setCellValue('B' . $nro_fila, "FECHA CONTRATO: ");
+            $sheet->getStyle('B' . $nro_fila)->applyFromArray($styleArrayCeldasBold);
+            $sheet->setCellValue('C' . $nro_fila, $value->fecha_contrato);
+            $sheet->mergeCells("C" . $nro_fila . ":I" . $nro_fila);  //combinar celdas
+            $sheet->getStyle('C' . $nro_fila . ":I" . $nro_fila)->applyFromArray($styleArrayCeldas);
+
+            $nro_fila++;
+            $sheet->setCellValue('B' . $nro_fila, "PESO TOTAL: ");
+            $sheet->getStyle('B' . $nro_fila)->applyFromArray($styleArrayCeldasBold);
+            $sheet->setCellValue('C' . $nro_fila, $value->peso_total . "");
+            $sheet->mergeCells("C" . $nro_fila . ":I" . $nro_fila);  //combinar celdas
+            $sheet->getStyle('C' . $nro_fila . ":I" . $nro_fila)->applyFromArray($styleArrayCeldas);
+            $nro_fila++;
+            $sheet->setCellValue('B' . $nro_fila, 'DETALLE');
+            $sheet->mergeCells("B" . $nro_fila . ":I" . $nro_fila);  //COMBINAR CELDAS
+            $sheet->getStyle('B' . $nro_fila . ':I' . $nro_fila)->applyFromArray($styleArray);
+            $nro_fila++;
+            $cont = 1;
+            $sheet->setCellValue('B' . $nro_fila, "NRO.");
+            $sheet->setCellValue('C' . $nro_fila, "CANTIDAD");
+            $sheet->setCellValue('D' . $nro_fila, "DESCRIPCIÓN");
+            $sheet->setCellValue('E' . $nro_fila, "PESO BRUTO");
+            $sheet->setCellValue('F' . $nro_fila, "10K");
+            $sheet->setCellValue('G' . $nro_fila, "14K");
+            $sheet->setCellValue('H' . $nro_fila, "18K");
+            $sheet->setCellValue('I' . $nro_fila, "24K");
+            $sheet->getStyle('B' . $nro_fila . ':I' . $nro_fila)->applyFromArray($styleArrayCeldasBold);
+            $nro_fila++;
+            foreach ($value->detalle as $detalle) {
+                $sheet->setCellValue('B' . $nro_fila, $cont++);
+                $sheet->setCellValue('C' . $nro_fila, $detalle->cantidad);
+                $sheet->setCellValue('D' . $nro_fila, $detalle->descripcion);
+                $sheet->setCellValue('E' . $nro_fila, $detalle->peso);
+                $sheet->setCellValue('F' . $nro_fila, $detalle->pdieseso);
+                $sheet->setCellValue('G' . $nro_fila, $detalle->catorce);
+                $sheet->setCellValue('H' . $nro_fila, $detalle->dieciocho);
+                $sheet->setCellValue('I' . $nro_fila, $detalle->veinticuatro);
+                $sheet->getStyle('B' . $nro_fila . ':I' . $nro_fila)->applyFromArray($styleArrayCeldas);
+                $nro_fila++;
+            }
+            $nro_fila++;
+            $sheet->setCellValue('B' . $nro_fila, '_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _');
+            $sheet->mergeCells("B" . $nro_fila . ":I" . $nro_fila);  //combinar celdas
+            $sheet->getStyle('B' . $nro_fila . ':I' . $nro_fila)->applyFromArray($styleArraySeparador);
+            $nro_fila++;
+            $nro_fila++;
+        }
+        // AJUSTAR EL ANCHO DE LAS CELDAS
+        foreach (range('B', 'I') as $columnID) {
+            $sheet->getColumnDimension($columnID)
+                ->setAutoSize(true);
+        }
+
+        // DESCARGA DEL ARCHIVO
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        header('Content-Disposition: attachment;filename="SolicitudRetiroPrendas.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+    }
 }

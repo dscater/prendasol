@@ -20,6 +20,7 @@ use App\ContaDiario;
 
 use Carbon\Carbon;
 use App\NumberToLetterConverter;
+use Exception;
 use PDF;
 use Illuminate\Support\Facades\DB;
 
@@ -283,68 +284,87 @@ class InicioFinCajaController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $datoCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', session::get('ID_SUCURSAL'))
-            ->where('caja', session::get('CAJA'))
-            ->where('fecha_pago', Carbon::now('America/La_Paz')->format('Y-m-d'))
-            ->where('estado_id', 1)
-            ->orderBy('id', 'DESC')->first();
-        //dd($datoCajaDetalle);
-        if ($datoCajaDetalle) {
-            $inicioCajaBs = $datoCajaDetalle->inicio_caja_bs;
-            $idInicioCaja = $datoCajaDetalle->inicio_fin_caja_id;
-
-            $inicioCaja = InicioFinCaja::find($idInicioCaja);
-            $inicioCaja->fecha_cierre                  = Carbon::now('America/La_Paz');
-            $inicioCaja->fin_caja_bs                   = $inicioCajaBs;
-            $inicioCaja->estado_id                       = 2;
-            $inicioCaja->usuario_id                      = session::get('ID_USUARIO');
-            $inicioCaja->save();
-
-            $fecha_actual = Carbon::now('America/La_Paz')->format('Y-m-d');
-            $resFechaProximo = date("d-m-Y", strtotime($fecha_actual . "+ 1 days"));
-
-
-            InicioFinCaja::create([
-                'sucursal_id'          => session::get('ID_SUCURSAL'),
-                'fecha'           => Carbon::parse($resFechaProximo)->format('Y-m-d'),
-                'inicio_caja_bs'       => $inicioCajaBs,
-                'caja'                 => session::get('CAJA'),
-                'tipo_de_movimiento'   => 'Inicio de caja realizado por',
-                'estado_id'            => 1,
-                'moneda_id'            => 1,
-                'usuario_id'           => session::get('ID_USUARIO')
-            ]);
-        } else {
-            $datoCajaDetalle = InicioFinCaja::where('sucursal_id', session::get('ID_SUCURSAL'))
+        DB::beginTransaction();
+        try {
+            // validar existencia de un cierre
+            $existe_cierre = InicioFinCaja::where('sucursal_id', session::get('ID_SUCURSAL'))
                 ->where('caja', session::get('CAJA'))
                 ->where('fecha', Carbon::now('America/La_Paz')->format('Y-m-d'))
-                ->whereIn('estado_id', [1, 2])
+                ->where('estado_id', 2)
                 ->orderBy('id', 'DESC')->first();
 
-            $inicioCaja = InicioFinCaja::find($datoCajaDetalle->id);
-            $inicioCaja->fecha_cierre                  = Carbon::now('America/La_Paz');
-            $inicioCaja->fin_caja_bs                   = $datoCajaDetalle->inicio_caja_bs;
-            $inicioCaja->estado_id                       = 2;
-            $inicioCaja->usuario_id                    = session::get('ID_USUARIO');
-            $inicioCaja->save();
+            if ($existe_cierre) {
+                return response()->json(["Mensaje" => "2"]);
+                // throw new Exception('No es posible eliminar el registro debido a que ya existe un cierre');
+            }
 
-            $fecha_actual = Carbon::now('America/La_Paz')->format('Y-m-d');
-            $resFechaProximo = date("d-m-Y", strtotime($fecha_actual . "+ 1 days"));
+            $datoCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', session::get('ID_SUCURSAL'))
+                ->where('caja', session::get('CAJA'))
+                ->where('fecha_pago', Carbon::now('America/La_Paz')->format('Y-m-d'))
+                ->where('estado_id', 1)
+                ->orderBy('id', 'DESC')->first();
+            //dd($datoCajaDetalle);
+            if ($datoCajaDetalle) {
+                $inicioCajaBs = $datoCajaDetalle->inicio_caja_bs;
+                $idInicioCaja = $datoCajaDetalle->inicio_fin_caja_id;
+
+                $inicioCaja = InicioFinCaja::find($idInicioCaja);
+                $inicioCaja->fecha_cierre                  = Carbon::now('America/La_Paz');
+                $inicioCaja->fin_caja_bs                   = $inicioCajaBs;
+                $inicioCaja->estado_id                       = 2;
+                $inicioCaja->usuario_id                      = session::get('ID_USUARIO');
+                $inicioCaja->save();
+
+                $fecha_actual = Carbon::now('America/La_Paz')->format('Y-m-d');
+                $resFechaProximo = date("d-m-Y", strtotime($fecha_actual . "+ 1 days"));
 
 
-            InicioFinCaja::create([
-                'sucursal_id'          => session::get('ID_SUCURSAL'),
-                'fecha'           => Carbon::parse($resFechaProximo)->format('Y-m-d'),
-                'inicio_caja_bs'       => $datoCajaDetalle->inicio_caja_bs,
-                'caja'                 => session::get('CAJA'),
-                'tipo_de_movimiento'   => 'Inicio de caja realizado por',
-                'estado_id'            => 1,
-                'moneda_id'            => 1,
-                'usuario_id'           => session::get('ID_USUARIO')
-            ]);
+                InicioFinCaja::create([
+                    'sucursal_id'          => session::get('ID_SUCURSAL'),
+                    'fecha'           => Carbon::parse($resFechaProximo)->format('Y-m-d'),
+                    'inicio_caja_bs'       => $inicioCajaBs,
+                    'caja'                 => session::get('CAJA'),
+                    'tipo_de_movimiento'   => 'Inicio de caja realizado por',
+                    'estado_id'            => 1,
+                    'moneda_id'            => 1,
+                    'usuario_id'           => session::get('ID_USUARIO')
+                ]);
+            } else {
+                $datoCajaDetalle = InicioFinCaja::where('sucursal_id', session::get('ID_SUCURSAL'))
+                    ->where('caja', session::get('CAJA'))
+                    ->where('fecha', Carbon::now('America/La_Paz')->format('Y-m-d'))
+                    ->whereIn('estado_id', [1, 2])
+                    ->orderBy('id', 'DESC')->first();
+
+                $inicioCaja = InicioFinCaja::find($datoCajaDetalle->id);
+                $inicioCaja->fecha_cierre                  = Carbon::now('America/La_Paz');
+                $inicioCaja->fin_caja_bs                   = $datoCajaDetalle->inicio_caja_bs;
+                $inicioCaja->estado_id                       = 2;
+                $inicioCaja->usuario_id                    = session::get('ID_USUARIO');
+                $inicioCaja->save();
+
+                $fecha_actual = Carbon::now('America/La_Paz')->format('Y-m-d');
+                $resFechaProximo = date("d-m-Y", strtotime($fecha_actual . "+ 1 days"));
+
+
+                InicioFinCaja::create([
+                    'sucursal_id'          => session::get('ID_SUCURSAL'),
+                    'fecha'           => Carbon::parse($resFechaProximo)->format('Y-m-d'),
+                    'inicio_caja_bs'       => $datoCajaDetalle->inicio_caja_bs,
+                    'caja'                 => session::get('CAJA'),
+                    'tipo_de_movimiento'   => 'Inicio de caja realizado por',
+                    'estado_id'            => 1,
+                    'moneda_id'            => 1,
+                    'usuario_id'           => session::get('ID_USUARIO')
+                ]);
+            }
+            DB::commit();
+
+            return response()->json(["Mensaje" => "1"]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json(["Mensaje" => "0"]);
         }
-
-        return response()->json(["Mensaje" => "1"]);
     }
 
     /**
