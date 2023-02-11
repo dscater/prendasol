@@ -44,13 +44,16 @@
                         <div class="col-md-6">
                             <div class="form-group">
                                 <label>Fecha:</label>
-								@if ($datoValidarCaja->estado_id == 1)
-									<input type="text" id="txtFecha" name="txtFecha" placeholder="Fecha" class="form-control" data-mask required readonly value="{{ $fechaActual }}">
-								@else
-									@if (Session::get('ID_ROL') == 1)
-										<input type="text" id="txtFecha" name="txtFecha" placeholder="Fecha" class="form-control" data-mask required readonly value="{{ $resFechaProximo }}">
-									@endif
-								@endif                               
+                                @if (isset($datoValidarCaja) && $datoValidarCaja && $datoValidarCaja['estado_id'] == 2)
+                                    @if (Session::get('ID_ROL') == 1)
+                                        <input type="text" id="txtFecha" name="txtFecha" placeholder="Fecha"
+                                            class="form-control" data-mask required readonly
+                                            value="{{ $resFechaProximo }}">
+                                    @endif
+                                @else
+                                    <input type="text" id="txtFecha" name="txtFecha" placeholder="Fecha"
+                                        class="form-control" data-mask required readonly value="{{ $fechaActual }}">
+                                @endif
                             </div>
                         </div>
                         <div class="col-md-6">
@@ -58,7 +61,13 @@
                                 <label>Tipo de Movimiento:</label>
                                 <select class="form-control select2" id="ddlTipoMovimiento" name="ddlTipoMovimiento"
                                     data-placeholder="Seleccionar Tipo de Movimiento" required>
-                                    @if ($datoValidarCaja->estado_id == 1)
+                                    @if (isset($datoValidarCaja) && $datoValidarCaja && $datoValidarCaja['estado_id'] == 2)
+                                        @if (Session::get('ID_ROL') == 1)
+                                            <option value="1">
+                                                CAPITALIZACIÓN(INCREMENTO DE CAPITAL)
+                                            </option>
+                                        @endif
+                                    @else
                                         <option></option>
                                         <option value="1">
                                             CAPITALIZACIÓN(INCREMENTO DE CAPITAL)
@@ -72,12 +81,6 @@
                                         <option value="4">
                                             OTROS INGRESOS ADICIONALES
                                         </option>
-                                    @else
-                                        @if (Session::get('ID_ROL') == 1)
-                                            <option value="1">
-                                                CAPITALIZACIÓN(INCREMENTO DE CAPITAL)
-                                            </option>
-                                        @endif
                                     @endif
                                 </select>
                             </div>
