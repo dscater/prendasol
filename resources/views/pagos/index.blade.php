@@ -723,21 +723,21 @@
                             valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
                         }
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -759,21 +759,21 @@
                             valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
                         }
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
                     }
 
@@ -822,7 +822,7 @@
                         console.log("diaAtrasados1 valoo", diaAtrasados1);
                         console.log("totalInteresValor valoo", totalInteresValor);
                         console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                        var totalInteres = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diaAtrasados1);
                         var cuotaMora = totalInteres;
                         console.log("Interes Calculado", totalInteres);
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(capital) + parseFloat(
@@ -830,8 +830,8 @@
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
                             'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
                             'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
                             'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
@@ -853,29 +853,29 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
                         var totalInteres = parseFloat(totalInteresValor1);
@@ -903,13 +903,13 @@
 
                         var diasMora = solodiaC + solodiaC1;
 
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                        var interesDescuento = ajustaDecimal((parseFloat(interes) / 30) * diasMora);
+                        var comisionDescuento = ajustaDecimal((parseFloat(comision) / 30) * diasMora);
                         //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
+                        var totalDescuento = ajustaDecimal(parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
+                            parseFloat(cutotaMoraDescuento));
 
                         totalGeneral = totalDescuento;
 
@@ -918,8 +918,8 @@
                         var interesDescuento = 0;
                         var comisionDescuento = 0;
                         var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
                         totalGeneral = totalGeneral + cutotaMoraDescuento;
                         console.log("ffff", cutotaMoraDescuento);
                     }
@@ -1102,21 +1102,21 @@
                             valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
                         }
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -1138,21 +1138,21 @@
                             valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
                         }
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     }
@@ -1202,7 +1202,7 @@
                         console.log("diaAtrasados1 valoo", diaAtrasados1);
                         console.log("totalInteresValor valoo", totalInteresValor);
                         console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                        var totalInteres = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diaAtrasados1);
                         var cuotaMora = totalInteres;
                         console.log("Interes Calculado", totalInteres);
                         var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor);
@@ -1252,29 +1252,29 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
                         var totalInteres = parseFloat(totalInteresValor1);
@@ -1304,12 +1304,12 @@
 
                         var diasMora = solodiaC + solodiaC1;
 
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                        var interesDescuento = ajustaDecimal((parseFloat(interes) / 30) * diasMora);
+                        var comisionDescuento = ajustaDecimal((parseFloat(comision) / 30) * diasMora);
                         //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
                         console.log("diasDecuento", diasDecuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
                         console.log("cccc", cutotaMoraDescuento);
                         var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
                             parseFloat(cutotaMoraDescuento);
@@ -1321,8 +1321,8 @@
                         var interesDescuento = 0;
                         var comisionDescuento = 0;
                         var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
                         totalGeneral = totalGeneral + cutotaMoraDescuento;
                         console.log("ffff", cutotaMoraDescuento);
                     }
@@ -1508,36 +1508,33 @@
                 }
 
                 if (parseFloat(valor) <= valor_comparacion1) {
-                    var valorGarantia = (valorRestatnte * 9.04) / 100;
+                    var valorGarantia = ajustaDecimal((valorRestatnte * 9.04) / 100);
                     //$('#txtNuevoInteres').val(Number(valorGarantia).toFixed(2));
-                    var interes = (valorRestatnte * globalInteresAmor) / 100;
-                    var comision = (valorRestatnte * 7.4) / 100;
+                    var interes = ajustaDecimal((valorRestatnte * globalInteresAmor) / 100);
+                    var comision = ajustaDecimal((valorRestatnte * 7.4) / 100);
                 } else if (parseFloat(valor) < valor_comparacion2) {
-                    var valorGarantia = (valorRestatnte * 6.7) / 100;
-                    var interes = (valorRestatnte * globalInteresAmor) / 100;
-                    var comision = (valorRestatnte * 4.4) / 100;
+                    var valorGarantia = ajustaDecimal((valorRestatnte * 6.7) / 100);
+                    var interes = ajustaDecimal((valorRestatnte * globalInteresAmor) / 100);
+                    var comision = ajustaDecimal((valorRestatnte * 4.4) / 100);
                     //$('#txtNuevoInteres').val(Number(valorGarantia).toFixed(2));
 
                 } else if (parseFloat(valor) < valor_comparacion3) {
-                    var valorGarantia = (valorRestatnte * 6) / 100;
-                    var interes = (valorRestatnte * globalInteresAmor) / 100;
-                    var comision = (valorRestatnte * 4.4) / 100;
+                    var valorGarantia = ajustaDecimal((valorRestatnte * 6) / 100);
+                    var interes = ajustaDecimal((valorRestatnte * globalInteresAmor) / 100);
+                    var comision = ajustaDecimal((valorRestatnte * 4.4) / 100);
                 }else{
-                    var valorGarantia = (valorRestatnte * 5) / 100;
-                    var interes = (valorRestatnte * globalInteresAmor) / 100;
-                    var comision = (valorRestatnte * 4.4) / 100;
+                    var valorGarantia = ajustaDecimal((valorRestatnte * 5) / 100);
+                    var interes = ajustaDecimal((valorRestatnte * globalInteresAmor) / 100);
+                    var comision = ajustaDecimal((valorRestatnte * 4.4) / 100);
                 }
 
                 var txtInteresFechaAD = parseFloat($("#txtInteresFechaAD").val());
                 if (txtInteresFechaAD > 0) {
                     console.log("AAAAAA");
-                    var totalPagar = parseFloat(valor) + parseFloat($("#txtInteresFechaAD").val()) + parseFloat($(
-                        "#txtGastosAdministrativosAD").val()) + parseFloat($("#txtInteresMoratorioAD").val());
+                    var totalPagar = ajustaDecimal(parseFloat(valor) + parseFloat($("#txtInteresFechaAD").val()) + parseFloat($("#txtGastosAdministrativosAD").val()) + parseFloat($("#txtInteresMoratorioAD").val()));
                 } else {
                     console.log("BBBBB");
-                    var totalPagar = parseFloat(valor) + parseFloat($("#txtInteresFechaA").val()) + parseFloat($(
-                            "#txtGastosAdministrativosA").val()) + parseFloat($("#txtInteresMoratorioA").val()) +
-                        parseFloat($("#txtInteresMoratorioAD").val());
+                    var totalPagar = ajustaDecimal(parseFloat(valor) + parseFloat($("#txtInteresFechaA").val()) + parseFloat($("#txtGastosAdministrativosA").val()) + parseFloat($("#txtInteresMoratorioA").val()) + parseFloat($("#txtInteresMoratorioAD").val()));
 
                 }
 
@@ -1763,21 +1760,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(valor) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(valor) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -1800,21 +1797,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(valor) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(valor) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
                     }
 
@@ -1835,15 +1832,15 @@
                     }
 
                     if (parseFloat(capital) <= valor_comparacion1) {
-                        var totalInteresValor = (capital * 9.04) / 100;
+                        var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
                     } else if (parseFloat(capital) < valor_comparacion2) {
-                        var totalInteresValor = (capital * 6.7) / 100;
+                        var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
                         //var interes = (capital * data.Resultado.p_interes)/100;
                         //var comision = (capital * 3.7)/100;
                     } else if (parseFloat(capital) < valor_comparacion3) {
-                        var totalInteresValor = (capital * 6) / 100;
+                        var totalInteresValor = ajustaDecimal((capital * 6) / 100);
                     }else{
-                        var totalInteresValor = (capital * 5) / 100;
+                        var totalInteresValor = ajustaDecimal((capital * 5) / 100);
                     }
 
                     var fechaInteresInicial = '2020-03-22';
@@ -1899,11 +1896,11 @@
                         console.log("diaAtrasados1 valoo", diaAtrasados1);
                         console.log("totalInteresValor valoo", totalInteresValor);
                         console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                        var totalInteres = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diaAtrasados1);
                         var cuotaMora = totalInteres;
                         console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor) +
-                            parseFloat(amortizacion);
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(totalInteresValor)) +
+                            parseFloat(ajustaDecimal(amortizacion));
                         console.log("Total General", totalGeneral);
                         // var mensaje = 'El contrato tiene <b>'+diaAtrasados+' dias </b> de atraso,<br> ' + 'Tiene un capital de :<b>'+parseFloat(capital).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> con un interes de <b>'+parseFloat(totalInteresValor).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> <br>'+
                         // 'El Interes seria un total de::<b>'+parseFloat(totalInteres).toFixed(2)+' '+ data.Resultado.desc_corta+'</b><br>'+'La Amortización de <b>'+parseFloat(amortizacion).toFixed(2)+' '+ data.Resultado.desc_corta+'</b> mas el interes  seria un total de: <b>'+parseFloat(totalGeneral).toFixed(2)+' '+ data.Resultado.desc_corta+' a pagar</b>';
@@ -1927,29 +1924,29 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
                         var totalInteres = parseFloat(totalInteresValor1);
@@ -1979,12 +1976,12 @@
 
                         var diasMora = solodiaC + solodiaC1;
 
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                        var interesDescuento = ajustaDecimal((parseFloat(interes) / 30) * diasMora);
+                        var comisionDescuento = ajustaDecimal((parseFloat(comision) / 30) * diasMora);
                         //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) * diasDecuento) * 70) / 100;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) * diasDecuento) * 70) / 100);
+                        var totalDescuento = ajustaDecimal(parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
+                            parseFloat(cutotaMoraDescuento));
 
                         totalGeneral = totalDescuento;
                         console.log("interesDescuento", interesDescuento);
@@ -1997,8 +1994,8 @@
                         var interesDescuento = 0;
                         var comisionDescuento = 0;
                         var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
                         totalGeneral = totalGeneral + cutotaMoraDescuento;
                         console.log("ffff", cutotaMoraDescuento);
                     }
@@ -2203,15 +2200,15 @@
                         let total_nuevo_ic_bs = (parseFloat(interes_capital.val()) + parseFloat(gastos_administrativos.val()) + parseFloat(interes_moratorios.val())).toFixed(2);
                         let total_nuevo_ic_sus = (parseFloat(interes_capital2.val()) + parseFloat(gastos_administrativos2.val()) + parseFloat(interes_moratorios2.val())).toFixed(2);
 
-                        var total_ic = parseFloat(contrato.interes) + parseFloat(contrato.comision) + parseFloat(interes_moratorios.attr('data-val'));
+                        var total_ic = parseFloat(ajustaDecimal(contrato.interes)) + parseFloat(ajustaDecimal(contrato.comision)) + parseFloat(ajustaDecimal(interes_moratorios.attr('data-val')));
                         if(contrato.moneda_id == 2){
-                            total_ic = parseFloat(contrato.interes) + parseFloat(contrato.comision) + parseFloat(interes_moratorios2.attr('data-val'));
+                            total_ic = parseFloat(ajustaDecimal(contrato.interes)) + parseFloat(ajustaDecimal(contrato.comision)) + parseFloat(ajustaDecimal(interes_moratorios2.attr('data-val')));
                         }
 
                         var total_nuevo_ic = (parseFloat(gastos_administrativos.val()) + parseFloat(interes_moratorios.val())).toFixed(2);
-                        var txtInteresMoratorio = interes_moratorios.attr('data-val');
+                        var txtInteresMoratorio = ajustaDecimal(interes_moratorios.attr('data-val'));
                         if(contrato.moneda_id == 2){
-                            txtInteresMoratorio = interes_moratorios2.attr('data-val');
+                            txtInteresMoratorio = ajustaDecimal(interes_moratorios2.attr('data-val'));
                         }
 
                         var mensaje = 'El contrato tiene un capital de :<b>'+ data.Resultado.desc_corta +' '+ ajustaDecimal(parseFloat(capital).toFixed(2)) + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(contrato.interes).toFixed(2)) + '</b> mas gastos administrativos de <b>' + ajustaDecimal(parseFloat(data.Resultado.comision).toFixed(2)) +'</b> mas intereses moratorios de <b> '+ ajustaDecimal(parseFloat(txtInteresMoratorio).toFixed(2)) +' </b> haciendo un total de <b>' + ajustaDecimal(parseFloat(total_ic).toFixed(2)) + '</b><br>' +'El nuevo interes tendra un total de: <b> Bs.' + ajustaDecimal(parseFloat(interes_capital.val()).toFixed(2)) + '  </b> mas el nuevo valor de gastos administrativos de <b>'+ ajustaDecimal(parseFloat(gastos_administrativos.val()).toFixed(2)) +' Bs.</b> mas el nuevo interes moratorio de <b>' + ajustaDecimal(parseFloat(interes_moratorios.val()).toFixed(2))+'</b>por lo que el nuevo monto total es de <b>'+ ajustaDecimal(parseFloat(total_nuevo_ic).toFixed(2)) +' Bs.</b><br>Total a pagar es de: <b>' + ajustaDecimal(parseFloat($('#txtTotalAI').val()).toFixed(2)) + ' Bs. / ' + ajustaDecimal(parseFloat($('#txtTotalAI2').val()).toFixed(2)) + ' $us';
@@ -2616,21 +2613,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -2652,21 +2649,21 @@
                             valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
                         }
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
                     }
 
@@ -2726,18 +2723,18 @@
                         console.log("diaAtrasados1 valoo", diaAtrasados1);
                         console.log("totalInteresValor valoo", totalInteresValor);
                         console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
-                        var cuotaMora = totalInteres;
+                        var totalInteres = (parseFloat(ajustaDecimal(totalInteresValor)) / diaActual) * diaAtrasados1;
+                        var cuotaMora = ajustaDecimal(totalInteres);
                         console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(capital) + parseFloat(
-                            totalInteresValor);
+                        totalInteresValor = parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(capital)) + parseFloat(ajustaDecimal(totalInteresValor));
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'Por lo tanto el Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                            'El Capital mas el interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
                         var diaAtrasados1 = 0;
@@ -2757,33 +2754,33 @@
                             valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
                         }
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
-                        var totalInteres = parseFloat(totalInteresValor1 + interes);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
+                        var totalInteres = parseFloat(ajustaDecimal(totalInteresValor1)) + parseFloat(ajustaDecimal(interes));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(capital));
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
                             'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
                             'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
@@ -2816,23 +2813,22 @@
 
                         var diasMora = solodiaC + solodiaC1;
 
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                        var interesDescuento = ajustaDecimal((parseFloat(ajustaDecimal(interes)) / 30) * diasMora);
+                        var comisionDescuento = ajustaDecimal((parseFloat(ajustaDecimal(comision)) / 30) * diasMora);
                         //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
-                        totalGeneral = totalDescuento + parseFloat(capital);
-
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision))) / 30) *
+                            diasDecuento) * 70) / 100);
+                        var totalDescuento = ajustaDecimal(parseFloat(ajustaDecimal(interesDescuento)) + parseFloat(ajustaDecimal(comisionDescuento)) +
+                            parseFloat(ajustaDecimal(cutotaMoraDescuento)));
+                        totalGeneral = totalDescuento + parseFloat(ajustaDecimal(capital));
                     } else {
                         console.log("intervalo NO ACEPATDO");
                         var interesDescuento = 0;
                         var comisionDescuento = 0;
                         var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision))) / 30) *
+                            diasDecuento) * 70) / 100);
+                        totalGeneral = totalGeneral + parseFloat(ajustaDecimal(cutotaMoraDescuento));
                         console.log("ffff", cutotaMoraDescuento);
                     }
 
@@ -2851,12 +2847,12 @@
                         $('#mensajePagoTotal').css('display','block');
                         // AFECTAR LOS VALORES DE INTERES Y GASTOS
                         if (moneda_pago == 1) {
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_bs);
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_bs);
+                            interes = parseFloat(ajustaDecimal(interes)) - parseFloat(ajustaDecimal(data.valor_amortizacion_interes_bs));
+                            comision = parseFloat(ajustaDecimal(comision)) - parseFloat(ajustaDecimal(data.valor_amortizacion_gastos_bs));
                         }else{
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_sus);
+                            interes = parseFloat(ajustaDecimal(interes)) - parseFloat(ajustaDecimal(data.valor_amortizacion_interes_sus));
                             comision
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_sus);
+                            comision = parseFloat(ajustaDecimal(comision)) - parseFloat(ajustaDecimal(data.valor_amortizacion_gastos_sus));
                         }
 
                         if(interes < 0)
@@ -2868,7 +2864,7 @@
                         {
                             comision = 0;
                         }
-                        totalGeneral = parseFloat(capital) + parseFloat(interes) + parseFloat(comision) + parseFloat(cutotaMoraDescuento);
+                        totalGeneral = parseFloat(ajustaDecimal(capital)) + parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision)) + parseFloat(ajustaDecimal(cutotaMoraDescuento));
                     }
 
                     if (moneda_pago == 1) {
@@ -2891,10 +2887,10 @@
                         $("#txtInteresMoratorioTD2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
                         $("#txtTotal").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
-                        $("#txtTotal2").val(ajustaDecimal(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtTotal2").val(ajustaDecimal((parseFloat($("#txtTotal").val())/parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
 
                         $("#txtCapitalPagoTotal").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
-                        $("#txtCapitalPagoTotal2").val(ajustaDecimal((capital / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtCapitalPagoTotal2").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotal").val()) / parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
 
                         $("#txtMontoTotal").val($("#txtTotal").val());
                         $("#txtMontoTotal2").val($("#txtTotal2").val());
@@ -3028,21 +3024,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -3066,21 +3062,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
                     }
 
@@ -3144,10 +3140,12 @@
                         console.log("diaAtrasados1 valoo", diaAtrasados1);
                         console.log("totalInteresValor valoo", totalInteresValor);
                         console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                        var totalInteres = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diaAtrasados1);
                         var cuotaMora = totalInteres;
                         console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor);
+
+                        totalInteresValor = parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(totalInteresValor));
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
                             'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
@@ -3180,34 +3178,34 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
 
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = parseFloat(totalInteres + interes);
+                        var totalInteres = parseFloat(ajustaDecimal(totalInteresValor1));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(interes));
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
                             'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
@@ -3241,15 +3239,15 @@
                         var diasMora = solodiaC + solodiaC1;
 
 
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                        var interesDescuento = ajustaDecimal((parseFloat(interes) / 30) * diasMora);
+                        var comisionDescuento = ajustaDecimal((parseFloat(comision) / 30) * diasMora);
 
                         //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
                         // cutotaMoraDescuento = cutotaMoraDescuento + interesDescuento1 + comisionDescuento1;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
+                        var totalDescuento = parseFloat(ajustaDecimal(interesDescuento)) + parseFloat(ajustaDecimal(comisionDescuento)) +
+                            parseFloat(ajustaDecimal(cutotaMoraDescuento));
 
                         totalGeneral = totalDescuento;
 
@@ -3258,9 +3256,9 @@
                         var interesDescuento = 0;
                         var comisionDescuento = 0;
                         var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
+                        totalGeneral = totalGeneral + parseFloat(ajustaDecimal(cutotaMoraDescuento));
                         console.log("ffff", cutotaMoraDescuento);
                     }
                     $("#txtCII").val(contrato.cliente.persona.nrodocumento);
@@ -3277,12 +3275,11 @@
                         $('#mensajePagoInteres').css('display','block');
                         // AFECTAR LOS VALORES DE INTERES Y GASTOS
                         if (moneda_pago == 1) {
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_bs);
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_bs);
+                            interes = parseFloat(ajustaDecimal(interes)) - parseFloat(ajustaDecimal(data.valor_amortizacion_interes_bs));
+                            comision = parseFloat(ajustaDecimal(comision)) - parseFloat(ajustaDecimal(data.valor_amortizacion_gastos_bs));
                         }else{
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_sus);
-                            comision
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_sus);
+                            interes = parseFloat(ajustaDecimal(interes)) - parseFloat(ajustaDecimal(data.valor_amortizacion_interes_sus));
+                            comision = parseFloat(ajustaDecimal(comision)) - parseFloat(ajustaDecimal(data.valor_amortizacion_gastos_sus));
                         }
 
                         if(interes < 0)
@@ -3294,7 +3291,7 @@
                         {
                             comision = 0;
                         }
-                        totalGeneral = parseFloat(interes) + parseFloat(comision) + parseFloat(cutotaMoraDescuento);
+                        totalGeneral = parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision)) + parseFloat(ajustaDecimal(cutotaMoraDescuento));
                     }
 
                     if (moneda_pago == 1) {
@@ -3317,13 +3314,13 @@
                         $("#txtInteresMoratorioID2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
                         $("#txtTotalI").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
-                        $("#txtTotalI2").val(ajustaDecimal(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtTotalI2").val(ajustaDecimal((parseFloat($("#txtTotalI").val())/parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
 
                         $("#txtCapitalPagoTotalI").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
-                        $("#txtCapitalPagoTotalI2").val(ajustaDecimal(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtCapitalPagoTotalI2").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalI").val())/parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
 
                         $("#txtMontoTotalI").val((ajustaDecimal((parseFloat($("#txtCapitalPagoTotalI").val()) + parseFloat($("#txtInteresFechaI").val()) + parseFloat($('#txtGastosAdministrativosI').val()) + parseFloat($("#txtInteresMoratorioI").val())).toFixed(2))));
-                        $("#txtMontoTotalI2").val((ajustaDecimal((parseFloat($("#txtCapitalPagoTotalI2").val()) + parseFloat($("#txtInteresFechaI2").val()) + parseFloat($('#txtGastosAdministrativosI2').val()) + parseFloat($("#txtInteresMoratorioI2").val())).toFixed(2))));
+                        $("#txtMontoTotalI2").val((ajustaDecimal((parseFloat($("#txtMontoTotalI").val()) / parseFloat(data.cambioMonedas.valor_bs)).toFixed(2))));
                     } else {
                         $("#txtInteresFechaI").val(ajustaDecimal(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2)));
                         $("#txtInteresFechaI2").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
@@ -3433,21 +3430,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -3473,21 +3470,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
                     }
 
@@ -3547,13 +3544,13 @@
                     }
 
                     if (parseFloat(capital) <= valor_comparacion1) {
-                        var totalInteresValor = (capital * 9.04) / 100;
+                        var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
                     } else if (parseFloat(capital) < valor_comparacion2) {
-                        var totalInteresValor = (capital * 6.7) / 100;
+                        var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
                     } else if (parseFloat(capital) < valor_comparacion3) {
-                        var totalInteresValor = (capital * 6) / 100;
+                        var totalInteresValor = ajustaDecimal((capital * 6) / 100);
                     }else{
-                        var totalInteresValor = (capital * 5) / 100;
+                        var totalInteresValor = ajustaDecimal((capital * 5) / 100);
                     }
 
                     var fechaInteresInicial = '2020-03-22';
@@ -3604,11 +3601,12 @@
                         console.log("diaAtrasados1 valoo", diaAtrasados1);
                         console.log("totalInteresValor valoo", totalInteresValor);
                         console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                        var totalInteres = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diaAtrasados1);
                         var cuotaMora = totalInteres;
                         console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor) +
-                            parseFloat(amortizacion);
+                        totalInteresValor = parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(totalInteresValor)) +
+                            parseFloat(ajustaDecimal(amortizacion));
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
                             'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
@@ -3641,33 +3639,33 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
-                        var totalInteres = parseFloat(totalInteresValor1 + interes);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(amortizacion);
+                        var totalInteres = parseFloat(ajustaDecimal(totalInteresValor1)) + parseFloat(ajustaDecimal(interes));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(amortizacion));
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
                             'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
@@ -3687,8 +3685,8 @@
 
                     } else {
                         console.log("intervalo NO ACEPATDO");
-                        var fff = ((((parseFloat(interes) + parseFloat(comision)) / 30) * diasDecuento) * 70) /
-                            100;
+                        var fff = ajustaDecimal(((((parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision))) / 30) * diasDecuento) * 70) /
+                            100);
 
                     }
 
@@ -3711,13 +3709,13 @@
 
                         var diasMora = solodiaC + solodiaC1;
 
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                        var interesDescuento = ajustaDecimal((parseFloat(interes) / 30) * diasMora);
+                        var comisionDescuento = ajustaDecimal((parseFloat(comision) / 30) * diasMora);
                         //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
+                        var totalDescuento = parseFloat(ajustaDecimal(interesDescuento)) + parseFloat(ajustaDecimal(comisionDescuento)) +
+                            parseFloat(ajustaDecimal(cutotaMoraDescuento));
 
                         totalGeneral = totalDescuento;
 
@@ -3726,9 +3724,9 @@
                         var interesDescuento = 0;
                         var comisionDescuento = 0;
                         var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
+                        totalGeneral = totalGeneral + parseFloat(ajustaDecimal(cutotaMoraDescuento));
                         console.log("ffff", cutotaMoraDescuento);
                     }
                     $("#txtCIA").val(contrato.cliente.persona.nrodocumento);
@@ -3745,12 +3743,12 @@
                         $('#mensajePagoAmortizacion').css('display','block');
                         // AFECTAR LOS VALORES DE INTERES Y GASTOS
                         if (moneda_pago == 1) {
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_bs);
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_bs);
+                            interes = parseFloat(ajustaDecimal(interes)) - parseFloat(ajustaDecimal(data.valor_amortizacion_interes_bs));
+                            comision = parseFloat(ajustaDecimal(comision)) - parseFloat(ajustaDecimal(data.valor_amortizacion_gastos_bs));
                         }else{
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_sus);
+                            interes = parseFloat(ajustaDecimal(interes)) - parseFloat(ajustaDecimal(data.valor_amortizacion_interes_sus));
                             comision
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_sus);
+                            comision = parseFloat(ajustaDecimal(comision)) - parseFloat(ajustaDecimal(data.valor_amortizacion_gastos_sus));
                         }
 
                         if(interes < 0)
@@ -3762,7 +3760,7 @@
                         {
                             comision = 0;
                         }
-                        totalGeneral = parseFloat(interes) + parseFloat(comision) + parseFloat(cutotaMoraDescuento);
+                        totalGeneral = parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision)) + parseFloat(ajustaDecimal(cutotaMoraDescuento));
                     }
 
                     if (moneda_pago == 1) {
@@ -3788,7 +3786,7 @@
                         $("#txtInteresMoratorioAD2").val(ajustaDecimal(parseFloat(cutotaMoraDescuento / data.cambioMonedas.valor_bs).toFixed(2)));
 
                         $("#txtTotalA").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
-                        $("#txtTotalA2").val(ajustaDecimal(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtTotalA2").val(ajustaDecimal((parseFloat($("#txtTotalA").val())/parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
 
                         $("#txtCapitalPagoTotalA").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
                         $("#txtCapitalPagoTotalA2").val(ajustaDecimal(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2)));
@@ -3943,21 +3941,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -3981,21 +3979,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
                     }
 
@@ -4062,7 +4060,8 @@
                         var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
                         var cuotaMora = totalInteres;
                         console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor);
+                        totalInteresValor = parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(totalInteresValor));
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
                             'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
@@ -4095,34 +4094,34 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
 
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = parseFloat(totalInteres + interes);
+                        var totalInteres = parseFloat(ajustaDecimal(totalInteresValor1));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(interes));
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
                             'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
@@ -4151,17 +4150,17 @@
                         var diasMora = solodiaC + solodiaC1;
 
 
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                        var interesDescuento = (parseFloat(ajustaDecimal(interes)) / 30) * diasMora;
+                        var comisionDescuento = (parseFloat(ajustaDecimal(comision)) / 30) * diasMora;
 
                         //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
+                        var cutotaMoraDescuento = ajustaDecimal(((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                            diasDecuento) * 70) / 100);
                         // cutotaMoraDescuento = cutotaMoraDescuento + interesDescuento1 + comisionDescuento1;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
+                        var totalDescuento = parseFloat(ajustaDecimal(interesDescuento)) + parseFloat(ajustaDecimal(comisionDescuento)) +
+                            parseFloat(ajustaDecimal(cutotaMoraDescuento));
 
-                        totalGeneral = totalDescuento;
+                        totalGeneral = parseFloat(ajustaDecimal(totalDescuento));
 
                     } else {
                         console.log("intervalo NO ACEPATDO");
@@ -4170,7 +4169,7 @@
                         var totalDescuento = 0;
                         var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
                             diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
+                        totalGeneral = totalGeneral + parseFloat(ajustaDecimal(cutotaMoraDescuento));
                         console.log("ffff", cutotaMoraDescuento);
                     }
 
@@ -4179,12 +4178,12 @@
                         $('#mensajePagoAmortizacionInteres').css('display','block');
                         // AFECTAR LOS VALORES DE INTERES Y GASTOS
                         if (moneda_pago == 1) {
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_bs);
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_bs);
+                            interes = parseFloat(ajustaDecimal(interes)) - parseFloat(ajustaDecimal(data.valor_amortizacion_interes_bs));
+                            comision = parseFloat(ajustaDecimal(comision)) - parseFloat(ajustaDecimal(data.valor_amortizacion_gastos_bs));
                         }else{
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_sus);
+                            interes = parseFloat(ajustaDecimal(interes)) - parseFloat(ajustaDecimal(data.valor_amortizacion_interes_sus));
                             comision
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_sus);
+                            comision = parseFloat(ajustaDecimal(comision)) - parseFloat(ajustaDecimal(data.valor_amortizacion_gastos_sus));
                         }
 
                         if(interes < 0)
@@ -4218,10 +4217,10 @@
                         $("#txtTotalAI2").val(ajustaDecimal(parseFloat('0.00').toFixed(2)));
 
                         $("#txtCapitalPagoTotalAI").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
-                        $("#txtCapitalPagoTotalAI2").val(ajustaDecimal(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtCapitalPagoTotalAI2").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI").val())/parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
 
                         $("#txtMontoTotalAI").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI").val()) + parseFloat($("#txtInteresFechaAI").val()) + parseFloat($('#txtGastosAdministrativosAI').val()) + parseFloat($("#txtInteresMoratorioAI").val())).toFixed(2)));
-                        $("#txtMontoTotalAI2").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI2").val()) + parseFloat($("#txtInteresFechaAI2").val()) + parseFloat($('#txtGastosAdministrativosAI2').val()) + parseFloat($("#txtInteresMoratorioAI2").val())).toFixed(2)));
+                        $("#txtMontoTotalAI2").val(ajustaDecimal((parseFloat($("#txtMontoTotalAI").val())/parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
                     } else {
                         $("#txtInteresFechaAI").attr('data-val',ajustaDecimal(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2)));
                         $("#txtInteresFechaAI2").attr('data-val',ajustaDecimal(parseFloat(interes).toFixed(2)));
@@ -4372,21 +4371,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -4408,21 +4407,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
                     }
 
@@ -4447,18 +4446,19 @@
 
                     console.log("diaAtrasados", diaAtrasados);
                     if (diaAtrasados > 0) {
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados;
+                        var totalInteres = (parseFloat(ajustaDecimal(totalInteresValor)) / diaActual) * diaAtrasados;
                         var cuotaMora = totalInteres;
                         console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(capital) + parseFloat(
-                            totalInteresValor);
+                        totalInteresValor = parseFloat(ajustaDecimal(interes)) + parseFloat(ajustaDecimal(comision));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(capital)) + parseFloat(
+                            ajustaDecimal(totalInteresValor));
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'Por lo tanto el Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                            'El Capital mas el interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
                         var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
@@ -4494,38 +4494,38 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
+                        var totalInteres = parseFloat(ajustaDecimal(totalInteresValor1));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(capital));
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'El Capital mas el interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b>';
                         // }
                     }
 
@@ -4545,41 +4545,41 @@
                     $("#txtDiasAtrasoR").val(valorDiasAtrasados);
                     $("#txtDiasTranscurridosR").val(diasTranscurridos);
                     if (moneda_pago == 1) {
-                        $("#txtMontoTotalR").val(parseFloat(contrato.total_capital).toFixed(2));
-                        $("#txtMontoTotalR2").val((parseFloat(contrato.total_capital) / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtMontoTotalR").val(ajustaDecimal(parseFloat(contrato.total_capital).toFixed(2)));
+                        $("#txtMontoTotalR2").val(ajustaDecimal((parseFloat(contrato.total_capital) / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresFechaR").val(parseFloat(interes).toFixed(2));
-                        $("#txtInteresFechaR2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtInteresFechaR").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
+                        $("#txtInteresFechaR2").val(ajustaDecimal(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtGastosAdministrativosR").val(parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativosR2").val(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtGastosAdministrativosR").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
+                        $("#txtGastosAdministrativosR2").val(ajustaDecimal(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtInteresMoratorioR").val(parseFloat(cuotaMora).toFixed(2));
-                        $("#txtInteresMoratorioR2").val(parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtInteresMoratorioR").val(ajustaDecimal(parseFloat(cuotaMora).toFixed(2)));
+                        $("#txtInteresMoratorioR2").val(ajustaDecimal(parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2)));
 
-                        $("#txtTotalR").val(parseFloat(totalGeneral).toFixed(2));
-                        $("#txtTotalR2").val(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtTotalR").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
+                        $("#txtTotalR2").val(ajustaDecimal(parseFloat(($("#txtTotalR").val())/parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
 
-                        $("#txtCapitalPagoTotalR").val(parseFloat(capital).toFixed(2));
-                        $("#txtCapitalPagoTotalR2").val(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtCapitalPagoTotalR").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
+                        $("#txtCapitalPagoTotalR2").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalR").val())/parseFloat(data.cambioMonedas.valor_bs)).toFixed(2)));
                     } else {
-                        $("#txtMontoTotalR").val((parseFloat(contrato.total_capital) * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtMontoTotalR2").val(parseFloat(contrato.total_capital).toFixed(2));
+                        $("#txtMontoTotalR").val(ajustaDecimal((parseFloat(contrato.total_capital) * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtMontoTotalR2").val(ajustaDecimal(parseFloat(contrato.total_capital).toFixed(2)));
 
-                        $("#txtInteresFechaR").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresFechaR2").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFechaR").val(ajustaDecimal(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresFechaR2").val(ajustaDecimal(parseFloat(interes).toFixed(2)));
 
-                        $("#txtGastosAdministrativosR").val(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosR2").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativosR").val(ajustaDecimal(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtGastosAdministrativosR2").val(ajustaDecimal(parseFloat(comision).toFixed(2)));
 
-                        $("#txtInteresMoratorioR").val(parseFloat(cuotaMora * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresMoratorioR2").val(parseFloat(cuotaMora).toFixed(2));
+                        $("#txtInteresMoratorioR").val(ajustaDecimal(parseFloat(cuotaMora * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtInteresMoratorioR2").val(ajustaDecimal(parseFloat(cuotaMora).toFixed(2)));
 
-                        $("#txtTotalR").val(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtTotalR2").val(parseFloat(totalGeneral).toFixed(2));
+                        $("#txtTotalR").val(ajustaDecimal(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtTotalR2").val(ajustaDecimal(parseFloat(totalGeneral).toFixed(2)));
 
-                        $("#txtCapitalPagoTotalR").val(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtCapitalPagoTotalR2").val(parseFloat(capital).toFixed(2));
+                        $("#txtCapitalPagoTotalR").val(ajustaDecimal(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtCapitalPagoTotalR2").val(ajustaDecimal(parseFloat(capital).toFixed(2)));
                     }
                     $('#txtMonedaR').val(data.Resultado.desc_corta);
                 },
@@ -4662,21 +4662,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
 
                     } else {
@@ -4698,21 +4698,21 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 9.04) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 6.04) / 100);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6.7) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3.7) / 100);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 6) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 3) / 100);
                         }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
+                            var totalInteresValor = ajustaDecimal((capital * 5) / 100);
+                            var interes = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision = ajustaDecimal((capital * 2) / 100);
                         }
                     }
 
@@ -4726,18 +4726,18 @@
                     var diaAtrasados = fechaActual.diff(fechaFin, 'days');
                     console.log("diaAtrasados", diaAtrasados);
                     if (diaAtrasados > 0) {
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados;
+                        var totalInteres = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diaAtrasados);
                         var cuotaMora = totalInteres;
                         console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(capital) + parseFloat(
-                            totalInteresValor);
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(capital)) + parseFloat(
+                            ajustaDecimal(totalInteresValor));
                         console.log("Total General", totalGeneral);
                         var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'Por lo tanto el Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                            'El Capital mas el interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b>';
                         var valorDiasAtrasados = diaAtrasados;
                     } else {
                         var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
@@ -4757,40 +4757,40 @@
                         }
 
                         if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 6.04) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3.7) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 3) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                            var totalInteresValor1 = ajustaDecimal((parseFloat(totalInteresValor) / diaActual) * diasRango);
+                            var interes1 = ajustaDecimal((capital * data.Resultado.p_interes) / 100);
+                            var comision1 = ajustaDecimal((capital * 2) / 100);
+                            var interes = ajustaDecimal((parseFloat(interes1) / diaActual) * diasRango);
+                            var comision = ajustaDecimal((parseFloat(comision1) / diaActual) * diasRango);
                         }
 
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
+                        var totalInteres = parseFloat(ajustaDecimal(totalInteresValor1));
+                        var totalGeneral = parseFloat(ajustaDecimal(totalInteres)) + parseFloat(ajustaDecimal(capital));
                         var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                            'Tiene un capital de :<b>' + ajustaDecimal(parseFloat(capital).toFixed(2)) +
+                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + ajustaDecimal(parseFloat(
+                                totalInteresValor).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                            'El Interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalInteres).toFixed(2)) +
                             ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                            'El Capital mas el interes seria un total de: <b>' + ajustaDecimal(parseFloat(totalGeneral).toFixed(2)) + ' ' + data.Resultado.desc_corta + '</b>';
                     }
 
                     console.log("interes", interes);
@@ -4822,10 +4822,10 @@
                                     'fecha_fin': contrato.fecha_fin,
                                     'fecha_Incio': contrato.fecha_contrato,
                                     'total_capital': contrato.total_capital,
-                                    'capital': parseFloat(capital).toFixed(2),
-                                    'interes': parseFloat(interes).toFixed(2),
-                                    'comision': parseFloat(comision).toFixed(2),
-                                    'cuotaMora': parseFloat(cuotaMora).toFixed(2),
+                                    'capital': ajustaDecimal(parseFloat(capital).toFixed(2)),
+                                    'interes': ajustaDecimal(parseFloat(interes).toFixed(2)),
+                                    'comision': ajustaDecimal(parseFloat(comision).toFixed(2)),
+                                    'cuotaMora': ajustaDecimal(parseFloat(cuotaMora).toFixed(2)),
                                     //'comision':0,
                                     'idContrato': contrato.id,
                                 },

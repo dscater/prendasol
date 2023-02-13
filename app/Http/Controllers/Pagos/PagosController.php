@@ -23,6 +23,7 @@ use App\CambioMoneda;
 use App\Http\Controllers\Contrato\ContratoController;
 use App\Moneda;
 use App\Sucursal;
+use Illuminate\Support\Facades\Log;
 
 class PagosController extends Controller
 {
@@ -776,6 +777,7 @@ class PagosController extends Controller
 
 
                 if ($contadorInicioCajaDetalle == 0) {
+                    Log::debug("ENTRO");
                     $inicioCajaBs = $datoInicioCaja->inicio_caja_bs;
                     $idInicioCaja = $datoInicioCaja->id;
                 } else {

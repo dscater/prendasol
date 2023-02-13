@@ -611,11 +611,15 @@
     {{-- AJUSTE DECIMAL --}}
     <script>
         function ajustaDecimal(numero) {
-            console.log(numero);
+            let aux = parseFloat(numero).toFixed(2);
+            numero = aux;
             numero = numero.toString();
-            console.log(numero);
+            // console.log(numero);
             let array_numero = numero.split(".");
-            let array_decimales = array_numero[1].split("");
+            let array_decimales = [0,0];
+            if(array_numero[1]){
+                array_decimales=array_numero[1].split("");
+            }
             let numero_ajustado = "";
             if (parseFloat(array_decimales[1]) > 0) {
                 array_decimales[0] = parseInt(array_decimales[0]) + 1;

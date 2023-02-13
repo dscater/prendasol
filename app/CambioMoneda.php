@@ -26,6 +26,6 @@ class CambioMoneda extends Model
             }
         }
         $numero_ajustado = $array_numero[0] . "." . $array_decimales[0] . $array_decimales[1];
-        return number_format($numero_ajustado, 2)."";
+        return number_format($numero_ajustado, 2, ".", "") . "";
     }
 }
