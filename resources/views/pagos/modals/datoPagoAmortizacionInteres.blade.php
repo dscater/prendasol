@@ -266,6 +266,27 @@
 				</div> --}}
 			</div>
 		
+			{{-- <div class="row">
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>SUMA TOTAL:</label>
+						<div class="input-group">
+							<input type="text" name="txtTotalAITotales" id="txtTotalAITotales" class="form-control" readonly>		
+							<span class="input-group-addon _txtBs">Bs</span>
+						</div>	
+			        </div>
+				</div>					
+				<div class="col-md-3">
+					<div class="form-group">
+						<label>&nbsp;</label>
+						<div class="input-group">
+							<input type="text" name="txtTotalAITotales2" id="txtTotalAITotales2" class="form-control" value="" readonly>
+							<span class="input-group-addon _txtSus">$us</span>
+						</div>
+			        </div>
+				</div>						
+			</div>
+		 --}}
 			<div class="row">
 				<div class="col-md-3">
 					<div class="form-group">
