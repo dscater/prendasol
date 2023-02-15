@@ -1404,6 +1404,7 @@ class PagosController extends Controller
         }
 
         if ($pago->moneda_id == 1) {
+            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $capital_convertido = (float)$pago->capital / (float) $valores_cambio->valor_bs;
             $totalPagar_convertido = (float)$totalPagar / (float) $valores_cambio->valor_bs;
@@ -1439,7 +1440,7 @@ class PagosController extends Controller
             $tasa_interes = 6;
         }
 
-        $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
+        // $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
 
         $pdf::SetFont('helvetica', 'B', 11);
         $pdf::SetXY(15, 58);
@@ -1492,7 +1493,7 @@ class PagosController extends Controller
         $pdf::SetXY(115, 68);
         $pdf::Cell($w = 0, $h = 0, $txt = 'TOTAL PAGADO', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
         $pdf::SetXY(170, 68);
-        $pdf::Cell($w = 0, $h = 0, $txt = \number_format($totalPagar_convertido, 2) . ' $us', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
+        $pdf::Cell($w = 0, $h = 0, $txt = round($totalPagar_convertido, 2) . ' $us', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
 
         $pdf::SetXY(132, 94);
         $pdf::Cell($w = 0, $h = 0, $txt = 'CI', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
@@ -1642,6 +1643,7 @@ class PagosController extends Controller
         $capital_convertido = 0;
         $totalPagar_convertido = 0;
         if ($pago->moneda_id == 1) {
+            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $capital_convertido = round((float)$pago->capital / (float) $valores_cambio->valor_bs, 2);
             $totalPagar_convertido = round((float)$totalPagar / (float) $valores_cambio->valor_bs, 2);
@@ -1675,9 +1677,7 @@ class PagosController extends Controller
             $tasa_interes = 6;
         }
 
-        $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
-
-
+        // $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
         $pdf::SetFont('helvetica', 'B', 11);
         $pdf::SetXY(15, 58);
         $pdf::Cell($w = 0, $h = 0, $txt = 'CAPITAL PRESTADO', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
@@ -1838,14 +1838,15 @@ class PagosController extends Controller
         $pdf::SetXY(15, 54);
         $pdf::Cell($w = 0, $h = 0, $txt = 'Interés', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
         $pdf::SetXY(160, 54);
-        $pdf::Cell($w = 0, $h = 0, $txt = number_format($interes_convertido, 2) . ' $us', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
+        $pdf::Cell($w = 0, $h = 0, $txt = round($interes_convertido, 2) . ' $us', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
 
         $capital_convertido = 0;
         $totalPagar_convertido = 0;
         if ($pago->moneda_id == 1) {
+            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
-            $capital_convertido = number_format((float)$pago->total_capital / (float) $valores_cambio->valor_bs, 2);
-            $totalPagar_convertido = number_format((float)$totalPagar / (float) $valores_cambio->valor_bs, 2);
+            $capital_convertido = number_format((float)$pago->total_capital / (float) $valores_cambio->valor_bs, 2, ".", "");
+            $totalPagar_convertido = number_format((float)$totalPagar / (float) $valores_cambio->valor_bs, 2, ".", "");
         } else {
             // DOLARES
             $capital_convertido = $pago->total_capital;
@@ -1879,7 +1880,7 @@ class PagosController extends Controller
             $gastos_deuda = $gastos_deuda / $valores_cambio->valor_bs;
         }
 
-        $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
+        // $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
 
         $pdf::SetXY(15, 59);
         $pdf::Cell($w = 0, $h = 0, $txt = 'Gastos de Deuda y Custodia', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
@@ -2032,6 +2033,7 @@ class PagosController extends Controller
         $capital_convertido = 0;
         $totalPagar_convertido = 0;
         if ($pago->moneda_id == 1) {
+            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $capital_convertido = round((float)$pago->total_capital / (float) $valores_cambio->valor_bs, 2);
             $totalPagar_convertido = round((float)$totalPagar / (float) $valores_cambio->valor_bs, 2);
@@ -2072,7 +2074,7 @@ class PagosController extends Controller
             $gastos_deuda = $gastos_deuda / $valores_cambio->valor_bs;
         }
 
-        $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
+        // $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
 
         $pdf::SetXY(15, 59);
         $pdf::Cell($w = 0, $h = 0, $txt = 'Gastos de Deuda y Custodia', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
@@ -2184,10 +2186,10 @@ class PagosController extends Controller
         $comision_convertido = 0;
         $mora_convertido = 0;
         if ($pago->moneda_id == 1) {
+            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $capital_convertido = round((float)$pago->capital / (float) $valores_cambio->valor_bs, 2);
             $totalPagar_convertido = round((float)$totalPagar / (float) $valores_cambio->valor_bs, 2);
-
             $comision_convertido = round((float)$pago->comision, 2);
             $interes_convertido = round((float)$pago->interes, 2);
             $mora_convertido = round((float)$pago->mora, 2);
@@ -2451,17 +2453,20 @@ class PagosController extends Controller
             $interes_convertido_sus = (float)$interes_convertido_sus / (float)$valores_cambio->valor_bs;
             $comision_convetido_sus = (float)$comision_convetido_sus / (float)$valores_cambio->valor_bs;
 
-            $capital_convertido_sus = $capital_convertido_sus / (float)$valores_cambio->valor_bs;
+            $capital_convertido_sus = CambioMoneda::ajustaDecimal($capital_convertido_sus);
+            $capital_convertido_sus = (float)$capital_convertido_sus / (float)$valores_cambio->valor_bs;
             if ($pago->estado == 'AMORTIZACIÓN') {
                 $capitalPagado = (float)$pago->dias_atraso_total - (float)$pago->capital;
 
                 $totalPagar = (float)$pago->interes + (float)$pago->comision + (float)$pago->cuota_mora + (float)$capitalPagado;
 
+                $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
                 $capital_convertido_bs = $totalPagar;
                 $capital_convertido_sus = $totalPagar / (float)$valores_cambio->valor_bs;
             }
             if ($pago->estado == 'INTERES') {
                 $totalPagar = (float)$pago->interes + (float)$pago->comision + (float)$pago->cuota_mora;
+                $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
                 $capital_convertido_bs = $totalPagar;
                 $capital_convertido_sus = $totalPagar / (float)$valores_cambio->valor_bs;
             }
@@ -2478,19 +2483,20 @@ class PagosController extends Controller
             $capital_convertido_sus = \number_format($capital_convertido_sus, 2);
 
             $capital_convertido_bs = (float)$nuevo_interes + (float)$nuevo_gasto;
-            $capital_convertido_bs = \number_format($capital_convertido_bs, 2);
+            // $capital_convertido_bs = \number_format($capital_convertido_bs, 2);
             if ($pago->moneda_id == 1) {
-                $capital_convertido_sus = \number_format($capital_convertido_sus / $valores_cambio->valor_bs, 2);
+                $capital_convertido_sus = CambioMoneda::ajustaDecimal($capital_convertido_sus);
+                $capital_convertido_sus = \number_format((float)$capital_convertido_sus / $valores_cambio->valor_bs, 2);
             } else {
                 $capital_convertido_bs = \number_format($capital_convertido_bs * $valores_cambio->valor_bs, 2);
             }
 
-            $capital_convertido_bs = \number_format($pago->total_ai, 2);
-            $capital_convertido_sus = \number_format($pago->total_ai / $valores_cambio->valor_bs, 2);
+            $capital_convertido_bs = CambioMoneda::ajustaDecimal($pago->total_ai, 2);
+            $capital_convertido_sus = \number_format(CambioMoneda::ajustaDecimal($pago->total_ai) / $valores_cambio->valor_bs, 2);
         }
 
         $pdf::SetXY(180, 82);
-        $pdf::Cell($w = 0, $h = 0, CambioMoneda::ajustaDecimal($capital_convertido_sus), $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
+        $pdf::Cell($w = 0, $h = 0, number_format((float)$capital_convertido_sus, 2), $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
         $pdf::SetXY(180, 89);
         $pdf::Cell($w = 0, $h = 0, CambioMoneda::ajustaDecimal($capital_convertido_bs), $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
 
@@ -2553,6 +2559,7 @@ class PagosController extends Controller
         $primer_pago_capital = Pagos::where('contrato_id', $pago->contrato_id)->get()->first();
 
         if ($pago->moneda_id == 1) {
+            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // CONVERTIR A DOLARES
             $capital_prestado_convertido = round((float)$primer_pago_capital->capital / (float) $valores_cambio->valor_bs, 2);
             $capital_convertido = round((float)$pago->capital / (float) $valores_cambio->valor_bs, 2);
@@ -2584,7 +2591,7 @@ class PagosController extends Controller
             $totalPagar_convertido = $totalPagar;
         }
 
-        $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
+        // $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
 
         $pdf = new PDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
@@ -2762,6 +2769,7 @@ class PagosController extends Controller
         $primer_pago_capital = Pagos::where('contrato_id', $pago->contrato_id)->get()->first();
 
         if ($pago->moneda_id == 1) {
+            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $primer_pago_capital_convertido = round((float)$primer_pago_capital->capital / (float) $valores_cambio->valor_bs, 2);
             $capital_convertido = round((float)$pago->capital / (float) $valores_cambio->valor_bs, 2);
@@ -2792,7 +2800,7 @@ class PagosController extends Controller
             $cuota_mora_convertido = $pago->cuota_mora;
             $totalPagar_convertido = $totalPagar;
         }
-        $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
+        // $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
 
         //$totalSoloInteres = (float)$pago->capital + (float)$pago->interes + (float)$pago->comision;             
         //dd($pago->contrato->);
@@ -2962,6 +2970,7 @@ class PagosController extends Controller
         $cuota_mora_convertido = $pago->cuota_mora;
         $totalPagar_convertido = 0;
         if ($pago->moneda_id == 1) {
+            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $capital_convertido = round((float)$pago->capital / (float) $valores_cambio->valor_bs, 2);
             $totalInteres_convertido = round((float)$totalInteres / (float) $valores_cambio->valor_bs, 2);
@@ -2982,7 +2991,7 @@ class PagosController extends Controller
             $totalPagar_convertido = $totalPagar;
         }
 
-        $totalInteres_convertido = CambioMoneda::ajustaDecimal($totalInteres_convertido);
+        // $totalInteres_convertido = CambioMoneda::ajustaDecimal($totalInteres_convertido);
 
         $pdf = new PDF(PDF_PAGE_ORIENTATION, PDF_UNIT, PDF_PAGE_FORMAT, true, 'UTF-8', false);
 
@@ -3452,7 +3461,7 @@ class PagosController extends Controller
                     $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
                 }
 
-                $totalComisionInteres =CambioMoneda::ajustaDecimal($totalComisionInteres);
+                $totalComisionInteres = CambioMoneda::ajustaDecimal($totalComisionInteres);
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
