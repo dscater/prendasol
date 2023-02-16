@@ -160,6 +160,7 @@ Route::get('Pagos/lista/listadoMoras', 'Pagos\PagosController@listadoMoras')->na
 
 
 /*INICIO FIN CAJA*/
+Route::get('lista_cierres', 'InicioFinCaja\InicioFinCajaController@lista_cierres')->name("InicioFinCaja.lista_cierres");
 Route::resource('InicioFinCaja', 'InicioFinCaja\InicioFinCajaController');
 Route::resource('DatoInicioFinCaja', 'InicioFinCaja\DatoInicioFinCajaController');
 Route::get('ImprimirInicioFinCaja', 'InicioFinCaja\InicioFinCajaController@imprimirInicioFinCaja');

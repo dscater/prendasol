@@ -9,11 +9,16 @@
                 <div class="header_title">
                     <h3>
                         DATOS INICIO FIN CAJA
+                        @if (Session::get('ID_ROL') == 1)
+                            <button class="btn btn-danger" data-toggle="modal" data-target="#modal_cierres">Eliminar
+                                cierres</button>
+                        @endif
                     </h3>
                 </div>
             </section>
         </div>
     </div>
+    <input type="hidden" value="{{ route('InicioFinCaja.lista_cierres') }}" id="urlListaCierres">
     @if (empty($datoValidarCaja->fecha_cierre))
         <div class="row">
             <div class="col-md-12">
@@ -92,6 +97,8 @@
                         class="icon-reload-alt"></i></b>Imprimir</button>
         </div>
     @endif
+
+    @include('inicioFinCaja.modal.cierres')
 
 
     <script type="text/javascript" src="{{ asset('template/dist/js/jquery.js') }}"></script>
@@ -210,6 +217,71 @@
             setTimeout(function() {
                 location.reload();
             }, 2000);
+        }
+
+
+        // LISTA DE CIERRES
+        $(document).on('click', '.contenedor_lista_cierres .pagination a', function(event) {
+            event.preventDefault();
+            var page = $(this).attr('href').split('page=')[1];
+            fetch_data(page);
+        });
+
+        function fetch_data(page) {
+            fnListaCierres(page);
+        }
+
+        function fnListaCierres(page = 1) {
+            $.ajax({
+                url: $("#urlListaCierres").val() + "?page=" + page,
+                success: function(data) {
+                    $('#table_data_cierres').html(data);
+                }
+            });
+        }
+
+        function fnEliminarCierre(e, id, fecha, sucursal, caja) {
+            e.preventDefault();
+            console.log("asdasdasd");
+            var route = "/InicioFinCaja/" + id+ "";
+            Swal.fire({
+                title: `ELIMINAR REGISTRO`,
+                html: `¿Está seguro(a) de eliminar este registro?<br/><b>Fecha:</b> ${fecha}<br/><b>Sucursal:</b> ${sucursal}<br/><b>Caja:</b> ${caja}`,
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Si, Eliminar!",
+                closeOnConfirm: false,
+                cancelButtonText: 'Cancelar',
+            }).then((result) => {
+                if (result.value) {
+                    $.ajax({
+                        url: route,
+                        headers: {
+                            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+                        },
+                        type: 'DELETE',
+                        dataType: 'json',
+                        success: function(data) {
+                            fnListaCierres();
+                            Swal.fire({
+                                title: "¡CORRECTO!",
+                                text: "Registro eliminado correctamente",
+                                confirmButtonText: 'Aceptar',
+                                confirmButtonColor: "#66BB6A",
+                                type: "success"
+                            });
+                        },
+                        error: function(result) {
+                            Swal.fire("Opss..!", "Ocurrió un error inesperado",
+                                "error")
+                        }
+                    });
+
+                }
+            })
+
+
         }
     </script>
 @endsection

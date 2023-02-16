@@ -23,6 +23,7 @@ use App\NumberToLetterConverter;
 use Exception;
 use PDF;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class InicioFinCajaController extends Controller
 {
@@ -71,7 +72,23 @@ class InicioFinCajaController extends Controller
                 //return view('contrato.modals.listadoContrato', ['personas' => $personas])->render();  
             }
             //return view('contrato.index',compact('personas'));
-            return view('inicioFinCaja.index', compact('datosCaja', 'datoValidarCaja', 'datoInicioFinCaja'));
+            $lista_cierres =  InicioFinCaja::where('estado_id', 2)
+                ->orderBy('created_at', 'DESC')->paginate(15);
+
+            return view('inicioFinCaja.index', compact('datosCaja', 'datoValidarCaja', 'datoInicioFinCaja', 'lista_cierres'));
+        } else {
+            return view("layout.login");
+        }
+    }
+
+    public function lista_cierres(Request $request)
+    {
+        if (Session::has('AUTENTICADO')) {
+            ///Carbon::setLocale('es');   
+            $lista_cierres =  InicioFinCaja::where('estado_id', 2)
+                ->orderBy('created_at', 'DESC')->paginate(15);
+
+            return view("inicioFinCaja.parcial.listaCierres", compact("lista_cierres"))->render();
         } else {
             return view("layout.login");
         }
@@ -362,6 +379,7 @@ class InicioFinCajaController extends Controller
 
             return response()->json(["Mensaje" => "1"]);
         } catch (\Exception $e) {
+            Log::debug($e);
             DB::rollBack();
             return response()->json(["Mensaje" => "0"]);
         }
@@ -375,7 +393,15 @@ class InicioFinCajaController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $inicio_caja = InicioFinCaja::find($id);
+        $inicio_caja->estado_id = 1;
+        $inicio_caja->fecha_cierre = NULL;
+        $inicio_caja->save();
+
+        return response()->JSON([
+            "sw" => true,
+            "message" => "Registro eliminado exitosamente"
+        ]);
     }
 
     public function imprimirInicioFinCaja()
