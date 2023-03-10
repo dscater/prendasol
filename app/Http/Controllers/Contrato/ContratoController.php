@@ -280,6 +280,30 @@ class ContratoController extends Controller
                         }
                     }
 
+                    if (session::get('ID_SUCURSAL') == 12) {
+                        if (Session::get('NROCAJA') == 1) {
+                            $codigo_contrato = 'PMC1';
+                        } else {
+                            $codigo_contrato = 'PMC2';
+                        }
+                    }
+
+                    if (session::get('ID_SUCURSAL') == 13) {
+                        if (Session::get('NROCAJA') == 1) {
+                            $codigo_contrato = 'SCR1';
+                        } else {
+                            $codigo_contrato = 'SCR2';
+                        }
+                    }
+
+                    if (session::get('ID_SUCURSAL') == 14) {
+                        if (Session::get('NROCAJA') == 1) {
+                            $codigo_contrato = 'SCM1';
+                        } else {
+                            $codigo_contrato = 'SCM2';
+                        }
+                    }
+
                     $codigo_contrato .= '-' . Carbon::parse($request['txtFechaContrato'])->format('y');
 
                     $nro_incremental = 2001;
@@ -3114,6 +3138,18 @@ class ContratoController extends Controller
                 $idCaja = [111, 112];
             }
 
+            if ($id_sucursal == 12) {
+                $idCaja = [121, 122];
+            }
+
+            if ($id_sucursal == 13) {
+                $idCaja = [131, 132];
+            }
+
+            if ($id_sucursal == 14) {
+                $idCaja = [141, 142];
+            }
+
             $array_cajas[$sucursal->id] = $idCaja;
 
             for ($i = 0; $i < count($idCaja); $i++) {
@@ -3389,6 +3425,18 @@ class ContratoController extends Controller
                 $idCaja = [111, 112];
             }
 
+            if ($id_sucursal == 12) {
+                $idCaja = [121, 122];
+            }
+
+            if ($id_sucursal == 13) {
+                $idCaja = [131, 132];
+            }
+
+            if ($id_sucursal == 14) {
+                $idCaja = [141, 142];
+            }
+
             $array_cajas[$sucursal->id] = $idCaja;
 
             for ($i = 0; $i < count($idCaja); $i++) {
@@ -3647,6 +3695,18 @@ class ContratoController extends Controller
 
             if ($id_sucursal == 11) {
                 $idCaja = [111, 112];
+            }
+
+            if ($id_sucursal == 12) {
+                $idCaja = [121, 122];
+            }
+
+            if ($id_sucursal == 13) {
+                $idCaja = [131, 132];
+            }
+
+            if ($id_sucursal == 14) {
+                $idCaja = [141, 142];
             }
 
             $array_cajas[$sucursal->id] = $idCaja;

@@ -153,6 +153,30 @@ class DatoInicioFinCajaController extends Controller
                         }
                     }
 
+                    if ($id_sucursal == 12) {
+                        if ($caja == 1) {
+                            $idCaja = 121;
+                        } else {
+                            $idCaja = 122;
+                        }
+                    }
+
+                    if ($id_sucursal == 13) {
+                        if ($caja == 1) {
+                            $idCaja = 131;
+                        } else {
+                            $idCaja = 132;
+                        }
+                    }
+
+                    if ($id_sucursal == 14) {
+                        if ($caja == 1) {
+                            $idCaja = 141;
+                        } else {
+                            $idCaja = 142;
+                        }
+                    }
+
                     //dd(Carbon::parse($request['txtFecha'])->format('Y-m-d'));
                     $verificarDato = InicioFinCaja::where('sucursal_id', $request['ddlSucursal'])
                         ->where('caja', $idCaja)
