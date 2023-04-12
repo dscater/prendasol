@@ -304,6 +304,14 @@ class ContratoController extends Controller
                         }
                     }
 
+                    if (session::get('ID_SUCURSAL') == 15) {
+                        if (Session::get('NROCAJA') == 1) {
+                            $codigo_contrato = 'CT1';
+                        } else {
+                            $codigo_contrato = 'CT2';
+                        }
+                    }
+
                     $codigo_contrato .= '-' . Carbon::parse($request['txtFechaContrato'])->format('y');
 
                     $nro_incremental = 2001;
@@ -3150,6 +3158,10 @@ class ContratoController extends Controller
                 $idCaja = [141, 142];
             }
 
+            if ($id_sucursal == 15) {
+                $idCaja = [151, 152];
+            }
+
             $array_cajas[$sucursal->id] = $idCaja;
 
             for ($i = 0; $i < count($idCaja); $i++) {
@@ -3437,6 +3449,10 @@ class ContratoController extends Controller
                 $idCaja = [141, 142];
             }
 
+            if ($id_sucursal == 15) {
+                $idCaja = [151, 152];
+            }
+
             $array_cajas[$sucursal->id] = $idCaja;
 
             for ($i = 0; $i < count($idCaja); $i++) {
@@ -3707,6 +3723,10 @@ class ContratoController extends Controller
 
             if ($id_sucursal == 14) {
                 $idCaja = [141, 142];
+            }
+
+            if ($id_sucursal == 15) {
+                $idCaja = [151, 152];
             }
 
             $array_cajas[$sucursal->id] = $idCaja;
