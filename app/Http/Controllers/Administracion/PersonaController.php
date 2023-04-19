@@ -26,20 +26,20 @@ class PersonaController extends Controller
             // dd($codigoPrueba);
             //$fechaIngreso = Carbon::now();
             //dd(Carbon::parse($fechaIngreso)->format('Y-m-d'));
-            $personas = Persona::orderBy('primerapellido','ASC')->orderBy('segundoapellido','ASC')->where('estado_id',1)->paginate(10);
-            $estadoCivil = Catalogo::where('tabla_id',7)->get();
-            $datoInicioFinCaja =  InicioFinCaja::where('fecha',Carbon::now('America/La_Paz')->format('Y-m-d'))
-                ->where('sucursal_id',session::get('ID_SUCURSAL'))
-                ->where('caja',session::get('CAJA'))
-                ->where('estado_id',1)
+            $personas = Persona::orderBy('primerapellido', 'ASC')->orderBy('segundoapellido', 'ASC')->where('estado_id', 1)->paginate(10);
+            $estadoCivil = Catalogo::where('tabla_id', 7)->get();
+            $datoInicioFinCaja =  InicioFinCaja::where('fecha', Carbon::now('America/La_Paz')->format('Y-m-d'))
+                ->where('sucursal_id', session::get('ID_SUCURSAL'))
+                ->where('caja', session::get('CAJA'))
+                ->where('estado_id', 1)
                 ->first();
             if ($request->ajax()) {
-                return view('administracion.persona.modals.listado', ['personas' => $personas,'estadoCivil' => $estadoCivil,'datoInicioFinCaja' => $datoInicioFinCaja])->render();  
+                return view('administracion.persona.modals.listado', ['personas' => $personas, 'estadoCivil' => $estadoCivil, 'datoInicioFinCaja' => $datoInicioFinCaja])->render();
             }
-            return view('administracion.persona.index',compact('personas','estadoCivil','datoInicioFinCaja'));
-        }else{
+            return view('administracion.persona.index', compact('personas', 'estadoCivil', 'datoInicioFinCaja'));
+        } else {
             return view("layout.login");
-        }   
+        }
     }
 
     /**
@@ -64,10 +64,10 @@ class PersonaController extends Controller
         if (Session::has('AUTENTICADO')) {
             if ($request->ajax()) {
                 /*VERIFICAMOS SI EXISTE LA PERSONA*/
-                $persona = Persona::where('nrodocumento',$request['txtCI'])->count();
+                $persona = Persona::where('nrodocumento', $request['txtCI'])->count();
                 if ($persona == 0) {
                     //INSERTAMOS PERSONA
-                    $idPersona = Persona::create([                        
+                    $idPersona = Persona::create([
                         'nombres'                           => strtoupper($request['txtNombres']),
                         'primerapellido'                    => strtoupper($request['txtPaterno']),
                         'segundoapellido'                   => strtoupper($request['txtMaterno']),
@@ -90,6 +90,7 @@ class PersonaController extends Controller
                         //'idioma_genericoid'                 => $request['autopertenencia_genericoid'],
                         'fotografia'                        => $request['fotografia'],
                         'celular'                           => $request['txtCelular'],
+                        'celular2'                           => $request['txtCelular2'],
                         'domicilio'                         => strtoupper($request['txtDomicilio']),
                         'estado_id'                         => 1,
                         'usuario_id'                        => session::get('ID_USUARIO'),
@@ -108,10 +109,10 @@ class PersonaController extends Controller
                         'modulo'   => 'PERSONA',
                         'consulta' => $resultado,
                     ]);
-                    $codigo = substr(strtoupper($request['txtPaterno']), 0, 1) .''. substr(strtoupper($request['txtMaterno']), 0, 1) .''. substr(strtoupper($request['txtNombres']), 0, 1) .''. Carbon::parse($request['txtFechaNacimiento'])->format('dmY');
+                    $codigo = substr(strtoupper($request['txtPaterno']), 0, 1) . '' . substr(strtoupper($request['txtMaterno']), 0, 1) . '' . substr(strtoupper($request['txtNombres']), 0, 1) . '' . Carbon::parse($request['txtFechaNacimiento'])->format('dmY');
                     $fechaIngreso = Carbon::now('America/La_Paz');
 
-                    Cliente::create([                        
+                    Cliente::create([
                         'persona_id'   => $idPersona,
                         'codigo'        => $codigo,
                         'fecha_ingreso'   => Carbon::parse($fechaIngreso)->format('Y-m-d'),
@@ -119,20 +120,17 @@ class PersonaController extends Controller
                         'estado_id'     => 1
                     ]);
 
-                    
+
 
                     return response()->json(["Mensaje" => "1"]);
-                }
-                else{
+                } else {
                     /*2 = EXISTE UN USUARIO */
                     return response()->json(["Mensaje" => "2"]);
-                }           
-            }
-            else{
+                }
+            } else {
                 return response()->json(["Mensaje" => "0"]);
             }
-        }
-        else{
+        } else {
             return response()->json(["Mensaje" => "-1"]);
         }
     }
@@ -172,11 +170,11 @@ class PersonaController extends Controller
         if (Session::has('AUTENTICADO')) {
             if ($request->ajax()) {
                 /*VERIFICAMOS SI EXISTE LA PERSONA*/
-                $persona = Persona::where('nrodocumento',$request['txtCI'])->where('id', '!=',$id)->count();
+                $persona = Persona::where('nrodocumento', $request['txtCI'])->where('id', '!=', $id)->count();
                 //dd($persona);
-                if ($persona == 0) {                    
+                if ($persona == 0) {
                     //ACTUALIZAMOS ROL
-                    $persona= Persona::find($id);
+                    $persona = Persona::find($id);
                     $persona->nombres                         = strtoupper($request['txtNombres']);
                     $persona->primerapellido                  = strtoupper($request['txtPaterno']);
                     $persona->segundoapellido                 = strtoupper($request['txtMaterno']);
@@ -199,6 +197,7 @@ class PersonaController extends Controller
                     // $persona->idioma_genericoid               = $request['autopertenencia_genericoid'];
                     $persona->fotografia                      = $request['fotografia'];
                     $persona->celular                         = $request['txtCelular'];
+                    $persona->celular2                        = $request['txtCelular2'];
                     $persona->domicilio                       = strtoupper($request['txtDomicilio']);
                     $persona->estado_id                       = 1;
                     //$persona->usuario_id                      = session::get('ID_USUARIO');
@@ -218,17 +217,14 @@ class PersonaController extends Controller
                         'consulta' => $resultado,
                     ]);
                     return response()->json(["Mensaje" => "1"]);
-                }
-                else{
+                } else {
                     /*2 = EXISTE UN USUARIO */
                     return response()->json(["Mensaje" => "2"]);
                 }
-            }
-            else{
+            } else {
                 return response()->json(["Mensaje" => "0"]);
             }
-        }
-        else{
+        } else {
             return response()->json(["Mensaje" => "-1"]);
         }
     }
@@ -241,14 +237,13 @@ class PersonaController extends Controller
      */
     public function destroy($id)
     {
-        if (Session::has('AUTENTICADO')) {     
+        if (Session::has('AUTENTICADO')) {
             //ACTUALIZAMOS PERSONA
-            $persona= Persona::find($id);
-            $persona->estado_id=2;        
+            $persona = Persona::find($id);
+            $persona->estado_id = 2;
             $persona->save();
-            return response()->json(["Mensaje" => "1"]);            
-        }
-        else{
+            return response()->json(["Mensaje" => "1"]);
+        } else {
             return response()->json(["Mensaje" => "-1"]);
         }
     }
@@ -270,71 +265,69 @@ class PersonaController extends Controller
                 //     ->where('nombres', 'like', '%' . strtoupper($txtBuscarNombres) . '%')
                 //     ->where('primerapellido', 'like', '%' . strtoupper($txtBuscarPaterno) . '%')
                 //     ->where('segundoapellido', 'like', '%' . strtoupper($txtBuscarMaterno) . '%')
-                    where('fechanacimiento', $txtBuscarFechaNacimiento)
-                    ->orderBy('primerapellido','ASC')
-                    ->orderBy('segundoapellido','ASC')                    
+                where('fechanacimiento', $txtBuscarFechaNacimiento)
+                    ->orderBy('primerapellido', 'ASC')
+                    ->orderBy('segundoapellido', 'ASC')
                     ->paginate(10);
-            }
-            else{
+            } else {
                 if ($txtBuscarPaterno) {
                     //dd("ci");
                     $personas = Persona::where('primerapellido', 'like', '%' . strtoupper($txtBuscarPaterno) . '%')
                         //->where('segundoapellido', 'like', '%' . strtoupper($txtBuscarMaterno) . '%')
-                        ->where('estado_id',1)
-                        ->orderBy('primerapellido','ASC')
-                        ->orderBy('segundoapellido','ASC')                    
+                        ->where('estado_id', 1)
+                        ->orderBy('primerapellido', 'ASC')
+                        ->orderBy('segundoapellido', 'ASC')
                         ->paginate(10);
                 }
                 if ($txtBuscarIdentifiacion) {
                     $personas = Persona::where('nrodocumento', 'like', '%' . $txtBuscarIdentifiacion . '%')
-                            ->where('estado_id',1)
-                            //->where('nombres', 'like', '%' . strtoupper($txtBuscarNombres) . '%')
-                            //->where('primerapellido', 'like', '%' . strtoupper($txtBuscarPaterno) . '%')
-                            //->where('segundoapellido', 'like', '%' . strtoupper($txtBuscarMaterno) . '%')
-                            ->orderBy('primerapellido','ASC')
-                            ->orderBy('segundoapellido','ASC')                    
-                            ->paginate(10);
+                        ->where('estado_id', 1)
+                        //->where('nombres', 'like', '%' . strtoupper($txtBuscarNombres) . '%')
+                        //->where('primerapellido', 'like', '%' . strtoupper($txtBuscarPaterno) . '%')
+                        //->where('segundoapellido', 'like', '%' . strtoupper($txtBuscarMaterno) . '%')
+                        ->orderBy('primerapellido', 'ASC')
+                        ->orderBy('segundoapellido', 'ASC')
+                        ->paginate(10);
                 }
                 if ($txtBuscarPaterno && $txtBuscarMaterno) {
                     $personas = Persona::
                         //->where('nombres', 'like', '%' . strtoupper($txtBuscarNombres) . '%')
                         where('primerapellido', 'like', '%' . strtoupper($txtBuscarPaterno) . '%')
-                        ->where('estado_id',1)
+                        ->where('estado_id', 1)
                         ->where('segundoapellido', 'like', '%' . strtoupper($txtBuscarMaterno) . '%')
-                        ->orderBy('primerapellido','ASC')
-                        ->orderBy('segundoapellido','ASC')                    
+                        ->orderBy('primerapellido', 'ASC')
+                        ->orderBy('segundoapellido', 'ASC')
                         ->paginate(10);
                 }
 
                 if ($txtBuscarMaterno) {
                     //dd("ci");
                     $personas = Persona::where('segundoapellido', 'like', '%' . strtoupper($txtBuscarMaterno) . '%')
-                        ->where('estado_id',1)
-                        ->orderBy('primerapellido','ASC')
-                        ->orderBy('segundoapellido','ASC')                    
+                        ->where('estado_id', 1)
+                        ->orderBy('primerapellido', 'ASC')
+                        ->orderBy('segundoapellido', 'ASC')
                         ->paginate(10);
                 }
             }
             //$personas = Persona::where('nrodocumento', 'like', '%' . $request['txtBuscarPersona'] . '%')->latest('created_at')->paginate(10);
             if ($request->ajax()) {
-                return view('administracion.persona.modals.listado', ['personas' => $personas])->render();  
+                return view('administracion.persona.modals.listado', ['personas' => $personas])->render();
             }
-            return view('administracion.persona.index',compact('personas'));
-        }else{
+            return view('administracion.persona.index', compact('personas'));
+        } else {
             return view("layout.login");
         }
     }
 
     public function habilitarPersona($id)
     {
-        if (Session::has('AUTENTICADO')) {     
+        if (Session::has('AUTENTICADO')) {
             //ACTUALIZAMOS ROL
-            $persona= Persona::find($id);
-            $persona->estado_id=1;        
+            $persona = Persona::find($id);
+            $persona->estado_id = 1;
             $persona->save();
-            return response()->json(["Mensaje" => "1"]);            
-        }
-        else{
+            return response()->json(["Mensaje" => "1"]);
+        } else {
             return response()->json(["Mensaje" => "-1"]);
         }
     }

@@ -3304,6 +3304,282 @@ class ContratoController extends Controller
         PDF::Output('Comprobate.pdf');
     }
 
+    public function resumen_prestamos_excel(Request $request)
+    {
+        $array_meses = [
+            '01' => 'Enero',
+            '02' => 'Febrero',
+            '03' => 'Marzo',
+            '04' => 'Abril',
+            '05' => 'Mayo',
+            '06' => 'Junio',
+            '07' => 'Julio',
+            '08' => 'Agosto',
+            '09' => 'Septiembre',
+            '10' => 'Octubre',
+            '11' => 'Noviembre',
+            '12' => 'Diciembre',
+        ];
+        $mes = $request->mes;
+        $mes_aux = $mes;
+        $nro_mes = (int)$mes;
+        $mes_anterior = 0;
+        $mes_anterior_aux = $mes_anterior;
+        $nro_mes--;
+        $anio = $request->anio;
+        $mes_anterior = $anio . '-' . $nro_mes;
+        $mes_anterior_aux = $nro_mes;
+        if ($nro_mes < 1) {
+            $nro_mes = '12';
+            $mes_anterior = ((int)$anio - 1) . '-' . $nro_mes;
+            $mes_anterior_aux = $nro_mes;
+        } elseif ($nro_mes < 10) {
+            $mes_anterior_aux = '0' . $nro_mes;
+            $mes_anterior = $anio . '-0' . $nro_mes;
+        }
+
+        $mes = $anio . '-' . $mes;
+        if ($mes < 10) {
+            $mes = $anio . '-0' . $mes;
+        }
+
+        $total_dias = date('t', strtotime($mes . '-01'));
+        $sucursales = Sucursal::where('estado_id', 1)->get();
+        $array_contratos = [];
+        $array_cajas = [];
+
+        $array_totales = [0, 0, 0, 0];
+
+        foreach ($sucursales as $sucursal) {
+            $array_contratos[$sucursal->id] = [
+                0 => [
+                    'contratos_anterior' => '',
+                    'importe_anterior' => 0.00,
+                    'contratos_actual' => '',
+                    'importe_actual' => 0.00,
+                ],
+                1 => [
+                    'contratos_anterior' => '',
+                    'importe_anterior' => 0.00,
+                    'contratos_actual' => '',
+                    'importe_actual' => 0.00,
+                ]
+            ];
+            $array_cajas[$sucursal->id] = [];
+
+            $id_sucursal = $sucursal->id;
+            if ((int)$id_sucursal == 1) {
+                $idCaja = [11, 12];
+            }
+
+            if ((int)$id_sucursal == 2) {
+                $idCaja = [31, 32];
+            }
+
+            if ((int)$id_sucursal == 3) {
+                $idCaja = [51, 52];
+            }
+
+            if ((int)$id_sucursal == 5) {
+                $idCaja = [41, 42];
+            }
+            if ((int)$id_sucursal == 6) {
+                $idCaja = [61, 62];
+            }
+            if ((int)$id_sucursal == 7) {
+                $idCaja = [71, 72];
+            }
+
+            if ((int)$id_sucursal == 4) {
+                $idCaja = [21, 22];
+            }
+
+            if ($id_sucursal == 8) {
+                $idCaja = [81, 82];
+            }
+
+            if ($id_sucursal == 9) {
+                $idCaja = [91, 92];
+            }
+
+            if ($id_sucursal == 10) {
+                $idCaja = [101, 102];
+            }
+
+            if ($id_sucursal == 11) {
+                $idCaja = [111, 112];
+            }
+
+            if ($id_sucursal == 12) {
+                $idCaja = [121, 122];
+            }
+
+            if ($id_sucursal == 13) {
+                $idCaja = [131, 132];
+            }
+
+            if ($id_sucursal == 14) {
+                $idCaja = [141, 142];
+            }
+
+            if ($id_sucursal == 15) {
+                $idCaja = [151, 152];
+            }
+
+            $array_cajas[$sucursal->id] = $idCaja;
+
+            for ($i = 0; $i < count($idCaja); $i++) {
+                $contratos_anterior = Pagos::where('sucursal_id', $sucursal->id)
+                    ->where('caja', $idCaja[$i])
+                    ->where('fecha_inio', 'LIKE', "$mes_anterior%")
+                    ->where('estado', 'DESEMBOLSO')
+                    ->get();
+
+                $contratos_actual = Pagos::where('sucursal_id', $sucursal->id)
+                    ->where('caja', $idCaja[$i])
+                    ->where('fecha_inio', 'LIKE', "$mes%")
+                    ->where('estado', 'DESEMBOLSO')
+                    ->get();
+
+                $importe_anterior = Pagos::where('sucursal_id', $sucursal->id)
+                    ->where('caja', $idCaja[$i])
+                    ->where('fecha_inio', 'LIKE', "$mes_anterior%")
+                    ->where('estado', 'DESEMBOLSO')
+                    ->sum('capital');
+
+                $importe_actual = Pagos::where('sucursal_id', $sucursal->id)
+                    ->where('caja', $idCaja[$i])
+                    ->where('fecha_inio', 'LIKE', "$mes%")
+                    ->where('estado', 'DESEMBOLSO')
+                    ->sum('capital');
+
+                $array_contratos[$sucursal->id][$i]['contratos_anterior'] = count($contratos_anterior);
+                $array_totales[1] += (int)count($contratos_anterior);
+                $array_contratos[$sucursal->id][$i]['contratos_actual'] = count($contratos_actual);
+                $array_totales[3] += (int)count($contratos_actual);
+
+                if ($importe_anterior > 0) {
+                    $array_totales[0] += (float)$importe_anterior;
+                    $array_contratos[$sucursal->id][$i]['importe_anterior'] = $importe_anterior;
+                }
+
+                if ($importe_actual > 0) {
+                    $array_totales[2] += (float)$importe_actual;
+                    $array_contratos[$sucursal->id][$i]['importe_actual'] = $importe_actual;
+                }
+            }
+        }
+
+        $valores_cambio = CambioMoneda::first();
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setCreator("PrendaSol")
+            ->setLastModifiedBy('Administración')
+            ->setTitle('Resumen de prestamos')
+            ->setSubject('Resumen de prestamos')
+            ->setDescription('Excel donde muestra el resumen de prestamos')
+            ->setKeywords('PHPSpreadsheet')
+            ->setCategory('Listado');
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 12
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('B1:J1')->applyFromArray($styleArray);
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        // LLENADO DEL REPORTE
+        // ENCABEZADO
+        $sheet->setCellValue('B1', 'RESUMEN DE PRÉSTAMOS');
+        $sheet->mergeCells("B1:G1");  //COMBINAR CELDAS
+        $sheet->setCellValue('B2', 'Por el periodo comprendido entre el 1 de ' . $array_meses[$mes_aux] . ' al ' . $total_dias . ' de ' . $array_meses[$mes_aux]);
+        $sheet->mergeCells("B2:G2");  //COMBINAR CELDAS
+        $sheet->setCellValue('B3', '(Expresado en Bolivianos)');
+        $sheet->mergeCells("B3:G3");  //COMBINAR CELDAS
+
+        $sheet->setCellValue('B5', 'Código Sucursal');
+        $sheet->mergeCells("B5:B6");  //COMBINAR CELDAS
+        $sheet->setCellValue('C5', 'Nombre Sucursal');
+        $sheet->mergeCells("C5:C6");  //COMBINAR CELDAS
+        $sheet->setCellValue('D5', $array_meses[$mes_anterior_aux]);
+        $sheet->mergeCells("D5:E5");  //COMBINAR CELDAS
+        $sheet->setCellValue('D6', 'IMPORTE');
+        $sheet->setCellValue('E6', 'CANTIDAD');
+        $sheet->setCellValue('F5', $array_meses[$mes_aux]);
+        $sheet->mergeCells("F5:G5");  //COMBINAR CELDAS
+        $sheet->setCellValue('F6', 'IMPORTE');
+        $sheet->setCellValue('G6', 'CANTIDAD');
+
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+        $sheet->getStyle('B5:G5')->applyFromArray($styleArray);
+        $sheet->getStyle('B6:G6')->applyFromArray($styleArray);
+
+        // RECORRER LOS REGISTROS
+        $nro_fila = 7;
+        $cont = 1;
+        $styleArray = [
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+        foreach ($sucursales as $sucursal) {
+            for ($i = 0; $i < count($array_cajas[$sucursal->id]); $i++) {
+                $sheet->setCellValue('B' . $nro_fila, $array_cajas[$sucursal->id][$i]);
+                $sheet->setCellValue('C' . $nro_fila, $sucursal->nombre);
+                $sheet->setCellValue('D' . $nro_fila, round($array_contratos[$sucursal->id][$i]['importe_anterior'], 2));
+                $sheet->setCellValue('E' . $nro_fila, round($array_contratos[$sucursal->id][$i]['contratos_anterior'], 2));
+                $sheet->setCellValue('F' . $nro_fila, round($array_contratos[$sucursal->id][$i]['importe_actual'], 2));
+                $sheet->setCellValue('G' . $nro_fila, round($array_contratos[$sucursal->id][$i]['contratos_actual'], 2));
+
+                $sheet->getStyle('B' . $nro_fila . ':G' . $nro_fila)->applyFromArray($styleArray);
+                $nro_fila++;
+            }
+        }
+        $sheet->setCellValue('B' . $nro_fila, 'TOTALLES');
+        $sheet->mergeCells("B" . $nro_fila . ":C" . $nro_fila);  //COMBINAR CELDAS
+        $sheet->setCellValue('D' . $nro_fila, $array_totales[0]);
+        $sheet->setCellValue('E' . $nro_fila, $array_totales[1]);
+        $sheet->setCellValue('F' . $nro_fila, round($array_totales[2], 2));
+        $sheet->setCellValue('G' . $nro_fila, round($array_totales[3], 2));
+
+        $sheet->getStyle('B' . $nro_fila . ':G' . $nro_fila)->applyFromArray($styleArray);
+
+        // AJUSTAR EL ANCHO DE LAS CELDAS
+        foreach (range('B', 'J') as $columnID) {
+            $sheet->getColumnDimension($columnID)
+                ->setAutoSize(true);
+        }
+
+        // DESCARGA DEL ARCHIVO
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        header('Content-Disposition: attachment;filename="ResumenPrestamos.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
+    }
+
     public function resumen_ingresos()
     {
         $array_meses = [

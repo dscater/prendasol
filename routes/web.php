@@ -90,6 +90,7 @@ Route::get('contratos_vigentes/contratos_vigentes_excel', 'Contrato\ContratoCont
 
 Route::get('resumen_prestamos', 'Contrato\ContratoController@resumen_prestamos')->name('contrato.resumen_prestamos');
 Route::get('resumen_prestamos/resumen_prestamos_pdf', 'Contrato\ContratoController@resumen_prestamos_pdf')->name('contrato.resumen_prestamos_pdf');
+Route::get('resumen_prestamos/resumen_prestamos_excel', 'Contrato\ContratoController@resumen_prestamos_excel')->name('contrato.resumen_prestamos_excel');
 
 Route::get('resumen_ingresos', 'Contrato\ContratoController@resumen_ingresos')->name('contrato.resumen_ingresos');
 Route::get('resumen_ingresos/resumen_ingresos_pdf', 'Contrato\ContratoController@resumen_ingresos_pdf')->name('contrato.resumen_ingresos_pdf');

@@ -32,6 +32,7 @@ class Persona extends Model
         'expedido_id',
         'complemento',
         'celular',
+        'celular2',
         'domicilio',
         'zona'
 

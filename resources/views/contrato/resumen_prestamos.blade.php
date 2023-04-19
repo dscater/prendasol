@@ -7,7 +7,7 @@
             <section class="content-header">
                 <div class="header_title">
                     <h3>
-                        REPORTES DE CONTRATOS VIGENTES
+                        REPORTE RESUMEN DE PRÉSTAMOS
                     </h3>
                 </div>
             </section>
@@ -39,7 +39,7 @@
                 </select>
             </div>
         </div>
-        
+
     </div>
 
     <form id="frmRepContratosVigentes">
@@ -51,6 +51,8 @@
                     <div class="input-group-btn" style="display:flex;">
                         <button class="btn btn-success" data-dismiss="modal" type="button"
                             onclick="fnImprimirResumenPDF();">Generar Pdf</button><br>
+                        <a href="{{ route('contrato.resumen_prestamos_excel') }}" class="btn btn-success"
+                            data-dismiss="modal" style="margin-left:5px;" id="btnExportarExcel">Exportar EXCEL</a><br>
                     </div>
                 </div>
             </div>
@@ -73,7 +75,7 @@
         function fnImprimirResumenPDF() {
             let mes = $('#mes');
             let anio = $('#anio');
-            var src = "/resumen_prestamos/resumen_prestamos_pdf?mes=" + mes.val() + "&anio="+anio.val();
+            var src = "/resumen_prestamos/resumen_prestamos_pdf?mes=" + mes.val() + "&anio=" + anio.val();
             var object = "<object data=\"{src}\" type=\"application/pdf\" width=\"850px\" height=\"600px\">";
             object += "</object>";
             $('#reporteModalContratosCancelados').modal()
@@ -82,5 +84,12 @@
             $("#dialogCC").show();
         }
 
+        $('#btnExportarExcel').click(function(e) {
+            e.preventDefault();
+            let mes = $('#mes');
+            let anio = $('#anio');
+            let url = $(this).attr('href') + "?mes=" + mes.val() + '&anio=' + anio.val();
+            window.location.href = url;
+        });
     </script>
 @endsection

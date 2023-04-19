@@ -491,6 +491,7 @@
 		            	'txtTelefonoTrabajo':$("#txtTelefonoTrabajo").val(),
 		            	'txtDireccionTrabajo':$("#txtDireccionTrabajo").val(),
 		            	'txtCelular':$("#txtCelular").val(),
+		            	'txtCelular2':$("#txtCelular2").val(),
 		            	'txtDomicilio':$("#txtDomicilio").val(),
 		            	'tipodocumento_genericoid':1,
 		            	'muninacimiento_id':1,
@@ -588,6 +589,7 @@
 		            	'txtTelefonoTrabajo':$("#txtTelefonoTrabajoA").val(),
 		            	'txtDireccionTrabajo':$("#txtDireccionTrabajoA").val(),
 		            	'txtCelular':$("#txtCelularA").val(),
+		            	'txtCelular2':$("#txtCelularA2").val(),
 		            	'txtDomicilio':$("#txtDomicilioA").val(),
 		            	'tipodocumento_genericoid':1,
 		            	'muninacimiento_id':1,
@@ -743,6 +745,7 @@
 	    	$("#txtTelefonoTrabajoA").val(datos.telefonotrabajo);
 	    	$("#txtDireccionTrabajoA").val(datos.direcciontrabajo);
 	    	$("#txtCelularA").val(datos.celular);
+	    	$("#txtCelularA2").val(datos.celular2);
 	    	$("#txtDomicilioA").val(datos.domicilio);
 	    	$("#id").val(datos.id);
 	    }

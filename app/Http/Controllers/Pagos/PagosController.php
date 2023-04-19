@@ -23,6 +23,7 @@ use App\CambioMoneda;
 use App\Http\Controllers\Contrato\ContratoController;
 use App\Moneda;
 use App\Sucursal;
+use Exception;
 
 class PagosController extends Controller
 {
@@ -3280,234 +3281,314 @@ class PagosController extends Controller
         \DB::enableQueryLog();
         if (Session::has('AUTENTICADO')) {
             if ($request->ajax()) {
-                $_contrato = Contrato::find($request['idContrato']);
-                $fecha_actual = Carbon::parse($request['fecha_pago'])->format('d-m-Y');
-                //$resFechaProximo = date("d-m-Y",strtotime($fecha_actual."+ 1 months"));
-                $resFechaProximo = date("d-m-Y", strtotime($fecha_actual . "+30 day"));
-                $idPago = Pagos::create([
-                    'contrato_id'          => $request['idContrato'],
-                    'sucursal_id'          => session::get('ID_SUCURSAL'),
-                    'fecha_inio'           => $request['fecha_pago'],
-                    //'fecha_fin'            => Carbon::parse($resFechaProximo)->format('Y-m-d'),
-                    'fecha_fin'            => $request['fecha_pago'],
-                    'fecha_pago'           => $request['fecha_pago'],
-                    'caja'                 => session::get('CAJA'),
-                    'dias_atraso'          => $request['diasAtraso'],
-                    'capital'              => $request['capital'], //Carbon::parse($request['txtFechaNacimiento'])->format('Y-m-d'),
-                    'interes'              => $request['interes'],
-                    'comision'              => $request['comision'],
-                    'cuota_mora'              => $request['cuotaMora'],
-                    'total_capital'        => $request['total_capital'],
-                    'estado'               => 'REMATE',
-                    'estado_id'            => 1,
-                    'usuario_id'           => session::get('ID_USUARIO'),
-                    'moneda_id'            => $_contrato->moneda_id
-                ])->id;
+                DB::beginTransaction();
+                try {
+                    $_contrato = Contrato::find($request['idContrato']);
+                    $fecha_actual = Carbon::parse($request['fecha_pago'])->format('d-m-Y');
+                    //$resFechaProximo = date("d-m-Y",strtotime($fecha_actual."+ 1 months"));
+                    $resFechaProximo = date("d-m-Y", strtotime($fecha_actual . "+30 day"));
+                    $idPago = Pagos::create([
+                        'contrato_id'          => $request['idContrato'],
+                        'sucursal_id'          => session::get('ID_SUCURSAL'),
+                        'fecha_inio'           => $request['fecha_pago'],
+                        //'fecha_fin'            => Carbon::parse($resFechaProximo)->format('Y-m-d'),
+                        'fecha_fin'            => $request['fecha_pago'],
+                        'fecha_pago'           => $request['fecha_pago'],
+                        'caja'                 => session::get('CAJA'),
+                        'dias_atraso'          => $request['diasAtraso'],
+                        'capital'              => $request['capital'], //Carbon::parse($request['txtFechaNacimiento'])->format('Y-m-d'),
+                        'interes'              => $request['interes'],
+                        'comision'              => $request['comision'],
+                        'cuota_mora'              => $request['cuotaMora'],
+                        'total_capital'        => $request['total_capital'],
+                        'estado'               => 'REMATE',
+                        'estado_id'            => 1,
+                        'usuario_id'           => session::get('ID_USUARIO'),
+                        'moneda_id'            => $_contrato->moneda_id
+                    ])->id;
 
-                $bitacora = \DB::getQueryLog();
-                foreach ($bitacora as $i => $query) {
-                    $resultado = json_encode($query);
+                    $bitacora = \DB::getQueryLog();
+                    foreach ($bitacora as $i => $query) {
+                        $resultado = json_encode($query);
+                    }
+                    \DB::disableQueryLog();
+                    LogSeguimiento::create([
+                        'usuario_id'   => session::get('ID_USUARIO'),
+                        'metodo'   => 'POST',
+                        'accion'   => 'CREACION',
+                        'detalle'  => "el usuario" . session::get('USUARIO') . " agrego un nuevo registro",
+                        'modulo'   => 'PAGO TOTAL',
+                        'consulta' => $resultado,
+                    ]);
+
+                    $totalPagar = CambioMoneda::ajustaDecimal((float)$request['capital'] + (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora']);
+
+                    /* **** REGISTRO EN LA SUCURSAL CENTRAL **** */
+                    $datoInicioCaja = InicioFinCaja::where('sucursal_id', 15)
+                        ->where('caja', 151)
+                        ->where('fecha', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))
+                        ->whereIn('estado_id', [1, 2])
+                        ->first();
+                    $contadorInicioCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', 15)
+                        ->where('caja', 151)
+                        ->where('fecha_pago', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))
+                        ->where('estado_id', 1)->count();
+
+                    if ($contadorInicioCajaDetalle == 0) {
+                        $inicioCajaBs = $datoInicioCaja->inicio_caja_bs;
+                        $idInicioCaja = $datoInicioCaja->id;
+                    } else {
+                        $datoCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', 15)->where('caja', 151)->where('fecha_pago', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))->where('estado_id', 1)->orderBy('id', 'DESC')->first();
+                        if (!$datoCajaDetalle) {
+                            throw new Exception('No es posible realizar el registro debido a que no se realizó la apertura de la Caja 1 en la Sucursal Central');
+                        }
+                        $inicioCajaBs = $datoCajaDetalle->inicio_caja_bs;
+                        $idInicioCaja = $datoCajaDetalle->inicio_fin_caja_id;
+                    }
+                    $_capital = round($request['capital'], 2);
+                    $resulInicioCaja = (float)$inicioCajaBs + (float)$_capital;
+
+                    $datoContrato = Contrato::where('id', $request['idContrato'])->first();
+                    if ($datoContrato->codigo != "") {
+                        $codigoContrato = $datoContrato->codigo;
+                    } else {
+                        $codigoContrato = $datoContrato->codigo_num;
+                    }
+
+                    InicioFinCajaDetalle::create([
+                        'inicio_fin_caja_id'    => $idInicioCaja,
+                        'contrato_id'           => $request['idContrato'],
+                        'pago_id'               => $idPago,
+                        'sucursal_id'           => 15,
+                        'fecha_pago'            => Carbon::parse($request['fecha_pago'])->format('Y-m-d'),
+                        'fecha_hora'            => Carbon::now('America/La_Paz'),
+                        'inicio_caja_bs'        => round($resulInicioCaja, 2),
+                        'ingreso_bs'             => round($_capital, 2),
+                        'tipo_de_movimiento'    => 'REMATE DEL CONTRATO N° ' . $codigoContrato . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . 151 . '.',
+                        'ref'               => 'REM01',
+                        'caja'              => 151,
+                        'usuario_id'        => session::get('ID_USUARIO'),
+                        'estado_id'         => 1,
+                        'moneda_id'             => $_contrato->moneda_id
+                    ]);
+                    /* **** FIN REGISTRO EN LA SUCURSAL CENTRAL **** */
+
+                    /* **** REGISTRO EN LA SUCURSAL ACTUAL **** */
+                    $datoInicioCaja = InicioFinCaja::where('sucursal_id', session::get('ID_SUCURSAL'))
+                        ->where('caja', session::get('CAJA'))
+                        ->where('fecha', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))
+                        ->whereIn('estado_id', [1, 2])
+                        ->first();
+                    $contadorInicioCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', session::get('ID_SUCURSAL'))
+                        ->where('caja', session::get('CAJA'))
+                        ->where('fecha_pago', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))
+                        ->where('estado_id', 1)->count();
+
+                    if ($contadorInicioCajaDetalle == 0) {
+                        $inicioCajaBs = $datoInicioCaja->inicio_caja_bs;
+                        $idInicioCaja = $datoInicioCaja->id;
+                    } else {
+                        $datoCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', session::get('ID_SUCURSAL'))->where('caja', session::get('CAJA'))->where('fecha_pago', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))->where('estado_id', 1)->orderBy('id', 'DESC')->first();
+                        $inicioCajaBs = $datoCajaDetalle->inicio_caja_bs;
+                        $idInicioCaja = $datoCajaDetalle->inicio_fin_caja_id;
+                    }
+
+                    $_total_intereses = (float)$request['interes'] + (float)$request['comision'] + $request['cuotaMora'];
+                    $_total_intereses = CambioMoneda::ajustaDecimal($_total_intereses);
+                    $resulInicioCaja = (float)$inicioCajaBs + (float)$_total_intereses;
+
+                    $datoContrato = Contrato::where('id', $request['idContrato'])->first();
+                    if ($datoContrato->codigo != "") {
+                        $codigoContrato = $datoContrato->codigo;
+                    } else {
+                        $codigoContrato = $datoContrato->codigo_num;
+                    }
+
+                    InicioFinCajaDetalle::create([
+                        'inicio_fin_caja_id'    => $idInicioCaja,
+                        'contrato_id'           => $request['idContrato'],
+                        'pago_id'               => $idPago,
+                        'sucursal_id'           => session::get('ID_SUCURSAL'),
+                        'fecha_pago'            => Carbon::parse($request['fecha_pago'])->format('Y-m-d'),
+                        'fecha_hora'            => Carbon::now('America/La_Paz'),
+                        'inicio_caja_bs'        => round($resulInicioCaja, 2),
+                        'ingreso_bs'             => round($_total_intereses, 2),
+                        'tipo_de_movimiento'    => 'REMATE DEL CONTRATO N° ' . $codigoContrato . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
+                        'ref'               => 'REM01',
+                        'caja'              => session::get('CAJA'),
+                        'usuario_id'        => session::get('ID_USUARIO'),
+                        'estado_id'         => 1,
+                        'moneda_id'             => $_contrato->moneda_id
+
+                    ]);
+                    /* **** FIN REGISTRO EN LA SUCURSAL ACTUAL **** */
+
+                    //ACTUALIZAMOS CONTRATO
+                    $contrato = Contrato::find($request['idContrato']);
+                    $contrato->fecha_pago                      = $request['fecha_pago'];
+                    $contrato->interes                         = $request['interes'];
+                    $contrato->comision                        = $request['comision'];
+                    $contrato->cuota_mora                      = $request['cuotaMora'];
+                    $contrato->estado_pago                     = 'Prenda Rematado';
+                    $contrato->estado_entrega                  = 'Prenda Rematado';
+                    $contrato->estado_pago_2                   = 'Prenda Rematado';
+                    $contrato->estado_id                       = 1;
+                    $contrato->usuario_id                      = session::get('ID_USUARIO');
+                    $contrato->save();
+
+                    $bitacora = \DB::getQueryLog();
+                    foreach ($bitacora as $i => $query) {
+                        $resultado = json_encode($query);
+                    }
+                    \DB::disableQueryLog();
+                    LogSeguimiento::create([
+                        'usuario_id'   => session::get('ID_USUARIO'),
+                        'metodo'   => 'PUT',
+                        'accion'   => 'ACTUALIZAR',
+                        'detalle'  => "el usuario" . session::get('USUARIO') . " actualizo un registro",
+                        'modulo'   => 'REMATE',
+                        'consulta' => $resultado,
+                    ]);
+
+                    /* **** REGISTRAR PARTE CONTABLE CENTRAL **** */
+                    $numComprobante = ContaDiario::max('num_comprobante');
+
+                    // $totalPagar = round($totalPagar, 2);
+                    $totalPagar = round($request['capital'], 2);
+                    if ($_contrato->moneda_id == 2) {
+                        // convertir a bolivianos
+                        $valores_cambio = CambioMoneda::first();
+                        $totalPagar = round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2);
+                    }
+                    ContaDiario::create([
+                        'contrato_id'        => $request['idContrato'],
+                        'pagos_id'           => $idPago,
+                        'sucursal_id'        => 15,
+                        'fecha_a'            => $request['fecha_pago'],
+                        'fecha_b'            => $request['fecha_pago'],
+                        'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . 151 . '.',
+                        'cod_deno'              => '11102',
+                        'cuenta'                => 'Caja sucursales',
+                        'debe'                  => $totalPagar,
+                        'haber'                 => '0.00',
+                        'caja'                  => 151,
+                        'num_comprobante'       => $numComprobante + 1,
+                        'periodo'               => 'mes',
+                        'tcom'                  => 'INGRESO',
+                        'ref'                   => 'REM01',
+                        'usuario_id'            => session::get('ID_USUARIO'),
+                        'estado_id'             => 1
+                    ]);
+                    ContaDiario::create([
+                        'contrato_id'        => $request['idContrato'],
+                        'pagos_id'           => $idPago,
+                        'sucursal_id'        => 15,
+                        'fecha_a'            => $request['fecha_pago'],
+                        'fecha_b'            => $request['fecha_pago'],
+                        'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . 151 . '.',
+                        'cod_deno'              => '11102',
+                        'cuenta'                => 'Caja sucursales',
+                        'debe'                  => '0.00',
+                        'haber'                 => $totalPagar,
+                        'caja'                  => 151,
+                        'num_comprobante'       => $numComprobante + 1,
+                        'periodo'               => 'mes',
+                        'tcom'                  => 'INGRESO',
+                        'ref'                   => 'REM01',
+                        'usuario_id'            => session::get('ID_USUARIO'),
+                        'estado_id'             => 1
+                    ]);
+                    /* **** FIN REGISTRAR PARTE CONTABLE CENTRAL **** */
+
+                    /* **** REGISTRAR PARTE CONTABLE SUCURSAL ACTUAL **** */
+                    $_total_intereses = (float)$request['interes'] + (float)$request['comision'] + $request['cuotaMora'];
+                    if ($_contrato->moneda_id == 2) {
+                        // convertir a bolivianos
+                        $valores_cambio = CambioMoneda::first();
+                        $_total_intereses = round((float)$valores_cambio->valor_bs * (float)$_total_intereses, 2);
+                    }
+                    $_total_intereses = CambioMoneda::ajustaDecimal($_total_intereses);
+                    ContaDiario::create([
+                        'contrato_id'        => $request['idContrato'],
+                        'pagos_id'           => $idPago,
+                        'sucursal_id'        => session::get('ID_SUCURSAL'),
+                        'fecha_a'            => $request['fecha_pago'],
+                        'fecha_b'            => $request['fecha_pago'],
+                        'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
+                        'cod_deno'              => '11102',
+                        'cuenta'                => 'Caja sucursales',
+                        'debe'                  => $_total_intereses,
+                        'haber'                 => '0.00',
+                        'caja'                  => session::get('CAJA'),
+                        'num_comprobante'       => $numComprobante + 1,
+                        'periodo'               => 'mes',
+                        'tcom'                  => 'INGRESO',
+                        'ref'                   => 'REM01',
+                        'usuario_id'            => session::get('ID_USUARIO'),
+                        'estado_id'             => 1
+                    ]);
+
+                    $totalComisionInteres = (float)$request['interes'] + (float)$request['comision'];
+                    $totalComisionInteres = round($totalComisionInteres, 2);
+                    if ($_contrato->moneda_id == 2) {
+                        // convertir a bolivianos
+                        $valores_cambio = CambioMoneda::first();
+                        $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
+                    }
+
+                    $totalComisionInteres = CambioMoneda::ajustaDecimal($totalComisionInteres);
+                    ContaDiario::create([
+                        'contrato_id'        => $request['idContrato'],
+                        'pagos_id'           => $idPago,
+                        'sucursal_id'        => session::get('ID_SUCURSAL'),
+                        'fecha_a'            => $request['fecha_pago'],
+                        'fecha_b'            => $request['fecha_pago'],
+                        'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
+                        'cod_deno'              => '41103',
+                        'cuenta'                => 'Intereses prestamos a plazo fijo cartera en ejecucion',
+                        'debe'                  => '0.00',
+                        'haber'                 => $totalComisionInteres,
+                        'caja'                  => session::get('CAJA'),
+                        'num_comprobante'       => $numComprobante + 1,
+                        'periodo'               => 'mes',
+                        'tcom'                  => 'INGRESO',
+                        'ref'                   => 'REM01',
+                        'usuario_id'            => session::get('ID_USUARIO'),
+                        'estado_id'             => 1
+                    ]);
+
+                    $_cuota_mora = round($request['cuotaMora'], 2);
+                    if ($_contrato->moneda_id == 2) {
+                        // convertir a bolivianos
+                        $valores_cambio = CambioMoneda::first();
+                        $_cuota_mora = round((float)$valores_cambio->valor_bs * (float)$request['cuotaMora'], 2);
+                    }
+                    ContaDiario::create([
+                        'contrato_id'        => $request['idContrato'],
+                        'pagos_id'           => $idPago,
+                        'sucursal_id'        => session::get('ID_SUCURSAL'),
+                        'fecha_a'            => $request['fecha_pago'],
+                        'fecha_b'            => $request['fecha_pago'],
+                        'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
+                        'cod_deno'              => '41106',
+                        'cuenta'                => 'Intereses por mora prestamos a plazo fijo cartera en ejecucion',
+                        'debe'                  => '0.00',
+                        'haber'                 => $_cuota_mora,
+                        'caja'                  => session::get('CAJA'),
+                        'num_comprobante'       => $numComprobante + 1,
+                        'periodo'               => 'mes',
+                        'tcom'                  => 'INGRESO',
+                        'ref'                   => 'REM01',
+                        'usuario_id'            => session::get('ID_USUARIO'),
+                        'estado_id'             => 1
+                    ]);
+                    /* **** FIN REGISTRAR PARTE CONTABLE SUCURSAL ACTUAL **** */
+                    DB::commit();
+                    return response()->json(["Mensaje" => "1", "idPago" => $idPago]);
+                } catch (\Exception $e) {
+                    DB::rollBack();
+                    return response()->json(["Mensaje" => "-2", "message" => $e->getMessage()]);
                 }
-                \DB::disableQueryLog();
-                LogSeguimiento::create([
-                    'usuario_id'   => session::get('ID_USUARIO'),
-                    'metodo'   => 'POST',
-                    'accion'   => 'CREACION',
-                    'detalle'  => "el usuario" . session::get('USUARIO') . " agrego un nuevo registro",
-                    'modulo'   => 'PAGO TOTAL',
-                    'consulta' => $resultado,
-                ]);
-
-                $totalPagar = CambioMoneda::ajustaDecimal((float)$request['capital'] + (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora']);
-
-                $datoInicioCaja = InicioFinCaja::where('sucursal_id', session::get('ID_SUCURSAL'))
-                    ->where('caja', session::get('CAJA'))
-                    ->where('fecha', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))
-                    ->whereIn('estado_id', [1, 2])
-                    ->first();
-                //dd($datoInicioCaja);
-
-                $contadorInicioCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', session::get('ID_SUCURSAL'))
-                    ->where('caja', session::get('CAJA'))
-                    ->where('fecha_pago', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))
-                    ->where('estado_id', 1)->count();
-                //dd($contadorInicioCajaDetalle);                    
-
-
-                if ($contadorInicioCajaDetalle == 0) {
-                    $inicioCajaBs = $datoInicioCaja->inicio_caja_bs;
-                    $idInicioCaja = $datoInicioCaja->id;
-                } else {
-                    $datoCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', session::get('ID_SUCURSAL'))->where('caja', session::get('CAJA'))->where('fecha_pago', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))->where('estado_id', 1)->orderBy('id', 'DESC')->first();
-                    $inicioCajaBs = $datoCajaDetalle->inicio_caja_bs;
-                    $idInicioCaja = $datoCajaDetalle->inicio_fin_caja_id;
-                }
-
-                $resulInicioCaja = (float)$inicioCajaBs + (float)$totalPagar;
-
-                $datoContrato = Contrato::where('id', $request['idContrato'])->first();
-                if ($datoContrato->codigo != "") {
-                    $codigoContrato = $datoContrato->codigo;
-                } else {
-                    $codigoContrato = $datoContrato->codigo_num;
-                }
-                //dd(round($resulInicioCaja, 2)); 
-
-                InicioFinCajaDetalle::create([
-                    'inicio_fin_caja_id'    => $idInicioCaja,
-                    'contrato_id'           => $request['idContrato'],
-                    'pago_id'               => $idPago,
-                    'sucursal_id'           => session::get('ID_SUCURSAL'),
-                    'fecha_pago'            => Carbon::parse($request['fecha_pago'])->format('Y-m-d'),
-                    'fecha_hora'            => Carbon::now('America/La_Paz'),
-                    'inicio_caja_bs'        => round($resulInicioCaja, 2),
-                    'ingreso_bs'             => round($totalPagar, 2),
-                    'tipo_de_movimiento'    => 'REMATE DEL CONTRATO N° ' . $codigoContrato . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
-                    'ref'               => 'REM01',
-                    'caja'              => session::get('CAJA'),
-                    'usuario_id'        => session::get('ID_USUARIO'),
-                    'estado_id'         => 1,
-                    'moneda_id'             => $_contrato->moneda_id
-
-                ]);
-
-                //ACTUALIZAMOS CONTRATO
-                $contrato = Contrato::find($request['idContrato']);
-                $contrato->fecha_pago                      = $request['fecha_pago'];
-                $contrato->interes                         = $request['interes'];
-                $contrato->comision                        = $request['comision'];
-                $contrato->cuota_mora                      = $request['cuotaMora'];
-                $contrato->estado_pago                     = 'Prenda Rematado';
-                $contrato->estado_entrega                  = 'Prenda Rematado';
-                $contrato->estado_pago_2                   = 'Prenda Rematado';
-                $contrato->estado_id                       = 1;
-                $contrato->usuario_id                      = session::get('ID_USUARIO');
-                $contrato->save();
-
-                $bitacora = \DB::getQueryLog();
-                foreach ($bitacora as $i => $query) {
-                    $resultado = json_encode($query);
-                }
-                \DB::disableQueryLog();
-                LogSeguimiento::create([
-                    'usuario_id'   => session::get('ID_USUARIO'),
-                    'metodo'   => 'PUT',
-                    'accion'   => 'ACTUALIZAR',
-                    'detalle'  => "el usuario" . session::get('USUARIO') . " actualizo un registro",
-                    'modulo'   => 'REMATE',
-                    'consulta' => $resultado,
-                ]);
-
-                /*REGISTRAR PARTE CONTABLE*/
-                $numComprobante = ContaDiario::max('num_comprobante');
-
-                $totalPagar = round($totalPagar, 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $totalPagar = round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2);
-                }
-                ContaDiario::create([
-                    'contrato_id'        => $request['idContrato'],
-                    'pagos_id'           => $idPago,
-                    'sucursal_id'        => session::get('ID_SUCURSAL'),
-                    'fecha_a'            => $request['fecha_pago'],
-                    'fecha_b'            => $request['fecha_pago'],
-                    'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
-                    'cod_deno'              => '11102',
-                    'cuenta'                => 'Caja sucursales',
-                    'debe'                  => $totalPagar,
-                    'haber'                 => '0.00',
-                    'caja'                  => session::get('CAJA'),
-                    'num_comprobante'       => $numComprobante + 1,
-                    'periodo'               => 'mes',
-                    'tcom'                  => 'INGRESO',
-                    'ref'                   => 'REM01',
-                    'usuario_id'            => session::get('ID_USUARIO'),
-                    'estado_id'             => 1
-                ]);
-
-                $_capital = round($request['capital'], 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_capital = round((float)$valores_cambio->valor_bs * (float)$request['capital'], 2);
-                }
-                ContaDiario::create([
-                    'contrato_id'        => $request['idContrato'],
-                    'pagos_id'           => $idPago,
-                    'sucursal_id'        => session::get('ID_SUCURSAL'),
-                    'fecha_a'            => $request['fecha_pago'],
-                    'fecha_b'            => $request['fecha_pago'],
-                    'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
-                    'cod_deno'              => '11301',
-                    'cuenta'                => 'Prestamos a plazo fijo vigentes',
-                    'debe'                  => '0.00',
-                    'haber'                 => $_capital,
-                    'caja'                  => session::get('CAJA'),
-                    'num_comprobante'       => $numComprobante + 1,
-                    'periodo'               => 'mes',
-                    'tcom'                  => 'INGRESO',
-                    'ref'                   => 'REM01',
-                    'usuario_id'            => session::get('ID_USUARIO'),
-                    'estado_id'             => 1
-                ]);
-
-                $totalComisionInteres = (float)$request['interes'] + (float)$request['comision'];
-                $totalComisionInteres = round($totalComisionInteres, 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
-                }
-
-                $totalComisionInteres = CambioMoneda::ajustaDecimal($totalComisionInteres);
-                ContaDiario::create([
-                    'contrato_id'        => $request['idContrato'],
-                    'pagos_id'           => $idPago,
-                    'sucursal_id'        => session::get('ID_SUCURSAL'),
-                    'fecha_a'            => $request['fecha_pago'],
-                    'fecha_b'            => $request['fecha_pago'],
-                    'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
-                    'cod_deno'              => '41103',
-                    'cuenta'                => 'Intereses prestamos a plazo fijo cartera en ejecucion',
-                    'debe'                  => '0.00',
-                    'haber'                 => $totalComisionInteres,
-                    'caja'                  => session::get('CAJA'),
-                    'num_comprobante'       => $numComprobante + 1,
-                    'periodo'               => 'mes',
-                    'tcom'                  => 'INGRESO',
-                    'ref'                   => 'REM01',
-                    'usuario_id'            => session::get('ID_USUARIO'),
-                    'estado_id'             => 1
-                ]);
-
-                $_cuota_mora = round($request['cuotaMora'], 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_cuota_mora = round((float)$valores_cambio->valor_bs * (float)$request['cuotaMora'], 2);
-                }
-                ContaDiario::create([
-                    'contrato_id'        => $request['idContrato'],
-                    'pagos_id'           => $idPago,
-                    'sucursal_id'        => session::get('ID_SUCURSAL'),
-                    'fecha_a'            => $request['fecha_pago'],
-                    'fecha_b'            => $request['fecha_pago'],
-                    'glosa'              => 'REMATE DEL CONTRATO AL N° ' . $datoContrato->codigo . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
-                    'cod_deno'              => '41106',
-                    'cuenta'                => 'Intereses por mora prestamos a plazo fijo cartera en ejecucion',
-                    'debe'                  => '0.00',
-                    'haber'                 => $_cuota_mora,
-                    'caja'                  => session::get('CAJA'),
-                    'num_comprobante'       => $numComprobante + 1,
-                    'periodo'               => 'mes',
-                    'tcom'                  => 'INGRESO',
-                    'ref'                   => 'REM01',
-                    'usuario_id'            => session::get('ID_USUARIO'),
-                    'estado_id'             => 1
-                ]);
-                return response()->json(["Mensaje" => "1", "idPago" => $idPago]);
             } else {
                 return response()->json(["Mensaje" => "0"]);
             }

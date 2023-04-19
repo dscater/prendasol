@@ -170,6 +170,12 @@
                         </div>
                         <div class="col-md-4">
                             <div class="form-group">
+                                {!!Form::label('Persona','Celular 2:')!!}
+                                {!! Form::text('txtCelular2', null, array('placeholder' => 'Ingrese Celular', 'class' => 'form-control','id'=>'txtCelular2')) !!}
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
                                 {!!Form::label('Persona','Domicilio:')!!}
                                 {!! Form::text('txtDomicilio', null, array('placeholder' => 'Ingrese Domicilio', 'class' => 'form-control','id'=>'txtDomicilio')) !!}
                             </div>
