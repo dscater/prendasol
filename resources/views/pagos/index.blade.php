@@ -4881,6 +4881,15 @@
                                             type: "error"
                                         });
                                     }
+                                    if (resultado == "-2") {
+                                        Swal.fire({
+                                            title: "PAGO...",
+                                            text: data.message,
+                                            confirmButtonColor: "#EF5350",
+                                            confirmButtonText: 'Aceptar',
+                                            type: "error"
+                                        });
+                                    }
 
                                     /*resultado = -1 SESION EXPIRADA*/
                                     if (resultado == "-1") {

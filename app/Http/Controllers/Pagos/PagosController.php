@@ -3340,7 +3340,7 @@ class PagosController extends Controller
                     } else {
                         $datoCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', 15)->where('caja', 151)->where('fecha_pago', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))->where('estado_id', 1)->orderBy('id', 'DESC')->first();
                         if (!$datoCajaDetalle) {
-                            throw new Exception('No es posible realizar el registro debido a que no se realizó la apertura de la Caja 1 en la Sucursal Central');
+                            throw new Exception('No es posible realizar el registro debido a que no se realizó la apertura de la Caja 1 de la Sucursal Central');
                         }
                         $inicioCajaBs = $datoCajaDetalle->inicio_caja_bs;
                         $idInicioCaja = $datoCajaDetalle->inicio_fin_caja_id;
@@ -3389,6 +3389,9 @@ class PagosController extends Controller
                         $idInicioCaja = $datoInicioCaja->id;
                     } else {
                         $datoCajaDetalle = InicioFinCajaDetalle::where('sucursal_id', session::get('ID_SUCURSAL'))->where('caja', session::get('CAJA'))->where('fecha_pago', Carbon::parse($request['fecha_pago'])->format('Y-m-d'))->where('estado_id', 1)->orderBy('id', 'DESC')->first();
+                        if (!$datoCajaDetalle) {
+                            throw new Exception('No es posible realizar el registro debido a que no se realizó la apertura de la Caja ' . session::get('CAJA'));
+                        }
                         $inicioCajaBs = $datoCajaDetalle->inicio_caja_bs;
                         $idInicioCaja = $datoCajaDetalle->inicio_fin_caja_id;
                     }

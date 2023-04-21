@@ -25,7 +25,7 @@ use App\Moneda;
 use App\Sucursal;
 use Illuminate\Support\Facades\Log;
 
-class PagosController extends Controller
+class PagosControllerCopy extends Controller
 {
     /**
      * Display a listing of the resource.
