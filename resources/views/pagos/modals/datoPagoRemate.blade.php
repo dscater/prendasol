@@ -273,7 +273,9 @@
 
 <div class="row">            
     <div class="col-md-12">
-    	<button type="button" class="btn btn-succes btn-labeled btn-sm" onClick="fnPagarRemateContrato(1);"><b><i class="icon-reload-alt"></i></b>Rematar</button>
+		@if(Session::get('ID_ROL') != 2)
+			<button type="button" class="btn btn-succes btn-labeled btn-sm" onClick="fnPagarRemateContrato(1);"><b><i class="icon-reload-alt"></i></b>Rematar</button>
+		@endif
        	<button type="button" class="btn btn-warning btn-labeled btn-sm" onClick="fnVolverContratos();"><b><i class="icon-reload-alt"></i></b>Volver</button>
     </div>
 </div>	
