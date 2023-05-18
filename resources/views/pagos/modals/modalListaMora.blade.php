@@ -27,12 +27,13 @@
 						</select>	
 					</div>  
 			        <div class="col-md-12">            
-		                <section id="contListaMoras" style="max-height: 400px!important; overflow: auto;"></section>        
+		                <section id="contListaMoras" style="height:auto;overflow: auto;"></section>        
 			        </div>
 			    </div>					
 			</div>
 			<div class="modal-footer">
 				<button type="button" class="btn btn-link" data-dismiss="modal">Cerrar</button>
+				<a href="{{route("pagos.listadoMorasExcel")}}?dias=30" data-url="{{route("pagos.listadoMorasExcel")}}" target="_blank" id="btnExportExcelListaMoras" class="btn btn-success">Exportar</a>
 			</div>			
 		</div>
 	</div>

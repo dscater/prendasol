@@ -262,7 +262,17 @@
             $('#mensajePagoInteres').css('display','none');
             $('#mensajePagoAmortizacion').css('display','none');
             fnListaMoras();
+
+            $("#contListaMoras").on("click",".pagination .page-item a.page-link",function(e){
+                e.preventDefault();
+                let url = $(this).attr("href");
+                let page =url.split("=")[1];
+                fnListaMoras(page);
+            });
             $('#txtDiasRango').change(function() {
+                let url_base = $("#btnExportExcelListaMoras").attr("data-url");
+                let dias = $(this).val();
+                $("#btnExportExcelListaMoras").attr("href",url_base+"?dias="+dias)
                 fnListaMoras();
             });
 
@@ -323,7 +333,7 @@
                         success: function(response) {
                             if(existe_pago_total)
                             {
-                                fnImprimirContratoPagoTotal(data.idPago);
+                                fnImprimirContratoPagoTotal(global_idPago);
                             }
                             else{
                                 $("#modalSolicitud").modal('toggle');
@@ -343,11 +353,11 @@
                 }
             });
 
-            function fnListaMoras() {
+            function fnListaMoras(page=1) {
                 $('#contListaMoras').html('Cargando...');
                 $.ajax({
                     type: 'GET',
-                    url: '/Pagos/lista/listadoMoras',
+                    url: '/Pagos/lista/listadoMoras?page='+page,
                     data: {
                         dias: $('#txtDiasRango').val()
                     },
@@ -679,260 +689,22 @@
                 data: parametros,
                 method: 'GET',
                 success: function(data) {
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    var fechaActual = moment($("#txtFechaActualT").val());
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        var capital = contrato.capital;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-                    }
-
-                    var fechaInteresInicial = '2020-03-22';
-                    var fechaInteresFin = '2020-05-11';
-                    var fechaInteresFinM = moment('2020-05-11');
-                    console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
-                        ' días de diferencia para descuneto interes');
-                    console.log("fecha Inicial Interes", fechaInteresInicial);
-                    console.log("fecha Final Interes", fechaInteresFin);
-                    console.log("fecha fin", fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
-                    var diaActual = 30;
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-                    console.log("diaAtrasados", diaAtrasados);
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-                        // var diasDecuento = diaAtrasados;
-                        var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        if (fechaFin > fechaInteresFin) {
-                            console.log("FECHA MAYOR");
-                            var diasDecuento = 0;
-                        } else {
-                            console.log("FECHA MENOR");
-                            var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        }
-                        console.log("diasDecuento", diasDecuento);
-                    }
-                    if (diaAtrasados > 0) {
-                        var calc = diaAtrasados - diasDecuento;
-                        if (calc > 0) {
-                            var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        } else {
-                            var diaAtrasados1 = 0;
-                        }
-                        
-                        console.log("diaAtrasados1 valoo", diaAtrasados1);
-                        console.log("totalInteresValor valoo", totalInteresValor);
-                        console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(capital) + parseFloat(
-                            totalInteresValor));
-                        console.log("Total General", totalGeneral);
-                        var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaActual = moment();
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        var valorDiasAtrasados = diaAtrasados;
-                        console.log("diasRango", diasRango);
-                        var cuotaMora = 0;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(capital));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
-                    }
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-
-                        var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
-
-                        var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
-                        var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
-                        console.log("solodiaC", solodiaC);
-                        console.log("solodiaC11111", solodiaC1);
-
-                        var diasMora = solodiaC + solodiaC1;
-
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
-                        //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
-
-                        totalGeneral = totalDescuento;
-
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        var interesDescuento = 0;
-                        var comisionDescuento = 0;
-                        var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
-                        console.log("ffff", cutotaMoraDescuento);
-                    }
-
-                    if (interesDescuento > 0) {
-                        interes = interesDescuento;
-                        comision = comisionDescuento;
-                        cuotaMora = cutotaMoraDescuento;
-                    } else {
-                        cuotaMora = cuotaMora + cutotaMoraDescuento;
-                    }
-
+                    let moneda_pago = data.Resultado.moneda_id
+                    let datosPago = getDatosPagoTotal(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let interesDescuento = datosPago.interesDescuento;
+                    let comisionDescuento = datosPago.comisionDescuento;
+                    let cutotaMoraDescuento = datosPago.cutotaMoraDescuento;
+                    let valorDiasAtrasados = datosPago.valorDiasAtrasados;
                     console.log("interes", interes);
                     console.log("comision", comision);
                     console.log("capital", capital);
                     console.log("cuotaMora", cuotaMora);
-
                     var route = "/PagoContratoTotal";
-                    totalGeneral = ajustaDecimal(totalGeneral);
                     $.ajax({
                         url: route,
                         headers: {
@@ -1039,264 +811,24 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    var fechaActual = moment($("#txtFechaActualI").val());
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        var capital = contrato.capital;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    }
-
-                    var fechaInteresInicial = '2020-03-22';
-                    var fechaInteresFin = '2020-05-11';
-                    var fechaInteresFinM = moment('2020-05-11');
-                    console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
-                        ' días de diferencia para descuneto interes');
-                    console.log("fecha Inicial Interes", fechaInteresInicial);
-                    console.log("fecha Final Interes", fechaInteresFin);
-                    console.log("fecha fin", fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    var diaActual = 30;
-
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-                    console.log("diaAtrasados", diaAtrasados);
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-                        var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        if (fechaFin > fechaInteresFin) {
-                            console.log("FECHA MAYOR");
-                            var diasDecuento = 0;
-                        } else {
-                            console.log("FECHA MENOR");
-                            var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        }
-                        console.log("diasDecuento", diasDecuento);
-                    }
-                    if (diaAtrasados > 0) {
-                        var calc = diaAtrasados - diasDecuento;
-                        if (calc > 0) {
-                            var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        } else {
-                            var diaAtrasados1 = 0;
-                        }
-                        var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        console.log("diaAtrasados1 valoo", diaAtrasados1);
-                        console.log("totalInteresValor valoo", totalInteresValor);
-                        console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(totalInteresValor));
-                        console.log("Total General", totalGeneral);
-                        var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaActual = moment();
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        var valorDiasAtrasados = diaAtrasados;
-                        console.log("diasRango", diasRango);
-                        var cuotaMora = 0;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b>';
-                        // }
-                    }
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-
-                        var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
-
-                        var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
-                        var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
-                        console.log("solodiaC", solodiaC);
-                        console.log("solodiaC11111", solodiaC1);
-
-                        var diasMora = solodiaC + solodiaC1;
-
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
-                        //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        console.log("diasDecuento", diasDecuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        console.log("cccc", cutotaMoraDescuento);
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
-
-                        totalGeneral = totalDescuento;
-
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        var interesDescuento = 0;
-                        var comisionDescuento = 0;
-                        var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
-                        console.log("ffff", cutotaMoraDescuento);
-                    }
-
-                    if (interesDescuento > 0) {
-                        interes = interesDescuento;
-                        comision = comisionDescuento;
-                        cuotaMora = cutotaMoraDescuento;
-                    } else {
-                        cuotaMora = cuotaMora + cutotaMoraDescuento;
-                    }
-
-
+                success: function(data) {          
+                    let moneda_pago = data.Resultado.moneda_id
+                    let datosPago = getDatosPagoInteres(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let interesDescuento = datosPago.interesDescuento;
+                    let comisionDescuento = datosPago.comisionDescuento;
+                    let cutotaMoraDescuento = datosPago.cutotaMoraDescuento;
+                    let valorDiasAtrasados = datosPago.valorDiasAtrasados;
                     console.log("interes", interes);
                     console.log("comision", comision);
                     console.log("capital", capital);
                     console.log("cuotaMora", cuotaMora);
                     var route = "/PagoContratoInteres";
-                    //console.log("comision",comision);
+                    
                     totalGeneral=ajustaDecimal(totalGeneral);
                     Swal.fire({
                         title: "Esta seguro de pagar el Interes?",
@@ -1526,7 +1058,7 @@
             let gastos_administrativos2 = $('#txtGastosAdministrativosAI2');
             let interes_moratorios = $('#txtInteresMoratorioAI');
             let interes_moratorios2 = $('#txtInteresMoratorioAI2');
-            if(valor != ''){
+            if(valor != '' && valor != 0){
                 valor = parseFloat(valor);
                 valorMaximo = Math.round((parseFloat(interes_capital.attr('data-val')) + parseFloat(gastos_administrativos.attr('data-val')) + parseFloat(interes_moratorios.attr('data-val'))) * 100) / 100;
                 // valorMaximo = parseFloat($("#txtTotalAITotales").val());
@@ -1678,309 +1210,22 @@
                 method: 'GET',
                 //dataType:'json',
                 success: function(data) {
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    var fechaActual = moment($("#txtFechaActualA").val());
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(valor) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(valor) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        // var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        // var capital = data.Resultado.capital;
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        // var capital = data.Resultado.capital;
-                        var capital = contrato.capital;
-                        // var fechaContrato = data.Resultado.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(valor) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(valor) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-                    }
-
-                    // var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                    // var interes = contrato.interes;  
-                    // var comision = contrato.comision;
-                    // var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                    // var capital = contrato.capital;
-                    // var fechaContrato = contrato.fecha_inio;
-
-                    var valor_comparacion1 = 3499;
-                    var valor_comparacion2 = 10000;
-                    var valor_comparacion3 = 15000;
-                    if (data.Resultado.moneda_id == 2) {
-                        valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                        valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                        valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                    }
-
-                    if (parseFloat(capital) <= valor_comparacion1) {
-                        var totalInteresValor = (capital * 9.04) / 100;
-                    } else if (parseFloat(capital) < valor_comparacion2) {
-                        var totalInteresValor = (capital * 6.7) / 100;
-                        //var interes = (capital * data.Resultado.p_interes)/100;
-                        //var comision = (capital * 3.7)/100;
-                    } else if (parseFloat(capital) < valor_comparacion3) {
-                        var totalInteresValor = (capital * 6) / 100;
-                    }else{
-                        var totalInteresValor = (capital * 5) / 100;
-                    }
-
-                    var fechaInteresInicial = '2020-03-22';
-                    var fechaInteresFin = '2020-05-11';
-                    var fechaInteresFinM = moment('2020-05-11');
-                    console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
-                        ' días de diferencia para descuneto interes');
-                    console.log("fecha Inicial Interes", fechaInteresInicial);
-                    console.log("fecha Final Interes", fechaInteresFin);
-                    console.log("fecha fin", fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
-                    var diaActual = 30;
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-                    console.log("diaAtrasados123", diaAtrasados);
-                    console.log("interesAAAAA", interes);
-                    console.log("comisionAAAA", comision);
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-                        // var diasDecuento = diaAtrasados;
-                        var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        if (fechaFin > fechaInteresFin) {
-                            console.log("FECHA MAYOR");
-                            var diasDecuento = 0;
-                        } else {
-                            console.log("FECHA MENOR");
-                            var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        }
-                        //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    }
-
-                    if (diaAtrasados > 0) {
-                        console.log("aleeeee");
-                        // var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        var calc = diaAtrasados - diasDecuento;
-                        console.log("calc", calc);
-                        if (calc > 0) {
-                            var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        } else {
-                            var diaAtrasados1 = 0;
-                        }
-                        console.log("diaAtrasados1 valoo", diaAtrasados1);
-                        console.log("totalInteresValor valoo", totalInteresValor);
-                        console.log("diaActual valoo", diaActual);
-                        console.log("diaAtrasados1 valoo", diaAtrasados1);
-                        console.log("totalInteresValor valoo", totalInteresValor);
-                        console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(totalInteresValor) +
-                            parseFloat(amortizacion));
-                        console.log("Total General", totalGeneral);
-                        // var mensaje = 'El contrato tiene <b>'+diaAtrasados+' dias </b> de atraso,<br> ' + 'Tiene un capital de :<b>'+parseFloat(capital).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> con un interes de <b>'+parseFloat(totalInteresValor).toFixed(2) +' '+ data.Resultado.desc_corta+'</b> <br>'+
-                        // 'El Interes seria un total de::<b>'+parseFloat(totalInteres).toFixed(2)+' '+ data.Resultado.desc_corta+'</b><br>'+'La Amortización de <b>'+parseFloat(amortizacion).toFixed(2)+' '+ data.Resultado.desc_corta+'</b> mas el interes  seria un total de: <b>'+parseFloat(totalGeneral).toFixed(2)+' '+ data.Resultado.desc_corta+' a pagar</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var diaAtrasados1 = 0;
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaActual = moment();
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        var valorDiasAtrasados = diaAtrasados;
-                        // console.log("diasRango", diasRango);
-                        var cuotaMora = 0;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(amortizacion));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
-                            data.Resultado.desc_corta + '</b><br>' + 'La Amortización de <b>' + parseFloat(
-                                amortizacion).toFixed(2) + ' ' + data.Resultado.desc_corta +
-                            '</b> mas el interes  seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + ' a pagar</b>';
-                    }
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-
-                        var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
-
-                        var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
-                        var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
-                        console.log("solodiaC", solodiaC);
-                        console.log("solodiaC11111", solodiaC1);
-                        console.log("interes12", interes);
-                        console.log("comision12", comision);
-
-                        var diasMora = solodiaC + solodiaC1;
-
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
-                        //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) * diasDecuento) * 70) / 100;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
-
-                        totalGeneral = totalDescuento;
-                        console.log("interesDescuento", interesDescuento);
-                        console.log("comisionDescuento", comisionDescuento);
-                        console.log("cutotaMoraDescuento", cutotaMoraDescuento);
-                        console.log("totalDescuento", totalDescuento);
-
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        var interesDescuento = 0;
-                        var comisionDescuento = 0;
-                        var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
-                        console.log("ffff", cutotaMoraDescuento);
-                    }
-
-                    if (interesDescuento > 0) {
-                        interes = interesDescuento;
-                        comision = comisionDescuento;
-                        cuotaMora = cutotaMoraDescuento;
-                    } else {
-                        cuotaMora = cuotaMora + cutotaMoraDescuento;
-                    }
-
-                    console.log("nuevoCapital", nuevoCapital);
+                    let moneda_pago = data.Resultado.moneda_id
+                    let datosPago = getDatosPagoAmortizacion(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let interesDescuento = datosPago.interesDescuento;
+                    let comisionDescuento = datosPago.comisionDescuento;
+                    let cutotaMoraDescuento = datosPago.cutotaMoraDescuento;
+                    let valorDiasAtrasados = datosPago.valorDiasAtrasados;
+                    let mensaje = datosPago.mensaje;
                     console.log("interes", interes);
                     console.log("comision", comision);
-                    console.log("valorDiasAtrasados", valorDiasAtrasados);
-                    console.log("fecha_pago", moment().format("YYYY-MM-DD"));
-                    console.log("fecha_fin", contrato.fecha_fin);
-                    console.log("total_capital", contrato.total_capital);
+                    console.log("capital", capital);
                     console.log("cuotaMora", cuotaMora);
-                    console.log("contrato", contrato.id);
-
-                    totalGeneral=ajustaDecimal(totalGeneral);
 
                     var route = "/PagoContratoAmortizacion";
                     Swal.fire({
@@ -2164,10 +1409,6 @@
                         let total_nuevo_ic_bs = (parseFloat(interes_capital.val()) + parseFloat(gastos_administrativos.val()) + parseFloat(interes_moratorios.val())).toFixed(2);
                         let total_nuevo_ic_sus = (parseFloat(interes_capital2.val()) + parseFloat(gastos_administrativos2.val()) + parseFloat(interes_moratorios2.val())).toFixed(2);
 
-                        var total_ic = parseFloat(contrato.interes) + parseFloat(contrato.comision) + parseFloat(interes_moratorios.attr('data-val'));
-                        if(contrato.moneda_id == 2){
-                            total_ic = parseFloat(contrato.interes) + parseFloat(contrato.comision) + parseFloat(interes_moratorios2.attr('data-val'));
-                        }
 
                         var total_nuevo_ic = (parseFloat(gastos_administrativos.val()) + parseFloat(interes_moratorios.val())).toFixed(2);
                         var txtInteresMoratorio = interes_moratorios.attr('data-val');
@@ -2175,7 +1416,23 @@
                             txtInteresMoratorio = interes_moratorios2.attr('data-val');
                         }
 
-                        var mensaje = 'El contrato tiene un capital de :<b>'+ data.Resultado.desc_corta +' '+ parseFloat(capital).toFixed(2) + '</b> con un interes de <b>' + parseFloat(contrato.interes).toFixed(2) + '</b> mas gastos administrativos de <b>' + parseFloat(data.Resultado.comision) +'</b> mas intereses moratorios de <b> '+ parseFloat(txtInteresMoratorio).toFixed(2) +' </b> haciendo un total de <b>' + parseFloat(total_ic).toFixed(2) + '</b><br>' +'El nuevo interes tendra un total de: <b> Bs.' + parseFloat(interes_capital.val()).toFixed(2) + '  </b> mas el nuevo valor de gastos administrativos de <b>'+parseFloat(gastos_administrativos.val()).toFixed(2)+' Bs.</b> mas el nuevo interes moratorio de <b>'+parseFloat(interes_moratorios.val()).toFixed(2)+'</b>por lo que el nuevo monto total es de <b>'+total_nuevo_ic+' Bs.</b><br>Total a pagar es de: <b>' +parseFloat($('#txtTotalAI').val()).toFixed(2) + ' Bs. / ' + parseFloat($('#txtTotalAI2').val()).toFixed(2) + ' $us';
+                        let datosPago = getDatosPagoAmortizacionInteres(data, contrato);
+                        let totalGeneral = datosPago.totalGeneral;
+                        // let capital = datosPago.capital;
+                        let interes = datosPago.interes;
+                        let comision = datosPago.comision;
+                        let cuotaMora = datosPago.cuotaMora;
+                        let interesDescuento = datosPago.interesDescuento;
+                        let comisionDescuento = datosPago.comisionDescuento;
+                        let cutotaMoraDescuento = datosPago.cutotaMoraDescuento;
+                        let valorDiasAtrasados = datosPago.valorDiasAtrasados;
+
+                        var total_ic = parseFloat(interes) + parseFloat(comision) + parseFloat(interes_moratorios.attr('data-val'));
+                        if(contrato.moneda_id == 2){
+                            total_ic = parseFloat(interes/data.cambioMonedas.valor_bs) + parseFloat(comision/data.cambioMonedas.valor_bs) + parseFloat(interes_moratorios2.attr('data-val'));
+                        }
+                        
+                        var mensaje = 'El contrato tiene un capital de :<b>'+ data.Resultado.desc_corta +' '+ parseFloat(capital).toFixed(2) + '</b> con un interes de <b>' + parseFloat(interes).toFixed(2) + '</b> mas gastos administrativos de <b>' + parseFloat(comision) +'</b> mas intereses moratorios de <b> '+ parseFloat(txtInteresMoratorio).toFixed(2) +' </b> haciendo un total de <b>' + parseFloat(total_ic).toFixed(2) + '</b><br>' +'El nuevo interes tendra un total de: <b> Bs.' + parseFloat(interes_capital.val()).toFixed(2) + '  </b> mas el nuevo valor de gastos administrativos de <b>'+parseFloat(gastos_administrativos.val()).toFixed(2)+' Bs.</b> mas el nuevo interes moratorio de <b>'+parseFloat(interes_moratorios.val()).toFixed(2)+'</b>por lo que el nuevo monto total es de <b>'+total_nuevo_ic+' Bs.</b><br>Total a pagar es de: <b>' +parseFloat($('#txtTotalAI').val()).toFixed(2) + ' Bs. / ' + parseFloat($('#txtTotalAI2').val()).toFixed(2) + ' $us';
 
                         var route = "/PagoContratoAmortizacionInteres";
                         Swal.fire({
@@ -2524,321 +1781,18 @@
                 method: 'GET',
                 //dataType:'json',
                 success: function(data) {
-
-                    let txtBs = data.txtBs;
-                    let txtSus = data.txtSus;
-                    let cambioMonedas = data.cambioMonedas;
-
-                    $('._txtBs').text(txtBs.desc_corta);
-                    $('._txtSus').text(txtSus.desc_corta);
-
                     let moneda_pago = data.Resultado.moneda_id
-
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
-                    var fechaActual = moment($("#txtFechaActualT").val());
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        // var capital = data.Resultado.capital;
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        // var capital = data.Resultado.capital;
-                        var capital = contrato.capital;
-                        //var fechaContrato = data.Resultado.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-                    }
-
-                    console.log("fecha fin", fechaFin);
-                    $("#txtVenceEl").val(fechaFin);
-                    var fechaInteresInicial = '2020-03-22';
-                    var fechaInteresFin = '2020-05-11';
-                    var fechaInteresFinM = moment('2020-05-11');
-                    console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
-                        ' días de diferencia para descuneto interes');
-                    console.log("fecha Inicial Interes", fechaInteresInicial);
-                    console.log("fecha Final Interes", fechaInteresFin);
-                    console.log("fecha fin", fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
-                    var diaActual = 30;
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-                        // var diasDecuento = diaAtrasados;
-                        var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        if (fechaFin > fechaInteresFin) {
-                            var diasDecuento = 0;
-                        } else {
-                            var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        }
-                        //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    }
-
-                    var fecha1 = new Date(fechaContrato);
-                    var fecha2 = new Date(fechaActual);
-                    var diasDif = fecha2.getTime() - fecha1.getTime();
-                    var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
-                    var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
-                    //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
-                    var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
-                    console.log("diasTranscurridos", diasTranscurridos);
-
-                    console.log("diaAtrasados", diaAtrasados);
-                    if (diaAtrasados > 0) {
-                        // var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        var calc = diaAtrasados - diasDecuento;
-                        if (calc > 0) {
-                            var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        } else {
-                            var diaAtrasados1 = 0;
-                        }
-                        // var diaAtrasados1 = diaAtrasados;
-                        console.log("diaAtrasados1 valoo", diaAtrasados1);
-                        console.log("totalInteresValor valoo", totalInteresValor);
-                        console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(capital) + parseFloat(
-                            totalInteresValor));
-                        console.log("Total General", totalGeneral);
-                        var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var diaAtrasados1 = 0;
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaActual = moment();
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        var valorDiasAtrasados = diaAtrasados;
-                        console.log("diasRango", diasRango);
-                        var cuotaMora = 0;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1 + interes);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(capital));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado
-                            .desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
-                    }
-
-                    console.log("interes", interes);
-                    console.log("comision", comision);
-                    console.log("capital", capital);
-
-                    //$("#txtCodigo").val(contrato.codigo);
-                    if (contrato.codigo != "") {
-                        $("#txtCodigo").val(contrato.codigo);
-                    } else {
-                        $("#txtCodigo").val(codigoContratoT);
-                    }
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-
-                        var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
-
-                        var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
-                        var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
-                        console.log("solodiaC", solodiaC);
-                        console.log("solodiaC11111", solodiaC1);
-
-                        var diasMora = solodiaC + solodiaC1;
-
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
-                        //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
-                        totalGeneral = totalDescuento + parseFloat(capital);
-
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        var interesDescuento = 0;
-                        var comisionDescuento = 0;
-                        var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
-                        console.log("ffff", cutotaMoraDescuento);
-                    }
-
-                    console.log("totalGeneral", totalGeneral);
-
-                    $("#txtCI").val(contrato.cliente.persona.nrodocumento);
-                    $("#txtNombres").val(contrato.cliente.persona.nombres + ' ' + contrato.cliente.persona
-                        .primerapellido + ' ' + contrato.cliente.persona.segundoapellido);
-                    $("#txtDiasAtraso").val(valorDiasAtrasados);
-                    $("#txtDiasTranscurridos").val(diasTranscurridos);
-                    $("#txtAtrasoDiasDescuentoT").val(diasDecuento);
-                    $("#txtCobroDiasDescuentoT").val(diaAtrasados1);
-
-                    if(data.sw_amortizacion)
-                    {
-                        $('#mensajePagoTotal').css('display','block');
-                        // AFECTAR LOS VALORES DE INTERES Y GASTOS
-                        if (moneda_pago == 1) {
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_bs);
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_bs);
-                        }else{
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_sus);
-                            comision
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_sus);
-                        }
-
-                        if(interes < 0)
-                        {
-                            interes = 0;
-                        }
-
-                        if(comision < 0)
-                        {
-                            comision = 0;
-                        }
-                        totalGeneral = parseFloat(capital) + parseFloat(interes) + parseFloat(comision) + parseFloat(cutotaMoraDescuento);
-                    }
-
+                    let datosPago = getDatosPagoTotal(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let interesDescuento = datosPago.interesDescuento;
+                    let comisionDescuento = datosPago.comisionDescuento;
+                    let cutotaMoraDescuento = datosPago.cutotaMoraDescuento;
+                    
                     if (moneda_pago == 1) {
-                        totalGeneral = ajustaDecimal(totalGeneral);
                         $("#txtInteresFecha").val(parseFloat(interes).toFixed(2));
                         $("#txtInteresFecha2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(
                         2));
@@ -2852,16 +1806,14 @@
                             .toFixed(2));
 
                         $("#txtGastosAdministrativosTD").val(parseFloat(comisionDescuento).toFixed(2));
-                        $("#txtGastosAdministrativosTD2").val(parseFloat(comisionDescuento / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtGastosAdministrativosTD2").val(parseFloat(comisionDescuento / data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtInteresMoratorio").val(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorio2").val(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus)
-                            .toFixed(2));
+                        $("#txtInteresMoratorio").val(parseFloat(cuotaMora).toFixed(2));
+                        cuotaMora= parseFloat(cuotaMora/data.cambioMonedas.valor_bs).toFixed(2); //ajusta decimal cuota mora $us
+                        $("#txtInteresMoratorio2").val(parseFloat(cuotaMora).toFixed(2));
 
                         $("#txtInteresMoratorioTD").val(parseFloat(cutotaMoraDescuento).toFixed(2));
-                        $("#txtInteresMoratorioTD2").val(parseFloat(cutotaMoraDescuento / data.cambioMonedas
-                            .valor_bs).toFixed(2));
+                        $("#txtInteresMoratorioTD2").val(parseFloat(cutotaMoraDescuento / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtTotal").val(parseFloat(totalGeneral).toFixed(2));
                         $("#txtTotal2").val(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2));
@@ -2873,28 +1825,30 @@
                         $("#txtMontoTotal").val($("#txtTotal").val());
                         $("#txtMontoTotal2").val($("#txtTotal2").val());
                     } else {
-                        $("#txtInteresFecha").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresFecha2").val(parseFloat(interes).toFixed(2));
+                        interes= ajustaDecimal(interes * data.cambioMonedas.valor_bs); //ajusta decimal interes
+                        $("#txtInteresFecha").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFecha2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtInteresFechaTD").val(parseFloat(interesDescuento * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtInteresFechaTD2").val(parseFloat(interesDescuento).toFixed(2));
+                        interesDescuento= ajustaDecimal(interesDescuento * data.cambioMonedas.valor_bs); //ajusta decimal interes descuento
+                        $("#txtInteresFechaTD").val(parseFloat(interesDescuento).toFixed(2));
+                        $("#txtInteresFechaTD2").val(parseFloat(interesDescuento / data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtGastosAdministrativos").val(parseFloat(comision * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtGastosAdministrativos2").val(parseFloat(comision).toFixed(2));
+                        comision= ajustaDecimal(comision * data.cambioMonedas.valor_bs); //ajusta decimal comisión
+                        $("#txtGastosAdministrativos").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativos2").val(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtGastosAdministrativosTD").val(parseFloat(comisionDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosTD2").val(parseFloat(comisionDescuento).toFixed(2));
+                        comisionDescuento= ajustaDecimal(comisionDescuento * data.cambioMonedas.valor_bs); //ajusta decimal comisión descuento
+                        $("#txtGastosAdministrativosTD").val(parseFloat(comisionDescuento).toFixed(2));
+                        $("#txtGastosAdministrativosTD2").val(parseFloat(comisionDescuento / data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtInteresMoratorio").val(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs)
-                            .toFixed(2));
-                        $("#txtInteresMoratorio2").val(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
+                        cuotaMora= ajustaDecimal(cuotaMora * data.cambioMonedas.valor_bs); //ajusta decimal interes moratorio
+                        $("#txtInteresMoratorio").val(parseFloat(cuotaMora).toFixed(2));
+                        cuotaMora= parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2); //ajusta decimal interes moratorio $us
+                        $("#txtInteresMoratorio2").val(parseFloat(cuotaMora).toFixed(2));
 
-                        $("#txtInteresMoratorioTD").val(parseFloat(cutotaMoraDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtInteresMoratorioTD2").val(parseFloat(cutotaMoraDescuento).toFixed(2));
+                        cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento * data.cambioMonedas.valor_bs); //ajusta decimal cuota mora descuento
+                        $("#txtInteresMoratorioTD").val(parseFloat(cutotaMoraDescuento).toFixed(2));
+                        $("#txtInteresMoratorioTD2").val(parseFloat(cutotaMoraDescuento / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtTotal").val(ajustaDecimal(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2)));
                         $("#txtTotal2").val(parseFloat(totalGeneral).toFixed(2));
@@ -2928,6 +1882,334 @@
             });
         }
 
+        function getDatosPagoTotal(data, contrato){
+            let txtBs = data.txtBs;
+            let txtSus = data.txtSus;
+            let cambioMonedas = data.cambioMonedas;
+
+            $('._txtBs').text(txtBs.desc_corta);
+            $('._txtSus').text(txtSus.desc_corta);
+
+            let moneda_pago = data.Resultado.moneda_id
+
+            var fecha = new Date();
+            var vDia;
+            var vMes;
+            if ((fecha.getMonth() + 1) < 10) {
+                vMes = "0" + (fecha.getMonth() + 1);
+            } else {
+                vMes = (fecha.getMonth() + 1);
+            }
+            if (fecha.getDate() < 10) {
+                vDia = "0" + fecha.getDate();
+            } else {
+                vDia = fecha.getDate();
+            }
+            if (fecha.getHours() < 10) {
+                hora = "0" + fecha.getHours();
+            } else {
+                hora = fecha.getHours();
+            }
+            if (fecha.getMinutes() < 10) {
+                minutos = "0" + fecha.getMinutes();
+            } else {
+                minutos = fecha.getMinutes();
+            }
+            //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
+            var fechaActual = moment($("#txtFechaActualT").val());
+            if (data == "") {
+                console.log("datosss vacios");
+                var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
+                var interes = contrato.interes;
+                var comision = contrato.comision;
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                var capital = contrato.capital;
+                var fechaContrato = contrato.fecha_contrato;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+                interes= ajustaDecimal(interes); //ajusta decimal interes
+                comision= ajustaDecimal(comision); //ajusta decimal comisión
+
+            } else {
+                console.log("con detalle", data.Resultado);
+                var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                // var capital = data.Resultado.capital;
+                var fechaContrato = data.Resultado.fecha_inio;
+                // var capital = data.Resultado.capital;
+                var capital = contrato.capital;
+                //var fechaContrato = data.Resultado.fecha_contrato;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+            }
+            interes= ajustaDecimal(interes); //ajusta decimal interes
+            comision= ajustaDecimal(comision); //ajusta decimal comisión
+
+            console.log("fecha fin", fechaFin);
+            $("#txtVenceEl").val(fechaFin);
+            var fechaInteresInicial = '2020-03-22';
+            var fechaInteresFin = '2020-05-11';
+            var fechaInteresFinM = moment('2020-05-11');
+            console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
+                ' días de diferencia para descuneto interes');
+            console.log("fecha Inicial Interes", fechaInteresInicial);
+            console.log("fecha Final Interes", fechaInteresFin);
+            console.log("fecha fin", fechaFin);
+            console.log("fecha actual", fechaActual);
+            console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
+            console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
+            console.log("total Interes", totalInteresValor);
+            //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
+            var diaActual = 30;
+            var diaAtrasados = fechaActual.diff(fechaFin, 'days');
+
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+                // var diasDecuento = diaAtrasados;
+                var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                console.log("diasDecuento", diasDecuento);
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                if (fechaFin > fechaInteresFin) {
+                    var diasDecuento = 0;
+                } else {
+                    var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                }
+                //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                console.log("diasDecuento", diasDecuento);
+            }
+
+            var fecha1 = new Date(fechaContrato);
+            var fecha2 = new Date(fechaActual);
+            var diasDif = fecha2.getTime() - fecha1.getTime();
+            var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
+            var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
+            //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
+            var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
+            console.log("diasTranscurridos", diasTranscurridos);
+
+            console.log("diaAtrasados", diaAtrasados);
+            if (diaAtrasados > 0) {
+                // var diaAtrasados1 = diaAtrasados - diasDecuento;
+                var calc = diaAtrasados - diasDecuento;
+                if (calc > 0) {
+                    var diaAtrasados1 = diaAtrasados - diasDecuento;
+                } else {
+                    var diaAtrasados1 = 0;
+                }
+                // var diaAtrasados1 = diaAtrasados;
+                console.log("diaAtrasados1 valoo", diaAtrasados1);
+                console.log("totalInteresValor valoo", totalInteresValor);
+                console.log("diaActual valoo", diaActual);
+                var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                totalInteres = ajustaDecimal(totalInteres);
+                totalInteresValor = ajustaDecimal(totalInteresValor);
+                var cuotaMora = totalInteres;
+                console.log("Interes Calculado", totalInteres);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(capital) + parseFloat(totalInteresValor);
+                console.log("Total General", totalGeneral);
+                var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
+                        totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
+                        2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                    'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
+                    .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                var valorDiasAtrasados = diaAtrasados;
+            } else {
+                var diaAtrasados1 = 0;
+                var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
+                var fechaActual = moment();
+                var diasRango = fechaActual.diff(fechaFin, 'days');
+                var valorDiasAtrasados = diaAtrasados;
+                console.log("diasRango", diasRango);
+                var cuotaMora = 0;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 6.04) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3.7) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }else{
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 2) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }
+                interes= ajustaDecimal(interes); //ajusta decimal interes
+                comision= ajustaDecimal(comision); //ajusta decimal comisión
+
+                var totalInteres = parseFloat(totalInteresValor1 + interes);
+                totalInteres = ajustaDecimal(totalInteres);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
+                var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado
+                    .desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(
+                        2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b><br>' +
+                    'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
+                    .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+            }
+
+            console.log("interes", interes);
+            console.log("comision", comision);
+            console.log("cuotaMora", cuotaMora);
+            console.log("capital", capital);
+
+            //$("#txtCodigo").val(contrato.codigo);
+            if (contrato.codigo != "") {
+                $("#txtCodigo").val(contrato.codigo);
+            } else {
+                $("#txtCodigo").val(codigoContratoT);
+            }
+
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+
+                var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
+                var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
+
+                var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
+                var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
+                console.log("solodiaC", solodiaC);
+                console.log("solodiaC11111", solodiaC1);
+
+                var diasMora = solodiaC + solodiaC1;
+
+                var interesDescuento = (parseFloat(interes) / 30) * diasMora;
+                interesDescuento= ajustaDecimal(interesDescuento); //ajusta decimal interes descuento
+
+                var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                    diasDecuento) * 70) / 100;
+                comisionDescuento= ajustaDecimal(comisionDescuento); //ajusta decimal comisión descuento
+                cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento); //ajusta decimal cuota mora descuento
+                var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
+                    parseFloat(cutotaMoraDescuento);
+                totalGeneral = totalDescuento + parseFloat(capital);
+
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                var interesDescuento = 0;
+                var comisionDescuento = 0;
+                var totalDescuento = 0;
+                var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                    diasDecuento) * 70) / 100;
+                cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento); //ajusta decimal cuota mora descuento
+                totalGeneral = totalGeneral + parseFloat(cutotaMoraDescuento);
+                console.log("ffff", cutotaMoraDescuento);
+            }
+
+            console.log("totalGeneral", totalGeneral);
+
+            $("#txtCI").val(contrato.cliente.persona.nrodocumento);
+            $("#txtNombres").val(contrato.cliente.persona.nombres + ' ' + contrato.cliente.persona
+                .primerapellido + ' ' + contrato.cliente.persona.segundoapellido);
+            $("#txtDiasAtraso").val(valorDiasAtrasados);
+            $("#txtDiasTranscurridos").val(diasTranscurridos);
+            $("#txtAtrasoDiasDescuentoT").val(diasDecuento);
+            $("#txtCobroDiasDescuentoT").val(diaAtrasados1);
+
+            if(data.sw_amortizacion)
+            {
+                $('#mensajePagoTotal').css('display','block');
+                // AFECTAR LOS VALORES DE INTERES Y GASTOS
+                let nuevos_valores = getInteresesConAmortizacion(data,interes,comision,cuotaMora);
+                interes = nuevos_valores.interes;
+                comision = nuevos_valores.comision;
+                cuotaMora = nuevos_valores.cuotaMora;
+                totalGeneral = parseFloat(capital) + parseFloat(interes) + parseFloat(comision) + parseFloat(cuotaMora) + parseFloat(cutotaMoraDescuento);
+            }
+
+            return {
+                totalGeneral:totalGeneral,
+                capital:capital,
+                interes:interes,
+                comision:comision,
+                cuotaMora:cuotaMora,
+                interesDescuento:interesDescuento,
+                comisionDescuento:comisionDescuento,
+                cutotaMoraDescuento:cutotaMoraDescuento,
+                valorDiasAtrasados:valorDiasAtrasados
+            };
+        }
+        
+
+        // FIN DATOS PAGO TOTAL
+
         function fnDatoPagoInteres(contrato) {
             console.log("contrato", contrato);
             document.getElementById('divMostrarPagoInteres').style.display = 'block';
@@ -2955,330 +2237,18 @@
                 method: 'GET',
                 //dataType:'json',
                 success: function(data) {
-                    let txtBs = data.txtBs;
-                    let txtSus = data.txtSus;
-                    let cambioMonedas = data.cambioMonedas;
-
-                    $('._txtBs').text(txtBs.desc_corta);
-                    $('._txtSus').text(txtSus.desc_corta);
-
                     let moneda_pago = data.Resultado.moneda_id
-
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
-                    var fechaActual = moment($("#txtFechaActualI").val());
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).add(1, 'days').format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        // var fechaFin = moment(data.Resultado.fecha_fin).add(1,'days').format('YYYY-MM-DD');          
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        // var capital = data.Resultado.capital;
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        // var capital = data.Resultado.capital;
-                        var capital = contrato.capital;
-                        //var fechaContrato = data.Resultado.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-                    }
-
-                    $("#txtVenceElI").val(fechaFin);
-
-                    var fechaInteresInicial = '2020-03-22';
-                    var fechaInteresFin = '2020-05-11';
-                    var fechaInteresFinM = moment('2020-05-11');
-                    console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
-                        ' días de diferencia para descuneto interes');
-                    console.log("fecha Inicial Interes", fechaInteresInicial);
-                    console.log("fecha Final Interes", fechaInteresFin);
-                    console.log("fecha fin", fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
-                    var diaActual = 30;
-
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-                        // var diasDecuento = diaAtrasados
-                        var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        if (fechaFin > fechaInteresFin) {
-                            console.log("FECHA MAYOR");
-                            var diasDecuento = 0;
-                        } else {
-                            console.log("FECHA MENOR");
-                            var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        }
-                        //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    }
-
-                    var fecha1 = new Date(fechaContrato);
-                    var fecha2 = new Date(fechaActual);
-                    var diasDif = fecha2.getTime() - fecha1.getTime();
-                    //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
-                    var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
-                    var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
-                    //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
-                    var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
-                    console.log("diasTranscurridos", diasTranscurridos);
-
-                    console.log("diaAtrasados", diaAtrasados);
-                    if (diaAtrasados > 0) {
-                        var calc = diaAtrasados - diasDecuento;
-                        if (calc > 0) {
-                            var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        } else {
-                            var diaAtrasados1 = 0;
-                        }
-
-                        // var diaAtrasados1 = diaAtrasados;
-                        console.log("diaAtrasados1 valoo", diaAtrasados1);
-                        console.log("totalInteresValor valoo", totalInteresValor);
-                        console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(totalInteresValor));
-                        console.log("Total General", totalGeneral);
-                        var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var diaAtrasados1 = 0;
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        console.log("fechaFin111 VALO", fechaFin);
-                        var fechaActual = moment();
-                        console.log("fechaActual111 VALO", fechaActual);
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        var valorDiasAtrasados = diaAtrasados;
-                        console.log("diasRango VALO", diasRango);
-                        var cuotaMora = 0;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres + interes));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
-                            data.Resultado.desc_corta + '</b><br>' + 'El total del interes a pagar es de:<b>' +
-                            parseFloat(totalGeneral).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b>';
-                    }
-
-                    console.log("interes", interes);
-                    console.log("comision", comision);
-                    if (contrato.codigo != "") {
-                        $("#txtCodigoI").val(contrato.codigo);
-                    } else {
-                        $("#txtCodigoI").val(codigoContratoI);
-                    }
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-
-                        var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
-
-                        var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
-                        var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
-                        console.log("solodiaC", solodiaC);
-                        console.log("solodiaC11111", solodiaC1);
-
-                        var diasMora = solodiaC + solodiaC1;
-
-
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
-
-                        //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        // cutotaMoraDescuento = cutotaMoraDescuento + interesDescuento1 + comisionDescuento1;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
-
-                        totalGeneral = totalDescuento;
-
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        var interesDescuento = 0;
-                        var comisionDescuento = 0;
-                        var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
-                        console.log("ffff", cutotaMoraDescuento);
-                    }
-                    $("#txtCII").val(contrato.cliente.persona.nrodocumento);
-                    $("#txtNombresI").val(contrato.cliente.persona.nombres + ' ' + contrato.cliente.persona
-                        .primerapellido + ' ' + contrato.cliente.persona.segundoapellido);
-                    $("#txtDiasAtrasoI").val(valorDiasAtrasados);
-                    $("#txtAtrasoDiasDescuentoI").val(diasDecuento);
-                    $("#txtCobroDiasDescuentoI").val(diaAtrasados1);
-                    $("#txtDiasTranscurridosI").val(diasTranscurridos);
-                    $("#txtTotalID").val(parseFloat(totalDescuento).toFixed(2));
-
-                    if(data.sw_amortizacion)
-                    {
-                        $('#mensajePagoInteres').css('display','block');
-                        // AFECTAR LOS VALORES DE INTERES Y GASTOS
-                        if (moneda_pago == 1) {
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_bs);
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_bs);
-                        }else{
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_sus);
-                            comision
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_sus);
-                        }
-
-                        if(interes < 0)
-                        {
-                            interes = 0;
-                        }
-
-                        if(comision < 0)
-                        {
-                            comision = 0;
-                        }
-                        totalGeneral = parseFloat(interes) + parseFloat(comision) + parseFloat(cutotaMoraDescuento);
-                    }
+                    let datosPago = getDatosPagoInteres(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let interesDescuento = datosPago.interesDescuento;
+                    let comisionDescuento = datosPago.comisionDescuento;
+                    let cutotaMoraDescuento = datosPago.cutotaMoraDescuento;
 
                     if (moneda_pago == 1) {
-                        totalGeneral = ajustaDecimal(totalGeneral);
                         $("#txtInteresFechaI").val(parseFloat(interes).toFixed(2));
                         $("#txtInteresFechaI2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(
                             2));
@@ -3295,9 +2265,8 @@
                         $("#txtGastosAdministrativosID2").val(parseFloat(comisionDescuento / data.cambioMonedas
                             .valor_bs).toFixed(2));
 
-                        $("#txtInteresMoratorioI").val(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioI2").val(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus)
-                            .toFixed(2));
+                        $("#txtInteresMoratorioI").val(parseFloat(cuotaMora).toFixed(2));
+                        $("#txtInteresMoratorioI2").val(parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtInteresMoratorioID").val(parseFloat(cutotaMoraDescuento).toFixed(2));
                         $("#txtInteresMoratorioID2").val(parseFloat(cutotaMoraDescuento / data.cambioMonedas
@@ -3311,31 +2280,34 @@
                             .toFixed(2));
 
                         $("#txtMontoTotalI").val((parseFloat($("#txtCapitalPagoTotalI").val()) + parseFloat($("#txtInteresFechaI").val()) + parseFloat($('#txtGastosAdministrativosI').val()) + parseFloat($("#txtInteresMoratorioI").val())).toFixed(2));
-                        $("#txtMontoTotalI2").val((parseFloat($("#txtCapitalPagoTotalI2").val()) + parseFloat($("#txtInteresFechaI2").val()) + parseFloat($('#txtGastosAdministrativosI2').val()) + parseFloat($("#txtInteresMoratorioI2").val())).toFixed(2));
+                        $("#txtMontoTotalI2").val((parseFloat($("#txtMontoTotalI").val())/data.cambioMonedas.valor_bs).toFixed(2));
                     } else {
-                        $("#txtInteresFechaI").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(
-                        2));
-                        $("#txtInteresFechaI2").val(parseFloat(interes).toFixed(2));
+                        interes= ajustaDecimal(interes * data.cambioMonedas.valor_bs); //ajusta decimal interes
+                        $("#txtInteresFechaI").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFechaI2").val(parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtInteresFechaID").val(parseFloat(interesDescuento * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtInteresFechaID2").val(parseFloat(interesDescuento).toFixed(2));
+                        interesDescuento= ajustaDecimal(interesDescuento * data.cambioMonedas.valor_bs); //ajusta decimal interes descuento
+                        $("#txtInteresFechaID").val(parseFloat(interesDescuento).toFixed(2));
+                        $("#txtInteresFechaID2").val(parseFloat(interesDescuento/data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtGastosAdministrativosI").val(parseFloat(comision * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtGastosAdministrativosI2").val(parseFloat(comision).toFixed(2));
+                        comision= ajustaDecimal(comision * data.cambioMonedas.valor_bs); //ajusta decimal comisión
+                        $("#txtGastosAdministrativosI").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativosI2").val(parseFloat(comision/data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtGastosAdministrativosID").val(parseFloat(comisionDescuento * data.cambioMonedas
+                        comisionDescuento= ajustaDecimal(comisionDescuento * data.cambioMonedas.valor_bs); //ajusta decimal comisión descuento
+                        $("#txtGastosAdministrativosID").val(parseFloat(comisionDescuento).toFixed(2));
+                        $("#txtGastosAdministrativosID2").val(parseFloat(comisionDescuento/data.cambioMonedas
                             .valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosID2").val(parseFloat(comisionDescuento).toFixed(2));
 
-                        $("#txtInteresMoratorioI").val(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs)
-                            .toFixed(2));
-                        $("#txtInteresMoratorioI2").val(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
+                        cuotaMora= ajustaDecimal(cuotaMora * data.cambioMonedas.valor_bs); //ajusta decimal interes moratorio
+                        $("#txtInteresMoratorioI").val(parseFloat(cuotaMora).toFixed(2));
+                        cuotaMora= parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2); //ajusta decimal interes moratorio $us
+                        $("#txtInteresMoratorioI2").val(parseFloat(cuotaMora).toFixed(2));
 
-                        $("#txtInteresMoratorioID").val(parseFloat(cutotaMoraDescuento * data.cambioMonedas
+                        cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento * data.cambioMonedas.valor_bs); //ajusta decimal cuota mora descuento
+                        $("#txtInteresMoratorioID").val(parseFloat(cutotaMoraDescuento).toFixed(2));
+                        $("#txtInteresMoratorioID2").val(parseFloat(cutotaMoraDescuento/data.cambioMonedas
                             .valor_bs).toFixed(2));
-                        $("#txtInteresMoratorioID2").val(parseFloat(cutotaMoraDescuento).toFixed(2));
 
                         $("#txtTotalI").val(ajustaDecimal(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2)));
                         $("#txtTotalI2").val(parseFloat(totalGeneral).toFixed(2));
@@ -3369,6 +2341,336 @@
             });
         }
 
+        function getDatosPagoInteres(data,contrato){
+            let txtBs = data.txtBs;
+            let txtSus = data.txtSus;
+            let cambioMonedas = data.cambioMonedas;
+
+            $('._txtBs').text(txtBs.desc_corta);
+            $('._txtSus').text(txtSus.desc_corta);
+
+            let moneda_pago = data.Resultado.moneda_id
+
+            var fecha = new Date();
+            var vDia;
+            var vMes;
+            if ((fecha.getMonth() + 1) < 10) {
+                vMes = "0" + (fecha.getMonth() + 1);
+            } else {
+                vMes = (fecha.getMonth() + 1);
+            }
+            if (fecha.getDate() < 10) {
+                vDia = "0" + fecha.getDate();
+            } else {
+                vDia = fecha.getDate();
+            }
+            if (fecha.getHours() < 10) {
+                hora = "0" + fecha.getHours();
+            } else {
+                hora = fecha.getHours();
+            }
+            if (fecha.getMinutes() < 10) {
+                minutos = "0" + fecha.getMinutes();
+            } else {
+                minutos = fecha.getMinutes();
+            }
+            //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
+            var fechaActual = moment($("#txtFechaActualI").val());
+            if (data == "") {
+                console.log("datosss vacios");
+                var fechaFin = moment(contrato.fecha_fin).add(1, 'days').format('YYYY-MM-DD');
+                var interes = contrato.interes;
+                var comision = contrato.comision;
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                var capital = contrato.capital;
+                var fechaContrato = contrato.fecha_contrato;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+
+            } else {
+                console.log("con detalle", data.Resultado);
+                // var fechaFin = moment(data.Resultado.fecha_fin).add(1,'days').format('YYYY-MM-DD');          
+                var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                // var capital = data.Resultado.capital;
+                var fechaContrato = data.Resultado.fecha_inio;
+                // var capital = data.Resultado.capital;
+                var capital = contrato.capital;
+                //var fechaContrato = data.Resultado.fecha_contrato;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+            }
+            interes= ajustaDecimal(interes); //ajusta decimal interes
+            comision= ajustaDecimal(comision); //ajusta decimal comisión
+
+            $("#txtVenceElI").val(fechaFin);
+
+            var fechaInteresInicial = '2020-03-22';
+            var fechaInteresFin = '2020-05-11';
+            var fechaInteresFinM = moment('2020-05-11');
+            console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
+                ' días de diferencia para descuneto interes');
+            console.log("fecha Inicial Interes", fechaInteresInicial);
+            console.log("fecha Final Interes", fechaInteresFin);
+            console.log("fecha fin", fechaFin);
+            console.log("fecha actual", fechaActual);
+            console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
+            console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
+            console.log("total Interes", totalInteresValor);
+            //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
+            var diaActual = 30;
+
+            var diaAtrasados = fechaActual.diff(fechaFin, 'days');
+
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+                // var diasDecuento = diaAtrasados
+                var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                console.log("diasDecuento", diasDecuento);
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                if (fechaFin > fechaInteresFin) {
+                    console.log("FECHA MAYOR");
+                    var diasDecuento = 0;
+                } else {
+                    console.log("FECHA MENOR");
+                    var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                }
+                //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                console.log("diasDecuento", diasDecuento);
+            }
+
+            var fecha1 = new Date(fechaContrato);
+            var fecha2 = new Date(fechaActual);
+            var diasDif = fecha2.getTime() - fecha1.getTime();
+            //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
+            var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
+            var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
+            //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
+            var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
+            console.log("diasTranscurridos", diasTranscurridos);
+
+            console.log("diaAtrasados", diaAtrasados);
+            if (diaAtrasados > 0) {
+                var calc = diaAtrasados - diasDecuento;
+                if (calc > 0) {
+                    var diaAtrasados1 = diaAtrasados - diasDecuento;
+                } else {
+                    var diaAtrasados1 = 0;
+                }
+
+                // var diaAtrasados1 = diaAtrasados;
+                console.log("diaAtrasados1 valoo", diaAtrasados1);
+                console.log("totalInteresValor valoo", totalInteresValor);
+                console.log("diaActual valoo", diaActual);
+                var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                totalInteres = ajustaDecimal(totalInteres);
+                totalInteresValor = ajustaDecimal(totalInteresValor);
+                var cuotaMora = totalInteres;
+                console.log("Interes Calculado", totalInteres);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor);
+                console.log("Total General", totalGeneral);
+                var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
+                        totalInteresValor).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b><br>' +
+                    'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b>';
+                var valorDiasAtrasados = diaAtrasados;
+            } else {
+                var diaAtrasados1 = 0;
+                var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
+                console.log("fechaFin111 VALO", fechaFin);
+                var fechaActual = moment();
+                console.log("fechaActual111 VALO", fechaActual);
+                var diasRango = fechaActual.diff(fechaFin, 'days');
+                var valorDiasAtrasados = diaAtrasados;
+                console.log("diasRango VALO", diasRango);
+                var cuotaMora = 0;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 6.04) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3.7) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }else{
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 2) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }
+                interes= ajustaDecimal(interes); //ajusta decimal interes
+                comision= ajustaDecimal(comision); //ajusta decimal comisión
+
+                var totalInteres = parseFloat(totalInteresValor1);
+                totalInteres = ajustaDecimal(totalInteres);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(interes);
+                var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
+                        totalInteresValor).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
+                    data.Resultado.desc_corta + '</b><br>' + 'El total del interes a pagar es de:<b>' +
+                    parseFloat(totalGeneral).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b>';
+            }
+
+            console.log("interes", interes);
+            console.log("comision", comision);
+            if (contrato.codigo != "") {
+                $("#txtCodigoI").val(contrato.codigo);
+            } else {
+                $("#txtCodigoI").val(codigoContratoI);
+            }
+
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+
+                var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
+                var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
+
+                var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
+                var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
+                console.log("solodiaC", solodiaC);
+                console.log("solodiaC11111", solodiaC1);
+
+                var diasMora = solodiaC + solodiaC1;
+
+
+                var interesDescuento = (parseFloat(interes) / 30) * diasMora;
+                interesDescuento= ajustaDecimal(interesDescuento); //ajusta decimal interes descuento
+                var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+
+                var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                    diasDecuento) * 70) / 100;
+                comisionDescuento= ajustaDecimal(comisionDescuento); //ajusta decimal comisión descuento
+                cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento); //ajusta decimal cuota mora descuento
+                var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
+                    parseFloat(cutotaMoraDescuento);
+
+                totalGeneral = totalDescuento;
+
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                var interesDescuento = 0;
+                var comisionDescuento = 0;
+                var totalDescuento = 0;
+                var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                    diasDecuento) * 70) / 100;
+                cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento); //ajusta decimal cuota mora descuento
+                totalGeneral = parseFloat(totalGeneral) + parseFloat(cutotaMoraDescuento);
+                console.log("ffff", cutotaMoraDescuento);
+            }
+            $("#txtCII").val(contrato.cliente.persona.nrodocumento);
+            $("#txtNombresI").val(contrato.cliente.persona.nombres + ' ' + contrato.cliente.persona
+                .primerapellido + ' ' + contrato.cliente.persona.segundoapellido);
+            $("#txtDiasAtrasoI").val(valorDiasAtrasados);
+            $("#txtAtrasoDiasDescuentoI").val(diasDecuento);
+            $("#txtCobroDiasDescuentoI").val(diaAtrasados1);
+            $("#txtDiasTranscurridosI").val(diasTranscurridos);
+            $("#txtTotalID").val(parseFloat(totalDescuento).toFixed(2));
+
+            if(data.sw_amortizacion)
+            {
+                $('#mensajePagoInteres').css('display','block');
+                // AFECTAR LOS VALORES DE INTERES Y GASTOS
+                let nuevos_valores = getInteresesConAmortizacion(data,interes,comision,cuotaMora);
+                interes = nuevos_valores.interes;
+                comision = nuevos_valores.comision;
+                cuotaMora = nuevos_valores.cuotaMora;
+                totalGeneral = parseFloat(interes) + parseFloat(comision) + parseFloat(cuotaMora) + parseFloat(cutotaMoraDescuento);
+            }
+            return {
+                totalGeneral:totalGeneral,
+                capital:capital,
+                interes:interes,
+                comision:comision,
+                cuotaMora:cuotaMora,
+                interesDescuento:interesDescuento,
+                comisionDescuento:comisionDescuento,
+                cutotaMoraDescuento:cutotaMoraDescuento,
+                valorDiasAtrasados:valorDiasAtrasados
+            };
+        }
+
         function fnDatoPagoAmortizacion(contrato) {
             $("#txtAmortizacion").val('');
             document.getElementById('divMostrarPagoAmortizacion').style.display = 'block';
@@ -3396,366 +2698,20 @@
                 method: 'GET',
                 //dataType:'json',
                 success: function(data) {
-
-                    let txtBs = data.txtBs;
-                    let txtSus = data.txtSus;
-                    let cambioMonedas = data.cambioMonedas;
-                    global_cambioMonedas = cambioMonedas;
-                    $('._txtBs').text(txtBs.desc_corta);
-                    $('._txtSus').text(txtSus.desc_corta);
-
                     let moneda_pago = data.Resultado.moneda_id
-                    global_monedaContrato = moneda_pago;
-                    var fechaActual = moment();
-                    globalInteresAmor = data.Resultado.p_interes;
-                    console.log("DATAAA", data);
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        $("#txtIdContrato").val(data.Resultado.contrato_id);
-                        $("#txtCapital").val(data.Resultado.capital);
-                        $("#txtInteres").val(data.Resultado.interes);
-                        $("#txtComisión").val(data.Resultado.comision);
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        // var capital = data.Resultado.capital;
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        // var capital = data.Resultado.capital;
-                        var capital = contrato.capital;
-                        //var fechaContrato = data.Resultado.fecha_contrato;
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-                    }
-
-                    var fecha1 = new Date(fechaContrato);
-                    var fecha2 = new Date(fechaActual);
-                    console.log("fecha1", fecha1);
-                    console.log("fecha2", fecha2);
-
-                    var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
-                    var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
-
-                    //var diasDif = fecha2.getTime() - fecha1.getTime();
-                    //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
-                    var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
-
-                    $("#txtVenceElA").val(fechaFin);
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
-                    var fechaActual = moment($("#txtFechaActualA").val());
-
-                    var valor_comparacion1 = 3499;
-                    var valor_comparacion2 = 10000;
-                    var valor_comparacion3 = 15000;
-                    if (data.Resultado.moneda_id == 2) {
-                        valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                        valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                        valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                    }
-
-                    if (parseFloat(capital) <= valor_comparacion1) {
-                        var totalInteresValor = (capital * 9.04) / 100;
-                    } else if (parseFloat(capital) < valor_comparacion2) {
-                        var totalInteresValor = (capital * 6.7) / 100;
-                    } else if (parseFloat(capital) < valor_comparacion3) {
-                        var totalInteresValor = (capital * 6) / 100;
-                    }else{
-                        var totalInteresValor = (capital * 5) / 100;
-                    }
-
-                    var fechaInteresInicial = '2020-03-22';
-                    var fechaInteresFin = '2020-05-11';
-                    var fechaInteresFinM = moment('2020-05-11');
-                    console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
-                        ' días de diferencia para descuneto interes');
-                    console.log("fecha Inicial Interes", fechaInteresInicial);
-                    console.log("fecha Final Interes", fechaInteresFin);
-                    console.log("fecha fin", fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
-                    var diaActual = 30;
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-
-                    console.log("diasTranscurridos", diasTranscurridos);
-                    console.log("diaAtrasados", diaAtrasados);
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-                        // var diasDecuento = diaAtrasados
-                        var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        if (fechaFin > fechaInteresFin) {
-                            console.log("FECHA MAYOR");
-                            var diasDecuento = 0;
-                        } else {
-                            console.log("FECHA MENOR");
-                            var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        }
-                        //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    }
-
-                    if (diaAtrasados > 0) {
-                        // var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        var calc = diaAtrasados - diasDecuento;
-                        if (calc > 0) {
-                            var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        } else {
-                            var diaAtrasados1 = 0;
-                        }
-                        console.log("diaAtrasados1 valoo", diaAtrasados1);
-                        console.log("totalInteresValor valoo", totalInteresValor);
-                        console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(totalInteresValor) +
-                            parseFloat(amortizacion));
-                        console.log("Total General", totalGeneral);
-                        var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
-                            data.Resultado.desc_corta + '</b><br>' + 'La Amortización de <b>' + parseFloat(
-                                amortizacion).toFixed(2) + ' ' + data.Resultado.desc_corta +
-                            '</b> mas el interes  seria un total de: <b>' + parseFloat(totalGeneral).toFixed(
-                            2) + ' ' + data.Resultado.desc_corta + ' a pagar</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var diaAtrasados1 = 0;
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaActual = moment();
-                        console.log("fechaActual", fechaActual);
-                        console.log("fechaFin", fechaFin);
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        // var diasRango = 30;
-                        var valorDiasAtrasados = diaAtrasados;
-                        console.log("diasRango", diasRango);
-                        var cuotaMora = 0;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1 + interes);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(amortizacion));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'La Amortización de <b>' + parseFloat(amortizacion).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> mas el interes  seria un total de: <b>' +
-                            parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta +
-                            ' a pagar</b>';
-                    }
-
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        var fff = ((((parseFloat(interes) + parseFloat(comision)) / 30) * diasDecuento) * 70) /
-                            100;
-
-                    }
-
-                    //$("#txtCodigoA").val(contrato.codigo);
-                    if (contrato.codigo != "") {
-                        $("#txtCodigoA").val(contrato.codigo);
-                    } else {
-                        $("#txtCodigoA").val(codigoContratoA);
-                    }
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-
-                        var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
-
-                        var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
-                        var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
-                        console.log("solodiaC", solodiaC);
-                        console.log("solodiaC11111", solodiaC1);
-
-                        var diasMora = solodiaC + solodiaC1;
-
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
-                        //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
-
-                        totalGeneral = totalDescuento;
-
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        var interesDescuento = 0;
-                        var comisionDescuento = 0;
-                        var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
-                        console.log("ffff", cutotaMoraDescuento);
-                    }
-                    $("#txtCIA").val(contrato.cliente.persona.nrodocumento);
-                    $("#txtNombresA").val(contrato.cliente.persona.nombres + ' ' + contrato.cliente.persona
-                        .primerapellido + ' ' + contrato.cliente.persona.segundoapellido);
-                    $("#txtDiasAtrasoA").val(valorDiasAtrasados);
-                    $("#txtAtrasoDiasDescuentoA").val(diasDecuento);
-                    $("#txtCobroDiasDescuentoA").val(diaAtrasados1);
-                    $("#txtDiasTranscurridosA").val(diasTranscurridos);
-                    // $("#txtInteresMoratorioID").val(parseFloat(fff).toFixed(2));
-
-                    if(data.sw_amortizacion)
-                    {
-                        $('#mensajePagoAmortizacion').css('display','block');
-                        // AFECTAR LOS VALORES DE INTERES Y GASTOS
-                        if (moneda_pago == 1) {
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_bs);
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_bs);
-                        }else{
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_sus);
-                            comision
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_sus);
-                        }
-
-                        if(interes < 0)
-                        {
-                            interes = 0;
-                        }
-
-                        if(comision < 0)
-                        {
-                            comision = 0;
-                        }
-                        totalGeneral = parseFloat(interes) + parseFloat(comision) + parseFloat(cutotaMoraDescuento);
-                    }
+                    let datosPago = getDatosPagoAmortizacion(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let interesDescuento = datosPago.interesDescuento;
+                    let comisionDescuento = datosPago.comisionDescuento;
+                    let cutotaMoraDescuento = datosPago.cutotaMoraDescuento;
+                    let valorDiasAtrasados = datosPago.valorDiasAtrasados;
+                    let mensaje = datosPago.mensaje;
 
                     if (moneda_pago == 1) {
-                        totalGeneral=ajustaDecimal(totalGeneral);
                         $("#txtMontoTotalA").val(parseFloat(contrato.total_capital).toFixed(2));
                         $("#txtMontoTotalA2").val((parseFloat(contrato.total_capital) / data.cambioMonedas
                             .valor_bs).toFixed(2));
@@ -3776,8 +2732,8 @@
                         $("#txtGastosAdministrativosAD2").val(parseFloat(comisionDescuento / data.cambioMonedas
                             .valor_bs).toFixed(2));
 
-                        $("#txtInteresMoratorioA").val(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioA2").val(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus)
+                        $("#txtInteresMoratorioA").val(parseFloat(cuotaMora).toFixed(2));
+                        $("#txtInteresMoratorioA2").val(parseFloat(cuotaMora / data.cambioMonedas.valor_bs)
                             .toFixed(2));
 
                         $("#txtInteresMoratorioAD").val(parseFloat(cutotaMoraDescuento).toFixed(2));
@@ -3785,38 +2741,41 @@
                             .valor_bs).toFixed(2));
 
                         $("#txtTotalA").val(parseFloat(totalGeneral).toFixed(2));
-                        $("#txtTotalA2").val(ajustaDecimal(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2)));
+                        $("#txtTotalA2").val(parseFloat(totalGeneral / data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtCapitalPagoTotalA").val(parseFloat(capital).toFixed(2));
                         $("#txtCapitalPagoTotalA2").val(parseFloat(capital / data.cambioMonedas.valor_bs)
                             .toFixed(2));
                     } else {
-                        $("#txtMontoTotalA").val((parseFloat(contrato.total_capital) * data.cambioMonedas
+                        total_capital = ajustaDecimal(contrato.total_capital * data.cambioMonedas.valor_bs);
+                        $("#txtMontoTotalA").val(parseFloat(total_capital).toFixed(2));
+                        $("#txtMontoTotalA2").val(parseFloat(contrato.total_capital/data.cambioMonedas.valor_bs).toFixed(2));
+
+                        interes= ajustaDecimal(interes * data.cambioMonedas.valor_bs); //ajusta decimal interes
+                        $("#txtInteresFechaA").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFechaA2").val(parseFloat(interes/ data.cambioMonedas.valor_bs).toFixed(2));
+
+                        interesDescuento= ajustaDecimal(interesDescuento * data.cambioMonedas.valor_bs); //ajusta decimal interes descuento
+                        $("#txtInteresFechaAD").val(parseFloat(interesDescuento).toFixed(2));
+                        $("#txtInteresFechaAD2").val(parseFloat(interesDescuento/data.cambioMonedas.valor_bs).toFixed(2));
+
+                        comision= ajustaDecimal(comision * data.cambioMonedas.valor_bs); //ajusta decimal comisión
+                        $("#txtGastosAdministrativosA").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativosA2").val(parseFloat(comision/data.cambioMonedas.valor_bs).toFixed(2));
+
+                        comisionDescuento= ajustaDecimal(comisionDescuento * data.cambioMonedas.valor_bs); //ajusta decimal comisión descuento
+                        $("#txtGastosAdministrativosAD").val(parseFloat(comisionDescuento).toFixed(2));
+                        $("#txtGastosAdministrativosAD2").val(parseFloat(comisionDescuento/data.cambioMonedas.valor_bs).toFixed(2));
+
+                        cuotaMora= ajustaDecimal(cuotaMora * data.cambioMonedas.valor_bs); //ajusta decimal interes moratorio
+                        $("#txtInteresMoratorioA").val(parseFloat(cuotaMora).toFixed(2));
+                        cuotaMora= parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2); //ajusta decimal interes moratorio $us
+                        $("#txtInteresMoratorioA2").val(parseFloat(cuotaMora).toFixed(2));
+
+                        cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento * data.cambioMonedas.valor_bs); //ajusta decimal cuota mora descuento
+                        $("#txtInteresMoratorioAD").val(parseFloat(cutotaMoraDescuento).toFixed(2));
+                        $("#txtInteresMoratorioAD2").val(parseFloat(cutotaMoraDescuento/data.cambioMonedas
                             .valor_bs).toFixed(2));
-                        $("#txtMontoTotalA2").val(parseFloat(contrato.total_capital).toFixed(2));
-
-                        $("#txtInteresFechaA").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(
-                        2));
-                        $("#txtInteresFechaA2").val(parseFloat(interes).toFixed(2));
-
-                        $("#txtInteresFechaAD").val(parseFloat(interesDescuento * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtInteresFechaAD2").val(parseFloat(interesDescuento).toFixed(2));
-
-                        $("#txtGastosAdministrativosA").val(parseFloat(comision * data.cambioMonedas.valor_bs)
-                            .toFixed(2));
-                        $("#txtGastosAdministrativosA2").val(parseFloat(comision).toFixed(2));
-
-                        $("#txtGastosAdministrativosAD").val(parseFloat(comisionDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosAD2").val(parseFloat(comisionDescuento).toFixed(2));
-
-                        $("#txtInteresMoratorioA").val(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioA2").val(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
-
-                        $("#txtInteresMoratorioAD").val(parseFloat(cutotaMoraDescuento * data.cambioMonedas
-                            .valor_bs).toFixed(2));
-                        $("#txtInteresMoratorioAD2").val(parseFloat(cutotaMoraDescuento).toFixed(2));
 
                         $("#txtTotalA").val(ajustaDecimal(parseFloat(totalGeneral * data.cambioMonedas.valor_bs).toFixed(2)));
                         $("#txtTotalA2").val(parseFloat(totalGeneral).toFixed(2));
@@ -3846,6 +2805,381 @@
 
         }
 
+        function getDatosPagoAmortizacion(data,contrato){
+            let amortizacion = parseFloat($("#txtAmortizacion").val().trim()!=""?$("#txtAmortizacion").val().trim():0);
+            let txtBs = data.txtBs;
+            let txtSus = data.txtSus;
+            let cambioMonedas = data.cambioMonedas;
+            global_cambioMonedas = cambioMonedas;
+            $('._txtBs').text(txtBs.desc_corta);
+            $('._txtSus').text(txtSus.desc_corta);
+
+            let moneda_pago = data.Resultado.moneda_id
+            global_monedaContrato = moneda_pago;
+            var fechaActual = moment();
+            globalInteresAmor = data.Resultado.p_interes;
+            console.log("DATAAA", data);
+            if (data == "") {
+                console.log("datosss vacios");
+                var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
+                var interes = contrato.interes;
+                var comision = contrato.comision;
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                var capital = contrato.capital;
+                var fechaContrato = contrato.fecha_contrato;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+
+            } else {
+                console.log("con detalle", data.Resultado);
+                $("#txtIdContrato").val(data.Resultado.contrato_id);
+                $("#txtCapital").val(data.Resultado.capital);
+                $("#txtInteres").val(data.Resultado.interes);
+                $("#txtComisión").val(data.Resultado.comision);
+                var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                // var capital = data.Resultado.capital;
+                var fechaContrato = data.Resultado.fecha_inio;
+                // var capital = data.Resultado.capital;
+                var capital = contrato.capital;
+                //var fechaContrato = data.Resultado.fecha_contrato;
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+            }
+            interes= ajustaDecimal(interes); //ajusta decimal interes
+            comision= ajustaDecimal(comision); //ajusta decimal comisión
+
+            var fecha1 = new Date(fechaContrato);
+            var fecha2 = new Date(fechaActual);
+            console.log("fecha1", fecha1);
+            console.log("fecha2", fecha2);
+
+            var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
+            var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
+
+            //var diasDif = fecha2.getTime() - fecha1.getTime();
+            //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
+            var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
+
+            $("#txtVenceElA").val(fechaFin);
+            var fecha = new Date();
+            var vDia;
+            var vMes;
+            if ((fecha.getMonth() + 1) < 10) {
+                vMes = "0" + (fecha.getMonth() + 1);
+            } else {
+                vMes = (fecha.getMonth() + 1);
+            }
+            if (fecha.getDate() < 10) {
+                vDia = "0" + fecha.getDate();
+            } else {
+                vDia = fecha.getDate();
+            }
+            if (fecha.getHours() < 10) {
+                hora = "0" + fecha.getHours();
+            } else {
+                hora = fecha.getHours();
+            }
+            if (fecha.getMinutes() < 10) {
+                minutos = "0" + fecha.getMinutes();
+            } else {
+                minutos = fecha.getMinutes();
+            }
+            //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
+            var fechaActual = moment($("#txtFechaActualA").val());
+
+            var valor_comparacion1 = 3499;
+            var valor_comparacion2 = 10000;
+            var valor_comparacion3 = 15000;
+            if (data.Resultado.moneda_id == 2) {
+                valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+            }
+
+            if (parseFloat(capital) <= valor_comparacion1) {
+                var totalInteresValor = (capital * 9.04) / 100;
+            } else if (parseFloat(capital) < valor_comparacion2) {
+                var totalInteresValor = (capital * 6.7) / 100;
+            } else if (parseFloat(capital) < valor_comparacion3) {
+                var totalInteresValor = (capital * 6) / 100;
+            }else{
+                var totalInteresValor = (capital * 5) / 100;
+            }
+            totalInteresValor= ajustaDecimal(totalInteresValor); //ajusta decimal interes
+
+            var fechaInteresInicial = '2020-03-22';
+            var fechaInteresFin = '2020-05-11';
+            var fechaInteresFinM = moment('2020-05-11');
+            console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
+                ' días de diferencia para descuneto interes');
+            console.log("fecha Inicial Interes", fechaInteresInicial);
+            console.log("fecha Final Interes", fechaInteresFin);
+            console.log("fecha fin", fechaFin);
+            console.log("fecha actual", fechaActual);
+            console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
+            console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
+            console.log("total Interes", totalInteresValor);
+            //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
+            var diaActual = 30;
+            var diaAtrasados = fechaActual.diff(fechaFin, 'days');
+
+            console.log("diasTranscurridos", diasTranscurridos);
+            console.log("diaAtrasados", diaAtrasados);
+
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+                // var diasDecuento = diaAtrasados
+                var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                console.log("diasDecuento", diasDecuento);
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                if (fechaFin > fechaInteresFin) {
+                    console.log("FECHA MAYOR");
+                    var diasDecuento = 0;
+                } else {
+                    console.log("FECHA MENOR");
+                    var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                }
+                //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                console.log("diasDecuento", diasDecuento);
+            }
+
+            if (diaAtrasados > 0) {
+                // var diaAtrasados1 = diaAtrasados - diasDecuento;
+                var calc = diaAtrasados - diasDecuento;
+                if (calc > 0) {
+                    var diaAtrasados1 = diaAtrasados - diasDecuento;
+                } else {
+                    var diaAtrasados1 = 0;
+                }
+                console.log("diaAtrasados1 valoo", diaAtrasados1);
+                console.log("totalInteresValor valoo", totalInteresValor);
+                console.log("diaActual valoo", diaActual);
+                var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                totalInteres= ajustaDecimal(totalInteres); //ajusta decimal interes
+                var cuotaMora = totalInteres;
+                console.log("Interes Calculado", totalInteres);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor) +parseFloat(amortizacion);
+                totalGeneral = parseFloat(totalGeneral).toFixed(2);
+                console.log("Total General", totalGeneral);
+                var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
+                        totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
+                    data.Resultado.desc_corta + '</b><br>' + 'La Amortización de <b>' + parseFloat(
+                        amortizacion).toFixed(2) + ' ' + data.Resultado.desc_corta +
+                    '</b> mas el interes  seria un total de: <b>' + parseFloat(totalGeneral).toFixed(
+                    2) + ' ' + data.Resultado.desc_corta + ' a pagar</b>';
+                var valorDiasAtrasados = diaAtrasados;
+            } else {
+                var diaAtrasados1 = 0;
+                var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
+                var fechaActual = moment();
+                console.log("fechaActual", fechaActual);
+                console.log("fechaFin", fechaFin);
+                var diasRango = fechaActual.diff(fechaFin, 'days');
+                // var diasRango = 30;
+                var valorDiasAtrasados = diaAtrasados;
+                console.log("diasRango", diasRango);
+                var cuotaMora = 0;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 6.04) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3.7) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }else{
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 2) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }
+                interes= ajustaDecimal(interes); //ajusta decimal interes
+                comision= ajustaDecimal(comision); //ajusta decimal comisión
+
+                var totalInteres = parseFloat(totalInteresValor1) + parseFloat(interes);
+                totalInteres = ajustaDecimal(totalInteres);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(amortizacion);
+                var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
+                        totalInteresValor).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b><br>' +
+                    'La Amortización de <b>' + parseFloat(amortizacion).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> mas el interes  seria un total de: <b>' +
+                    parseFloat(totalGeneral).toFixed(2) + ' ' + data.Resultado.desc_corta +
+                    ' a pagar</b>';
+            }
+
+
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                var fff = ((((parseFloat(interes) + parseFloat(comision)) / 30) * diasDecuento) * 70) /
+                    100;
+
+            }
+
+            //$("#txtCodigoA").val(contrato.codigo);
+            if (contrato.codigo != "") {
+                $("#txtCodigoA").val(contrato.codigo);
+            } else {
+                $("#txtCodigoA").val(codigoContratoA);
+            }
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+
+                var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
+                var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
+
+                var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
+                var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
+                console.log("solodiaC", solodiaC);
+                console.log("solodiaC11111", solodiaC1);
+
+                var diasMora = solodiaC + solodiaC1;
+
+                var interesDescuento = (parseFloat(interes) / 30) * diasMora;
+                interesDescuento= ajustaDecimal(interesDescuento); //ajusta decimal interes descuento
+                var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
+                var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) * diasDecuento) * 70) / 100;
+                comisionDescuento= ajustaDecimal(comisionDescuento); //ajusta decimal comisión descuento
+                cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento); //ajusta decimal cuota mora descuento
+                var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) + parseFloat(cutotaMoraDescuento);
+
+                totalGeneral = totalDescuento;
+
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                var interesDescuento = 0;
+                var comisionDescuento = 0;
+                var totalDescuento = 0;
+                var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) * diasDecuento) * 70) / 100;
+                cutotaMoraDescuento= ajustaDecimal(cutotaMoraDescuento); //ajusta decimal cuota mora descuento
+                totalGeneral = parseFloat(totalGeneral) + parseFloat(cutotaMoraDescuento);
+                console.log("ffff", cutotaMoraDescuento);
+            }
+            $("#txtCIA").val(contrato.cliente.persona.nrodocumento);
+            $("#txtNombresA").val(contrato.cliente.persona.nombres + ' ' + contrato.cliente.persona
+                .primerapellido + ' ' + contrato.cliente.persona.segundoapellido);
+            $("#txtDiasAtrasoA").val(valorDiasAtrasados);
+            $("#txtAtrasoDiasDescuentoA").val(diasDecuento);
+            $("#txtCobroDiasDescuentoA").val(diaAtrasados1);
+            $("#txtDiasTranscurridosA").val(diasTranscurridos);
+            // $("#txtInteresMoratorioID").val(parseFloat(fff).toFixed(2));
+
+            if(data.sw_amortizacion)
+            {
+                $('#mensajePagoAmortizacion').css('display','block');
+                // AFECTAR LOS VALORES DE INTERES Y GASTOS
+                let nuevos_valores = getInteresesConAmortizacion(data,interes,comision,cuotaMora);
+                interes = nuevos_valores.interes;
+                comision = nuevos_valores.comision;
+                cuotaMora = nuevos_valores.cuotaMora;
+                let total_amortizacion_interes = nuevos_valores.total_amortizacion_interes;
+                totalInteresValor = parseFloat(interes) + parseFloat(comision) + parseFloat(cuotaMora);
+
+                totalGeneral = parseFloat(interes) + parseFloat(comision) + parseFloat(cuotaMora) + parseFloat(cutotaMoraDescuento) +parseFloat(amortizacion);
+                mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'Considerando una amortización de <b>'+total_amortizacion_interes+data.Resultado.desc_corta+'</b><br>La Amortización de <b>' + parseFloat(amortizacion).toFixed(2) + ' ' + data.Resultado.desc_corta +
+                    '</b> mas el interes  seria un total de: <b>' + parseFloat(totalGeneral).toFixed(
+                    2) + ' ' + data.Resultado.desc_corta + ' a pagar</b>';
+            }
+            return {
+                totalGeneral:totalGeneral,
+                capital:capital,
+                interes:interes,
+                comision:comision,
+                cuotaMora:cuotaMora,
+                interesDescuento:interesDescuento,
+                comisionDescuento:comisionDescuento,
+                cutotaMoraDescuento:cutotaMoraDescuento,
+                valorDiasAtrasados:valorDiasAtrasados,
+                mensaje:mensaje
+            };
+        }
+
         function fnDatoPagoAmortizacionInteres(contrato) {
             $("#txtAmortizacionInteres").val('');
             document.getElementById('divMostrarPagoAmortizacionInteres').style.display = 'block';
@@ -3873,340 +3207,20 @@
                 method: 'GET',
                 //dataType:'json',
                 success: function(data) {
-
-                    let txtBs = data.txtBs;
-                    let txtSus = data.txtSus;
-                    let cambioMonedas = data.cambioMonedas;
-                    global_cambioMonedas = cambioMonedas;
-                    $('._txtBs').text(txtBs.desc_corta);
-                    $('._txtSus').text(txtSus.desc_corta);
-
                     let moneda_pago = data.Resultado.moneda_id
-                    global_monedaContrato = moneda_pago;
-                    var fechaActual = moment();
-                    globalInteresAmor = data.Resultado.p_interes;
-                    console.log("DATAAA", data);
-                    var p_interes = contrato.interes;
-                    var interes = contrato.interes;
-                    var comision = contrato.comision;
-                    var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                    var capital = contrato.capital;
-                    var fechaContrato = contrato.fecha_contrato;
-                    if (data != "") {
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        var capital = contrato.capital;
-                    }
+                    let datosPago = getDatosPagoAmortizacionInteres(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let interesDescuento = datosPago.interesDescuento;
+                    let comisionDescuento = datosPago.comisionDescuento;
+                    let cutotaMoraDescuento = datosPago.cutotaMoraDescuento;
+                    let valorDiasAtrasados = datosPago.valorDiasAtrasados;
+                    let mensaje = datosPago.mensaje;
 
-                    var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
-                    var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
-                    var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
-
-                    $("#txtVenceElAI").val(fechaFin);
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    var fechaActual = moment($("#txtFechaActualAI").val());
-
-                    var fechaActual = moment($("#txtFechaActualI").val());
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).add(1, 'days').format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        // var fechaFin = moment(data.Resultado.fecha_fin).add(1,'days').format('YYYY-MM-DD');          
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        // var capital = data.Resultado.capital;
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        // var capital = data.Resultado.capital;
-                        var capital = contrato.capital;
-                        //var fechaContrato = data.Resultado.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-                    }
-
-                    $("#txtVenceElAI").val(fechaFin);
-
-                    var fechaInteresInicial = '2020-03-22';
-                    var fechaInteresFin = '2020-05-11';
-                    var fechaInteresFinM = moment('2020-05-11');
-                    console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
-                        ' días de diferencia para descuneto interes');
-                    console.log("fecha Inicial Interes", fechaInteresInicial);
-                    console.log("fecha Final Interes", fechaInteresFin);
-                    console.log("fecha fin", fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
-                    var diaActual = 30;
-
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-                        // var diasDecuento = diaAtrasados
-                        var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        if (fechaFin > fechaInteresFin) {
-                            console.log("FECHA MAYOR");
-                            var diasDecuento = 0;
-                        } else {
-                            console.log("FECHA MENOR");
-                            var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        }
-                        //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
-                        console.log("diasDecuento", diasDecuento);
-                    }
-
-                    var fecha1 = new Date(fechaContrato);
-                    var fecha2 = new Date(fechaActual);
-                    var diasDif = fecha2.getTime() - fecha1.getTime();
-                    //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
-                    var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
-                    var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
-                    //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
-                    var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
-                    console.log("diasTranscurridos", diasTranscurridos);
-
-                    console.log("diaAtrasados", diaAtrasados);
-                    if (diaAtrasados > 0) {
-                        var calc = diaAtrasados - diasDecuento;
-                        if (calc > 0) {
-                            var diaAtrasados1 = diaAtrasados - diasDecuento;
-                        } else {
-                            var diaAtrasados1 = 0;
-                        }
-
-                        // var diaAtrasados1 = diaAtrasados;
-                        console.log("diaAtrasados1 valoo", diaAtrasados1);
-                        console.log("totalInteresValor valoo", totalInteresValor);
-                        console.log("diaActual valoo", diaActual);
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(totalInteresValor));
-                        console.log("Total General", totalGeneral);
-                        var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var diaAtrasados1 = 0;
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        console.log("fechaFin111 VALO", fechaFin);
-                        var fechaActual = moment();
-                        console.log("fechaActual111 VALO", fechaActual);
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        var valorDiasAtrasados = diaAtrasados;
-                        console.log("diasRango VALO", diasRango);
-                        var cuotaMora = 0;
-                  
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres + interes));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
-                            data.Resultado.desc_corta + '</b><br>' + 'El total del interes a pagar es de:<b>' +
-                            parseFloat(totalGeneral).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b>';
-                    }
-
-                    console.log("interes", interes);
-                    console.log("comision", comision);
-
-                    if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
-                        console.log("intervalo ACEPATDO");
-
-                        var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
-
-                        var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
-                        var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
-                        console.log("solodiaC", solodiaC);
-                        console.log("solodiaC11111", solodiaC1);
-
-                        var diasMora = solodiaC + solodiaC1;
-
-
-                        var interesDescuento = (parseFloat(interes) / 30) * diasMora;
-                        var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
-
-                        //var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento);
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        // cutotaMoraDescuento = cutotaMoraDescuento + interesDescuento1 + comisionDescuento1;
-                        var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) +
-                            parseFloat(cutotaMoraDescuento);
-
-                        totalGeneral = totalDescuento;
-
-                    } else {
-                        console.log("intervalo NO ACEPATDO");
-                        var interesDescuento = 0;
-                        var comisionDescuento = 0;
-                        var totalDescuento = 0;
-                        var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
-                            diasDecuento) * 70) / 100;
-                        totalGeneral = totalGeneral + cutotaMoraDescuento;
-                        console.log("ffff", cutotaMoraDescuento);
-                    }
-
-                    if(data.sw_amortizacion)
-                    {
-                        $('#mensajePagoAmortizacionInteres').css('display','block');
-                        // AFECTAR LOS VALORES DE INTERES Y GASTOS
-                        if (moneda_pago == 1) {
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_bs);
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_bs);
-                            // totalGeneral = totalGeneral - parseFloat(data.valor_amortizacion_interes_bs) - parseFloat(data.valor_amortizacion_gastos_bs);
-                        }else{
-                            interes = parseFloat(interes) - parseFloat(data.valor_amortizacion_interes_sus);
-                            comision
-                            comision = parseFloat(comision) - parseFloat(data.valor_amortizacion_gastos_sus);
-                            // totalGeneral = totalGeneral - parseFloat(data.valor_amortizacion_interes_sus) - parseFloat(data.valor_amortizacion_gastos_sus);
-                        }
-
-                        if(interes < 0)
-                        {
-                            interes = 0;
-                        }
-
-                        if(comision < 0)
-                        {
-                            comision = 0;
-                        }
-                    }
-                    
                     if (moneda_pago == 1) {
-                        totalGeneral = ajustaDecimal(totalGeneral);
                         $("#txtInteresFechaAI").attr('data-val',parseFloat(interes).toFixed(2));
                         $("#txtInteresFechaAI2").attr('data-val',parseFloat(interes / data.cambioMonedas.valor_bs).toFixed(2));
                         $("#txtInteresFechaAI").val(parseFloat(interes).toFixed(2));
@@ -4217,10 +3231,10 @@
                         $("#txtGastosAdministrativosAI").val(parseFloat(comision).toFixed(2));
                         $("#txtGastosAdministrativosAI2").val(parseFloat(comision / data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtInteresMoratorioAI").attr('data-val',parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioAI2").attr('data-val',parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2));
-                        $("#txtInteresMoratorioAI").val(parseFloat(cuotaMora - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioAI2").val(parseFloat((cuotaMora / data.cambioMonedas.valor_bs) - data.suma_moratorios_sus).toFixed(2));
+                        $("#txtInteresMoratorioAI").attr('data-val',parseFloat(cuotaMora).toFixed(2));
+                        $("#txtInteresMoratorioAI2").attr('data-val',parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtInteresMoratorioAI").val(parseFloat(cuotaMora).toFixed(2));
+                        $("#txtInteresMoratorioAI2").val(parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2));
                         
                         $("#txtTotalAI").val(parseFloat('0.00').toFixed(2));
                         $("#txtTotalAI2").val(parseFloat('0.00').toFixed(2));
@@ -4228,39 +3242,37 @@
                         $("#txtCapitalPagoTotalAI").val(parseFloat(capital).toFixed(2));
                         $("#txtCapitalPagoTotalAI2").val(parseFloat(capital / data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtMontoTotalAI").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI").val()) + parseFloat($("#txtInteresFechaAI").val()) + parseFloat($('#txtGastosAdministrativosAI').val()) + parseFloat($("#txtInteresMoratorioAI").val())).toFixed(2)));
+                        $("#txtMontoTotalAI").val(parseFloat($("#txtCapitalPagoTotalAI").val()) + parseFloat($("#txtInteresFechaAI").val()) + parseFloat($('#txtGastosAdministrativosAI').val()) + parseFloat($("#txtInteresMoratorioAI").val()).toFixed(2));
                         $("#txtMontoTotalAI2").val((parseFloat($("#txtCapitalPagoTotalAI2").val()) + parseFloat($("#txtInteresFechaAI2").val()) + parseFloat($('#txtGastosAdministrativosAI2').val()) + parseFloat($("#txtInteresMoratorioAI2").val())).toFixed(2));
-
-                        // $("#txtTotalAITotales").val(parseFloat(totalGeneral).toFixed(2));
-                        // $("#txtTotalAITotales2").val(ajustaDecimal(parseFloat(totalGeneral)/data.cambioMonedas.valor_bs));
-
                     } else {
-                        $("#txtInteresFechaAI").attr('data-val',parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresFechaAI2").attr('data-val',parseFloat(interes).toFixed(2));
-                        $("#txtInteresFechaAI").val(parseFloat(interes * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtInteresFechaAI2").val(parseFloat(interes).toFixed(2));
+                        interes= ajustaDecimal(interes * data.cambioMonedas.valor_bs); //ajusta decimal interes
+                        $("#txtInteresFechaAI").attr('data-val',parseFloat(interes).toFixed(2));
+                        $("#txtInteresFechaAI2").attr('data-val',parseFloat(interes/data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtInteresFechaAI").val(parseFloat(interes).toFixed(2));
+                        $("#txtInteresFechaAI2").val(parseFloat(interes/data.cambioMonedas.valor_bs).toFixed(2));
 
-                        $("#txtInteresMoratorioAI").attr('data-val',parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioAI2").attr('data-val',parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
-                        $("#txtInteresMoratorioAI").val(parseFloat((cuotaMora * data.cambioMonedas.valor_bs) - data.suma_moratorios_bs).toFixed(2));
-                        $("#txtInteresMoratorioAI2").val(parseFloat(cuotaMora - data.suma_moratorios_sus).toFixed(2));
+                        cuotaMora= ajustaDecimal(cuotaMora * data.cambioMonedas.valor_bs); //ajusta decimal interes moratorio
+                        $("#txtInteresMoratorioAI").attr('data-val',parseFloat(cuotaMora).toFixed(2));
+                        $("#txtInteresMoratorioAI").val(parseFloat(cuotaMora).toFixed(2));
+                        cuotaMora= parseFloat(cuotaMora / data.cambioMonedas.valor_bs).toFixed(2); //ajusta decimal interes moratorio $us
+                        $("#txtInteresMoratorioAI2").attr('data-val',parseFloat(cuotaMora).toFixed(2));
+                        $("#txtInteresMoratorioAI2").val(parseFloat(cuotaMora).toFixed(2));
 
-                        $("#txtGastosAdministrativosAI").attr('data-val',parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosAI2").attr('data-val',parseFloat(comision).toFixed(2));
-                        $("#txtGastosAdministrativosAI").val(parseFloat(comision * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtGastosAdministrativosAI2").val(parseFloat(comision).toFixed(2));
+                        comision= ajustaDecimal(comision * data.cambioMonedas.valor_bs); //ajusta decimal comisión
+                        $("#txtGastosAdministrativosAI").attr('data-val',parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativosAI2").attr('data-val',parseFloat(comision/data.cambioMonedas.valor_bs).toFixed(2));
+                        $("#txtGastosAdministrativosAI").val(parseFloat(comision).toFixed(2));
+                        $("#txtGastosAdministrativosAI2").val(parseFloat(comision/data.cambioMonedas.valor_bs).toFixed(2));
 
                         $("#txtTotalAI").val(parseFloat('0.00').toFixed(2));
                         $("#txtTotalAI2").val(parseFloat('0.00').toFixed(2));
 
-                        $("#txtCapitalPagoTotalAI").val(parseFloat(capital * data.cambioMonedas.valor_bs).toFixed(2));
-                        $("#txtCapitalPagoTotalAI2").val(parseFloat(capital).toFixed(2));
+                        total_capital = ajustaDecimal(contrato.total_capital * data.cambioMonedas.valor_bs);
+                        $("#txtCapitalPagoTotalAI").val(parseFloat(capital).toFixed(2));
+                        $("#txtCapitalPagoTotalAI2").val(parseFloat(capital/data.cambioMonedas.valor_bs).toFixed(2));
                         
                         $("#txtMontoTotalAI").val(ajustaDecimal((parseFloat($("#txtCapitalPagoTotalAI").val()) + parseFloat($("#txtInteresFechaAI").val()) + parseFloat($('#txtGastosAdministrativosAI').val()) + parseFloat($("#txtInteresMoratorioAI").val())).toFixed(2)));
                         $("#txtMontoTotalAI2").val((parseFloat($("#txtCapitalPagoTotalAI2").val()) + parseFloat($("#txtInteresFechaAI2").val()) + parseFloat($('#txtGastosAdministrativosAI2').val()) + parseFloat($("#txtInteresMoratorioAI2").val())).toFixed(2));
-
-                        // $("#txtTotalAITotales").val(ajustaDecimal(parseFloat(totalGeneral)*data.cambioMonedas.valor_bs));
-                        // $("#txtTotalAITotales2").val(parseFloat(totalGeneral).toFixed(2));
                     }
                     $('#txtMonedaA').val(data.Resultado.desc_corta);
                 },
@@ -4280,6 +3292,386 @@
                     });
                 }
             });
+        }
+
+        function getDatosPagoAmortizacionInteres(data,contrato){
+            let txtBs = data.txtBs;
+            let txtSus = data.txtSus;
+            let cambioMonedas = data.cambioMonedas;
+            global_cambioMonedas = cambioMonedas;
+            $('._txtBs').text(txtBs.desc_corta);
+            $('._txtSus').text(txtSus.desc_corta);
+
+            let moneda_pago = data.Resultado.moneda_id
+            global_monedaContrato = moneda_pago;
+            var fechaActual = moment();
+            globalInteresAmor = data.Resultado.p_interes;
+            console.log("DATAAA", data);
+            var p_interes = contrato.interes;
+            var interes = contrato.interes;
+            var comision = contrato.comision;
+            var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
+            var capital = contrato.capital;
+            var fechaContrato = contrato.fecha_contrato;
+            if (data != "") {
+                var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
+                var fechaContrato = data.Resultado.fecha_inio;
+                var capital = contrato.capital;
+            }
+
+            var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
+            var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
+            var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
+
+            $("#txtVenceElAI").val(fechaFin);
+            var fecha = new Date();
+            var vDia;
+            var vMes;
+            if ((fecha.getMonth() + 1) < 10) {
+                vMes = "0" + (fecha.getMonth() + 1);
+            } else {
+                vMes = (fecha.getMonth() + 1);
+            }
+            if (fecha.getDate() < 10) {
+                vDia = "0" + fecha.getDate();
+            } else {
+                vDia = fecha.getDate();
+            }
+            if (fecha.getHours() < 10) {
+                hora = "0" + fecha.getHours();
+            } else {
+                hora = fecha.getHours();
+            }
+            if (fecha.getMinutes() < 10) {
+                minutos = "0" + fecha.getMinutes();
+            } else {
+                minutos = fecha.getMinutes();
+            }
+            var fechaActual = moment($("#txtFechaActualAI").val());
+
+            var fechaActual = moment($("#txtFechaActualI").val());
+            if (data == "") {
+                console.log("datosss vacios");
+                var fechaFin = moment(contrato.fecha_fin).add(1, 'days').format('YYYY-MM-DD');
+                var interes = contrato.interes;
+                var comision = contrato.comision;
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                var capital = contrato.capital;
+                var fechaContrato = contrato.fecha_contrato;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+
+            } else {
+                console.log("con detalle", data.Resultado);
+                // var fechaFin = moment(data.Resultado.fecha_fin).add(1,'days').format('YYYY-MM-DD');          
+                var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                // var capital = data.Resultado.capital;
+                var fechaContrato = data.Resultado.fecha_inio;
+                // var capital = data.Resultado.capital;
+                var capital = contrato.capital;
+                //var fechaContrato = data.Resultado.fecha_contrato;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+            }
+            interes = ajustaDecimal(interes);//ajustar decimal interes
+            comision = ajustaDecimal(comision);//ajustar decimal comision
+            totalInteresValor = ajustaDecimal(totalInteresValor);//ajustar decimal interes
+
+            $("#txtVenceElAI").val(fechaFin);
+
+            var fechaInteresInicial = '2020-03-22';
+            var fechaInteresFin = '2020-05-11';
+            var fechaInteresFinM = moment('2020-05-11');
+            console.log(fechaInteresFinM.diff(fechaInteresInicial, 'days'),
+                ' días de diferencia para descuneto interes');
+            console.log("fecha Inicial Interes", fechaInteresInicial);
+            console.log("fecha Final Interes", fechaInteresFin);
+            console.log("fecha fin", fechaFin);
+            console.log("fecha actual", fechaActual);
+            console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
+            console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
+            console.log("total Interes", totalInteresValor);
+            //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
+            var diaActual = 30;
+
+            var diaAtrasados = fechaActual.diff(fechaFin, 'days');
+
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+                // var diasDecuento = diaAtrasados
+                var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                console.log("diasDecuento", diasDecuento);
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                if (fechaFin > fechaInteresFin) {
+                    console.log("FECHA MAYOR");
+                    var diasDecuento = 0;
+                } else {
+                    console.log("FECHA MENOR");
+                    var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                }
+                //var diasDecuento = fechaInteresFinM.diff(fechaInteresInicial, 'days');
+                console.log("diasDecuento", diasDecuento);
+            }
+
+            var fecha1 = new Date(fechaContrato);
+            var fecha2 = new Date(fechaActual);
+            var diasDif = fecha2.getTime() - fecha1.getTime();
+            //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
+            var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
+            var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
+            //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
+            var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
+            console.log("diasTranscurridos", diasTranscurridos);
+
+            console.log("diaAtrasados", diaAtrasados);
+            if (diaAtrasados > 0) {
+                var calc = diaAtrasados - diasDecuento;
+                if (calc > 0) {
+                    var diaAtrasados1 = diaAtrasados - diasDecuento;
+                } else {
+                    var diaAtrasados1 = 0;
+                }
+
+                // var diaAtrasados1 = diaAtrasados;
+                console.log("diaAtrasados1 valoo", diaAtrasados1);
+                console.log("totalInteresValor valoo", totalInteresValor);
+                console.log("diaActual valoo", diaActual);
+                var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados1;
+                totalInteres = ajustaDecimal(totalInteres);//ajustar decimal interes
+                var cuotaMora = totalInteres;
+                console.log("Interes Calculado", totalInteres);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(totalInteresValor);
+                console.log("Total General", totalGeneral);
+                var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
+                        totalInteresValor).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'El Interes seria un total de::<b>' + parseFloat(totalInteres).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b><br>' +
+                    'El total del interes a pagar es de:<b>' + parseFloat(totalGeneral).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b>';
+                var valorDiasAtrasados = diaAtrasados;
+            } else {
+                var diaAtrasados1 = 0;
+                var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
+                console.log("fechaFin111 VALO", fechaFin);
+                var fechaActual = moment();
+                console.log("fechaActual111 VALO", fechaActual);
+                var diasRango = fechaActual.diff(fechaFin, 'days');
+                var valorDiasAtrasados = diaAtrasados;
+                console.log("diasRango VALO", diasRango);
+                var cuotaMora = 0;
+            
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 6.04) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3.7) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }else{
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 2) / 100;
+                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }
+                interes = ajustaDecimal(interes);//ajustar decimal interes
+                comision = ajustaDecimal(comision);//ajustar decimal comision
+                totalInteresValor1 = ajustaDecimal(totalInteresValor1);//ajustar decimal comision
+
+                var totalInteres = parseFloat(totalInteresValor1);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(interes);
+                var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
+                        totalInteresValor).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) + ' ' +
+                    data.Resultado.desc_corta + '</b><br>' + 'El total del interes a pagar es de:<b>' +
+                    parseFloat(totalGeneral).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b>';
+            }
+
+            console.log("interes", interes);
+            console.log("comision", comision);
+
+            if (fechaInteresInicial <= fechaFin && fechaFin <= fechaInteresFin) {
+                console.log("intervalo ACEPATDO");
+
+                var fechaFin3 = moment(fechaContrato, 'YYYY/MM/DD');
+                var fechaInteresInicial33 = moment('2020-03-22', 'YYYY/MM/DD');
+
+                var solodiaC = fechaInteresInicial33.diff(fechaFin3, 'days');
+                var solodiaC1 = fechaActual.diff(fechaInteresFinM, 'days');
+                console.log("solodiaC", solodiaC);
+                console.log("solodiaC11111", solodiaC1);
+
+                var diasMora = solodiaC + solodiaC1;
+
+
+                var interesDescuento = (parseFloat(interes) / 30) * diasMora;
+                var comisionDescuento = (parseFloat(comision) / 30) * diasMora;
+                var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                    diasDecuento) * 70) / 100;
+
+                interesDescuento = ajustaDecimal(interesDescuento);//ajustar decimal interesDescuento
+                comisionDescuento = ajustaDecimal(comisionDescuento);//ajustar decimal comisionDescuento
+                cutotaMoraDescuento = ajustaDecimal(cutotaMoraDescuento);//ajustar decimal cutotaMoraDescuento
+
+                var totalDescuento = parseFloat(interesDescuento) + parseFloat(comisionDescuento) + parseFloat(cutotaMoraDescuento);
+                totalGeneral = totalDescuento;
+            } else {
+                console.log("intervalo NO ACEPATDO");
+                var interesDescuento = 0;
+                var comisionDescuento = 0;
+                var totalDescuento = 0;
+                var cutotaMoraDescuento = ((((parseFloat(interes) + parseFloat(comision)) / 30) *
+                    diasDecuento) * 70) / 100;
+                cutotaMoraDescuento = ajustaDecimal(cutotaMoraDescuento);//ajustar decimal cutotaMoraDescuento
+                totalGeneral = parseFloat(totalGeneral) + parseFloat(cutotaMoraDescuento);
+                console.log("ffff", cutotaMoraDescuento);
+            }
+
+            if(data.sw_amortizacion)
+            {
+                $('#mensajePagoAmortizacionInteres').css('display','block');
+                // AFECTAR LOS VALORES DE INTERES Y GASTOS
+                let nuevos_valores = getInteresesConAmortizacion(data,interes,comision,cuotaMora);
+                interes = nuevos_valores.interes;
+                comision = nuevos_valores.comision;
+                cuotaMora = nuevos_valores.cuotaMora;
+                totalGeneral = parseFloat(capital) + parseFloat(interes) + parseFloat(comision) + parseFloat(cuotaMora) + parseFloat(cutotaMoraDescuento);
+            }
+            return {
+                totalGeneral:totalGeneral,
+                capital:capital,
+                interes:interes,
+                comision:comision,
+                cuotaMora:cuotaMora,
+                interesDescuento:interesDescuento,
+                comisionDescuento:comisionDescuento,
+                cutotaMoraDescuento:cutotaMoraDescuento,
+                valorDiasAtrasados:valorDiasAtrasados,
+                mensaje:mensaje
+            };
+        }
+
+        function getInteresesConAmortizacion(data,interes,comision,cuotaMora){
+            let amortizacion_total = parseFloat(data.total_ai_bs);
+            let nuevo_interes = amortizacion_total - interes;
+            let nueva_comision = 0;
+            let nueva_cuotaMora = 0;
+            console.log("cuotaMora inicial:::")
+            console.log(cuotaMora)
+            if(nuevo_interes > 0){
+                interes = 0;
+                nueva_comision = nuevo_interes - comision;
+                if(nueva_comision > 0){
+                    comision = 0;
+                    nueva_cuotaMora = nueva_comision - cuotaMora;
+                    if(nueva_cuotaMora >= 0){
+                        cuotaMora = 0;
+                    }else{
+                        cuotaMora = nueva_cuotaMora;
+                        if(nueva_cuotaMora <0){
+                            cuotaMora = nueva_cuotaMora*-1;
+                        }
+                    }
+                }else{
+                    comision = nueva_comision;
+                    if(nueva_comision < 0){
+                        comision = nueva_comision*-1;
+                    }
+                }
+            }else{
+                interes = nuevo_interes
+                if(nuevo_interes < 0){
+                    interes = nuevo_interes * -1;
+                }
+            }
+            console.log("cuotaMora:::");
+            console.log(cuotaMora);
+            return {
+                interes:interes,
+                comision:comision,
+                cuotaMora:cuotaMora,
+                total_amortizacion_interes:amortizacion_total
+            };
         }
 
         function fnVolverContratos() {
@@ -4333,221 +3725,15 @@
                 method: 'GET',
                 //dataType:'json',
                 success: function(data) {
-                    let txtBs = data.txtBs;
-                    let txtSus = data.txtSus;
-                    let cambioMonedas = data.cambioMonedas;
-                    global_cambioMonedas = cambioMonedas;
-                    $('._txtBs').text(txtBs.desc_corta);
-                    $('._txtSus').text(txtSus.desc_corta);
-
                     let moneda_pago = data.Resultado.moneda_id
-                    global_monedaContrato = moneda_pago;
-
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
-                    var fechaActual = moment($("#txtFechaActualR").val());
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        // var capital = data.Resultado.capital;
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        // var capital = data.Resultado.capital;
-                        var capital = contrato.capital;
-                        //var fechaContrato = data.Resultado.fecha_contrato;
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-                    }
-
-                    console.log("fecha fin", fechaFin);
-                    $("#txtVenceEl").val(fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
-                    var diaActual = 30;
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-
-                    var fecha1 = new Date(fechaContrato);
-                    var fecha2 = new Date(fechaActual);
-                    var diasDif = fecha2.getTime() - fecha1.getTime();
-                    var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
-                    var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
-                    //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
-                    var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
-                    console.log("diasTranscurridos", diasTranscurridos);
-
-                    console.log("diaAtrasados", diaAtrasados);
-                    if (diaAtrasados > 0) {
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(capital) + parseFloat(
-                            totalInteresValor));
-                        console.log("Total General", totalGeneral);
-                        var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaActual = moment();
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        var valorDiasAtrasados = diaAtrasados;
-                        console.log("diasRango", diasRango);
-                        var cuotaMora = 0;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(capital));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado
-                            .desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
-                        // }
-                    }
-
-                    console.log("interes", interes);
-                    console.log("comision", comision);
-                    console.log("capital", capital);
-
-                    //$("#txtCodigoR").val(contrato.codigo);
-                    if (contrato.codigo != "") {
-                        $("#txtCodigoR").val(contrato.codigo);
-                    } else {
-                        $("#txtCodigoR").val(codigoContratoR);
-                    }
-                    $("#txtCIR").val(contrato.cliente.persona.nrodocumento);
-                    $("#txtNombresR").val(contrato.cliente.persona.nombres + ' ' + contrato.cliente.persona
-                        .primerapellido + ' ' + contrato.cliente.persona.segundoapellido);
-                    $("#txtDiasAtrasoR").val(valorDiasAtrasados);
-                    $("#txtDiasTranscurridosR").val(diasTranscurridos);
+                    let datosPago = getDatosRemate(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let valorDiasAtrasados = datosPago.valorDiasAtrasados;
+                    let mensaje = datosPago.mensaje;
 
                     if (moneda_pago == 1) {
                         totalGeneral = ajustaDecimal(totalGeneral);
@@ -4618,6 +3804,246 @@
             });
         }
 
+        function getDatosRemate(data,contrato){
+            let txtBs = data.txtBs;
+            let txtSus = data.txtSus;
+            let cambioMonedas = data.cambioMonedas;
+            global_cambioMonedas = cambioMonedas;
+            $('._txtBs').text(txtBs.desc_corta);
+            $('._txtSus').text(txtSus.desc_corta);
+
+            let moneda_pago = data.Resultado.moneda_id
+            global_monedaContrato = moneda_pago;
+
+            var fecha = new Date();
+            var vDia;
+            var vMes;
+            if ((fecha.getMonth() + 1) < 10) {
+                vMes = "0" + (fecha.getMonth() + 1);
+            } else {
+                vMes = (fecha.getMonth() + 1);
+            }
+            if (fecha.getDate() < 10) {
+                vDia = "0" + fecha.getDate();
+            } else {
+                vDia = fecha.getDate();
+            }
+            if (fecha.getHours() < 10) {
+                hora = "0" + fecha.getHours();
+            } else {
+                hora = fecha.getHours();
+            }
+            if (fecha.getMinutes() < 10) {
+                minutos = "0" + fecha.getMinutes();
+            } else {
+                minutos = fecha.getMinutes();
+            }
+            //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
+            var fechaActual = moment($("#txtFechaActualR").val());
+            if (data == "") {
+                console.log("datosss vacios");
+                var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
+                var interes = contrato.interes;
+                var comision = contrato.comision;
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                var capital = contrato.capital;
+                var fechaContrato = contrato.fecha_contrato;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+
+            } else {
+                console.log("con detalle", data.Resultado);
+                var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
+                //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
+                // var capital = data.Resultado.capital;
+                var fechaContrato = data.Resultado.fecha_inio;
+                // var capital = data.Resultado.capital;
+                var capital = contrato.capital;
+                //var fechaContrato = data.Resultado.fecha_contrato;
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor = (capital * 9.04) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 6.04) / 100;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor = (capital * 6.7) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3.7) / 100;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor = (capital * 6) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 3) / 100;
+                }else{
+                    var totalInteresValor = (capital * 5) / 100;
+                    var interes = (capital * data.Resultado.p_interes) / 100;
+                    var comision = (capital * 2) / 100;
+                }
+            }
+            interes = ajustaDecimal(interes)//ajustar decimal interes
+            comision = ajustaDecimal(comision)//ajustar decimal comision
+
+            console.log("fecha fin", fechaFin);
+            $("#txtVenceEl").val(fechaFin);
+            console.log("fecha actual", fechaActual);
+            console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
+            console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
+            console.log("total Interes", totalInteresValor);
+            //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
+            var diaActual = 30;
+            var diaAtrasados = fechaActual.diff(fechaFin, 'days');
+
+            var fecha1 = new Date(fechaContrato);
+            var fecha2 = new Date(fechaActual);
+            var diasDif = fecha2.getTime() - fecha1.getTime();
+            var fechaEmision = moment(fechaContrato, 'YYYY/MM/DD');
+            var fechaExpiracion = moment(fechaActual, 'YYYY/MM/DD');
+            //var diasTranscurridos = Math.round(diasDif/(1000 * 60 * 60 * 24)) + 1;
+            var diasTranscurridos = fechaExpiracion.diff(fechaEmision, 'days');
+            console.log("diasTranscurridos", diasTranscurridos);
+
+            console.log("diaAtrasados", diaAtrasados);
+            if (diaAtrasados > 0) {
+                var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados;
+                totalInteres = ajustaDecimal(totalInteres)//ajustar decimal totalInteres
+                var cuotaMora = totalInteres;
+                console.log("Interes Calculado", totalInteres);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(capital) + parseFloat(totalInteresValor);
+                console.log("Total General", totalGeneral);
+                var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
+                        totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
+                        2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
+                    'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
+                    .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                var valorDiasAtrasados = diaAtrasados;
+            } else {
+                var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
+                var fechaActual = moment();
+                var diasRango = fechaActual.diff(fechaFin, 'days');
+                var valorDiasAtrasados = diaAtrasados;
+                console.log("diasRango", diasRango);
+                var cuotaMora = 0;
+
+                var valor_comparacion1 = 3499;
+                var valor_comparacion2 = 10000;
+                var valor_comparacion3 = 15000;
+                if (data.Resultado.moneda_id == 2) {
+                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
+                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
+                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
+                }
+
+                if (parseFloat(capital) <= valor_comparacion1) {
+                    var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 6.04) / 100;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                } else if (parseFloat(capital) < valor_comparacion2) {
+                    var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3.7) / 100;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                } else if (parseFloat(capital) < valor_comparacion3) {
+                    var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 3) / 100;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }else{
+                    var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
+                    var interes1 = (capital * data.Resultado.p_interes) / 100;
+                    var comision1 = (capital * 2) / 100;
+                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
+                }
+                interes = ajustaDecimal(interes)//ajustar decimal interes
+                comision = ajustaDecimal(comision)//ajustar decimal comision
+                totalInteresValor1 = ajustaDecimal(totalInteresValor1)//ajustar decimal totalInteresValor1
+
+                var totalInteres = parseFloat(totalInteresValor1);
+                var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
+                var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
+                    'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado
+                    .desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(
+                        2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
+                    'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
+                    ' ' + data.Resultado.desc_corta + '</b><br>' +
+                    'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
+                    .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
+                // }
+            }
+
+            // AFECTAR LOS VALORES DE INTERES Y GASTOS
+            let nuevos_valores = getInteresesConAmortizacion(data,interes,comision,cuotaMora);
+            interes = nuevos_valores.interes;
+            comision = nuevos_valores.comision;
+            cuotaMora = nuevos_valores.cuotaMora;
+
+            console.log("interes", interes);
+            console.log("comision", comision);
+            console.log("capital", capital);
+
+            //$("#txtCodigoR").val(contrato.codigo);
+            if (contrato.codigo != "") {
+                $("#txtCodigoR").val(contrato.codigo);
+            } else {
+                $("#txtCodigoR").val(codigoContratoR);
+            }
+            $("#txtCIR").val(contrato.cliente.persona.nrodocumento);
+            $("#txtNombresR").val(contrato.cliente.persona.nombres + ' ' + contrato.cliente.persona
+                .primerapellido + ' ' + contrato.cliente.persona.segundoapellido);
+            $("#txtDiasAtrasoR").val(valorDiasAtrasados);
+            $("#txtDiasTranscurridosR").val(diasTranscurridos);
+            totalGeneral = parseFloat(capital) + parseFloat(interes) + parseFloat(comision) + parseFloat(cuotaMora);
+
+            return {
+                totalGeneral:totalGeneral,
+                capital:capital,
+                interes:interes,
+                comision:comision,
+                cuotaMora:cuotaMora,
+                valorDiasAtrasados:valorDiasAtrasados,
+                mensaje:mensaje
+            };
+        }
+
         /******************************** PAGAR PAGO TOTAL *****************************************/
         function fnPagarRemateContrato(contrato) {
             existe_pago_total = false;
@@ -4634,191 +4060,20 @@
                 method: 'GET',
                 //dataType:'json',
                 success: function(data) {
-                    var fecha = new Date();
-                    var vDia;
-                    var vMes;
-                    if ((fecha.getMonth() + 1) < 10) {
-                        vMes = "0" + (fecha.getMonth() + 1);
-                    } else {
-                        vMes = (fecha.getMonth() + 1);
-                    }
-                    if (fecha.getDate() < 10) {
-                        vDia = "0" + fecha.getDate();
-                    } else {
-                        vDia = fecha.getDate();
-                    }
-                    if (fecha.getHours() < 10) {
-                        hora = "0" + fecha.getHours();
-                    } else {
-                        hora = fecha.getHours();
-                    }
-                    if (fecha.getMinutes() < 10) {
-                        minutos = "0" + fecha.getMinutes();
-                    } else {
-                        minutos = fecha.getMinutes();
-                    }
-                    //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
-                    var fechaActual = moment($("#txtFechaActualR").val());
-                    if (data == "") {
-                        console.log("datosss vacios");
-                        var fechaFin = moment(contrato.fecha_fin).format('YYYY-MM-DD');
-                        var interes = contrato.interes;
-                        var comision = contrato.comision;
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        var capital = contrato.capital;
-                        var fechaContrato = contrato.fecha_contrato;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-
-                    } else {
-                        console.log("con detalle", data.Resultado);
-                        var fechaFin = moment(data.Resultado.fecha_fin).format('YYYY-MM-DD');
-                        //var totalInteresValor =  parseFloat(interes) +  parseFloat(comision);
-                        // var capital = data.Resultado.capital;
-                        var fechaContrato = data.Resultado.fecha_inio;
-                        // var capital = data.Resultado.capital;
-                        var capital = contrato.capital;
-                        //var fechaContrato = data.Resultado.fecha_contrato;
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor = (capital * 9.04) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 6.04) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor = (capital * 6.7) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3.7) / 100;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor = (capital * 6) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 3) / 100;
-                        }else{
-                            var totalInteresValor = (capital * 5) / 100;
-                            var interes = (capital * data.Resultado.p_interes) / 100;
-                            var comision = (capital * 2) / 100;
-                        }
-                    }
-
-                    console.log("fecha fin", fechaFin);
-                    console.log("fecha actual", fechaActual);
-                    console.log(fechaActual.diff(fechaFin, 'days'), ' días de diferencia');
-                    console.log("dias del mes actual", moment(fechaActual, "YYYY-MM").daysInMonth());
-                    console.log("total Interes", totalInteresValor);
-                    //var diaActual = moment(fechaActual, "YYYY-MM").daysInMonth();
-                    var diaActual = 30;
-                    var diaAtrasados = fechaActual.diff(fechaFin, 'days');
-                    console.log("diaAtrasados", diaAtrasados);
-                    if (diaAtrasados > 0) {
-                        var totalInteres = (parseFloat(totalInteresValor) / diaActual) * diaAtrasados;
-                        var cuotaMora = totalInteres;
-                        console.log("Interes Calculado", totalInteres);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(capital) + parseFloat(
-                            totalInteresValor));
-                        console.log("Total General", totalGeneral);
-                        var mensaje = 'El contrato tiene <b>' + diaAtrasados + ' dias </b> de atraso,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'Por lo tanto el Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(
-                                2) + ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
-                        var valorDiasAtrasados = diaAtrasados;
-                    } else {
-                        var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
-                        var fechaActual = moment();
-                        var diasRango = fechaActual.diff(fechaFin, 'days');
-                        var valorDiasAtrasados = diaAtrasados;
-                        console.log("diasRango", diasRango);
-                        var cuotaMora = 0;
-
-                        var valor_comparacion1 = 3499;
-                        var valor_comparacion2 = 10000;
-                        var valor_comparacion3 = 15000;
-                        if (data.Resultado.moneda_id == 2) {
-                            valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                            valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                            valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                        }
-
-                        if (parseFloat(capital) <= valor_comparacion1) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 6.04) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion2) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3.7) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        } else if (parseFloat(capital) < valor_comparacion3) {
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 3) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }else{
-                            var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                            var interes1 = (capital * data.Resultado.p_interes) / 100;
-                            var comision1 = (capital * 2) / 100;
-                            var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                            var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                        }
-
-                        var totalInteres = parseFloat(totalInteresValor1);
-                        var totalGeneral = ajustaDecimal(parseFloat(totalInteres) + parseFloat(capital));
-                        var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
-                            'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b> con un interes de <b>' + parseFloat(
-                                totalInteresValor).toFixed(2) + ' ' + data.Resultado.desc_corta + '</b> <br>' +
-                            'El Interes seria un total de: <b>' + parseFloat(totalInteres).toFixed(2) +
-                            ' ' + data.Resultado.desc_corta + '</b><br>' +
-                            'El Capital mas el interes seria un total de: <b>' + parseFloat(totalGeneral)
-                            .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
-                    }
+                    let moneda_pago = data.Resultado.moneda_id
+                    let datosPago = getDatosRemate(data, contrato);
+                    let totalGeneral = datosPago.totalGeneral;
+                    let capital = datosPago.capital;
+                    let interes = datosPago.interes;
+                    let comision = datosPago.comision;
+                    let cuotaMora = datosPago.cuotaMora;
+                    let valorDiasAtrasados = datosPago.valorDiasAtrasados;
+                    let mensaje = datosPago.mensaje;
 
                     console.log("interes", interes);
                     console.log("comision", comision);
                     var route = "/PagoRemate";
                     //console.log("comision",comision);
-
-                    totalGeneral = ajustaDecimal(totalGeneral);
-
                     Swal.fire({
                         title: "Esta seguro de rematar el Contrato?",
                         html: '',

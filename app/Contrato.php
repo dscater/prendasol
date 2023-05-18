@@ -75,6 +75,16 @@ class Contrato extends Model
 		return $this->hasMany(ContratoDetalle::class, 'contrato_id');
 	}
 
+	public function pagos()
+	{
+		return $this->hasMany(Pagos::class, 'contrato_id');
+	}
+
+	public function ultimo_pago_realizado()
+	{
+		return $this->hasOne(Pagos::class, 'contrato_id')->latest();
+	}
+
 	public function moneda()
 	{
 		return $this->belongsTo(Moneda::class, 'moneda_id');

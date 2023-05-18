@@ -158,6 +158,7 @@ Route::get('BuscarContratosCodigo', 'Pagos\PagosController@buscarContratosCodigo
 
 Route::get('Pagos/lista/Mora', 'Pagos\PagosController@listaMora')->name('pagos.listaMora');
 Route::get('Pagos/lista/listadoMoras', 'Pagos\PagosController@listadoMoras')->name('pagos.listadoMoras');
+Route::get('Pagos/lista/listadoMorasExcel', 'Pagos\PagosController@listadoMorasExcel')->name('pagos.listadoMorasExcel');
 
 
 /*INICIO FIN CAJA*/

@@ -24,6 +24,9 @@ use App\Http\Controllers\Contrato\ContratoController;
 use App\Moneda;
 use App\Sucursal;
 use Exception;
+use PhpOffice\PhpSpreadsheet\IOFactory;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use Illuminate\Support\Facades\Log;
 
 class PagosController extends Controller
 {
@@ -292,7 +295,7 @@ class PagosController extends Controller
                     'consulta' => $resultado,
                 ]);
 
-                $totalPagar = CambioMoneda::ajustaDecimal((float)$request['capital'] + (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora']);
+                $totalPagar = (float)$request['capital'] + (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora'];
 
                 $datoInicioCaja = InicioFinCaja::where('sucursal_id', session::get('ID_SUCURSAL'))
                     ->where('caja', session::get('CAJA'))
@@ -335,7 +338,7 @@ class PagosController extends Controller
                     'fecha_pago'            => Carbon::parse($request['fecha_pago'])->format('Y-m-d'),
                     'fecha_hora'            => Carbon::now('America/La_Paz'),
                     'inicio_caja_bs'        => round($resulInicioCaja, 2),
-                    'ingreso_bs'             => round($totalPagar, 2),
+                    'ingreso_bs'             => $totalPagar,
                     'tipo_de_movimiento'    => 'PAGO TOTAL AL N° ' . $codigoContrato . ' DEL  SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' EN LA CAJA ' . session::get('CAJA') . '.',
                     'ref'               => 'CA01',
                     'caja'              => session::get('CAJA'),
@@ -374,13 +377,13 @@ class PagosController extends Controller
                 /*
                 CONVERTIR A BS SI EL CONTRATO/PAGO ESTA EN $US
                 */
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_total_pagar = CambioMoneda::ajustaDecimal(round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2));
-                } else {
-                    $_total_pagar = round((float)$totalPagar, 2);
-                }
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                // $_total_pagar = CambioMoneda::ajustaDecimal(round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2));
+                // } else {
+                $_total_pagar = (float)$totalPagar;
+                // }
 
                 /*REGISTRAR PARTE CONTABLE*/
                 $numComprobante = ContaDiario::max('num_comprobante');
@@ -405,13 +408,13 @@ class PagosController extends Controller
                 ]);
 
                 $_capital = 0;
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_capital = round((float)$valores_cambio->valor_bs * (float)$request['capital'], 2);
-                } else {
-                    $_capital = round($request['capital'], 2);
-                }
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $_capital = round((float)$valores_cambio->valor_bs * (float)$request['capital'], 2);
+                // } else {
+                $_capital = $request['capital'];
+                // }
 
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
@@ -435,12 +438,12 @@ class PagosController extends Controller
 
                 $totalComisionInteres = (float)$request['interes'] + (float)$request['comision'];
 
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
-                }
-                $totalComisionInteres = CambioMoneda::ajustaDecimal($totalComisionInteres);
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
+                // }
+                $totalComisionInteres = $totalComisionInteres;
 
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
@@ -452,7 +455,7 @@ class PagosController extends Controller
                     'cod_deno'              => '41101',
                     'cuenta'                => 'Intereses prestamos a plazo fijo cartera vigente',
                     'debe'                  => '0.00',
-                    'haber'                 => round($totalComisionInteres, 2),
+                    'haber'                 => $totalComisionInteres,
                     'caja'                  => session::get('CAJA'),
                     'num_comprobante'       => $numComprobante + 1,
                     'periodo'               => 'mes',
@@ -463,12 +466,12 @@ class PagosController extends Controller
                 ]);
 
 
-                $_cuotaMora = round($request['cuotaMora'], 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_cuotaMora = round((float)$valores_cambio->valor_bs * (float)$request['cuotaMora'], 2);
-                }
+                $_cuotaMora = $request['cuotaMora'];
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $_cuotaMora = round((float)$valores_cambio->valor_bs * (float)$request['cuotaMora'], 2);
+                // }
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
@@ -539,7 +542,7 @@ class PagosController extends Controller
                     'consulta' => $resultado,
                 ]);
 
-                $totalPagar = CambioMoneda::ajustaDecimal((float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora']);
+                $totalPagar = (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora'];
 
                 $datoInicioCaja = InicioFinCaja::where('sucursal_id', session::get('ID_SUCURSAL'))
                     ->where('caja', session::get('CAJA'))
@@ -625,11 +628,11 @@ class PagosController extends Controller
 
 
                 $_totalPagar = round($totalPagar, 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_totalPagar = CambioMoneda::ajustaDecimal(round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2));
-                }
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $_totalPagar = CambioMoneda::ajustaDecimal(round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2));
+                // }
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
@@ -652,13 +655,12 @@ class PagosController extends Controller
 
 
                 $totalComisionInteres = (float)$request['interes'] + (float)$request['comision'];
-                $totalComisionInteres = round($totalComisionInteres, 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
-                }
-                $totalComisionInteres = CambioMoneda::ajustaDecimal($totalComisionInteres);
+                // $totalComisionInteres = round($totalComisionInteres, 2);
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
+                // }
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
@@ -680,11 +682,11 @@ class PagosController extends Controller
                 ]);
 
                 $_cuota_mora = round($request['cuotaMora'], 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_cuota_mora = round((float)$valores_cambio->valor_bs * (float)$request['cuotaMora'], 2);
-                }
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $_cuota_mora = round((float)$valores_cambio->valor_bs * (float)$request['cuotaMora'], 2);
+                // }
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
@@ -762,7 +764,7 @@ class PagosController extends Controller
 
                 $capitalPagado = (float)$request['capitalActual'] - (float)$request['capital'];
 
-                $totalPagar = CambioMoneda::ajustaDecimal((float)$capitalPagado + (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora']);
+                $totalPagar = (float)$capitalPagado + (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora'];
 
                 $datoInicioCaja = InicioFinCaja::where('sucursal_id', session::get('ID_SUCURSAL'))
                     ->where('caja', session::get('CAJA'))
@@ -851,11 +853,11 @@ class PagosController extends Controller
                 $numComprobante = ContaDiario::max('num_comprobante');
 
                 $_total_pagar = round($totalPagar, 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_total_pagar = round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2);
-                }
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $_total_pagar = round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2);
+                // }
 
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
@@ -879,11 +881,11 @@ class PagosController extends Controller
 
                 //$totalhaber = float($request['capitalActual']) - float($request['capital']);
                 $_capitalPagado = round($capitalPagado, 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_capitalPagado = round((float)$valores_cambio->valor_bs * (float)$capitalPagado, 2);
-                }
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $_capitalPagado = round((float)$valores_cambio->valor_bs * (float)$capitalPagado, 2);
+                // }
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
@@ -905,13 +907,11 @@ class PagosController extends Controller
                 ]);
 
                 $totalComisionInteres = (float)$request['interes'] + (float)$request['comision'];
-                $totalComisionInteres = round($totalComisionInteres, 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
-                }
-                $totalComisionInteres = CambioMoneda::ajustaDecimal($totalComisionInteres);
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$totalComisionInteres, 2);
+                // }
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
@@ -933,11 +933,11 @@ class PagosController extends Controller
                 ]);
 
                 $_cuota_mora = round($request['cuotaMora'], 2);
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $_cuota_mora = round((float)$valores_cambio->valor_bs * (float)$request['cuotaMora'], 2);
-                }
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $_cuota_mora = round((float)$valores_cambio->valor_bs * (float)$request['cuotaMora'], 2);
+                // }
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
@@ -998,7 +998,10 @@ class PagosController extends Controller
 
                 $total_ai = 0;
                 if ($_contrato->moneda_id == 1) {
-                    $resta_mora = $interes_moratorios - $moratorio_calculado_bs;
+                    $resta_mora = $moratorio_calculado_bs;
+                    if ((float)$moratorio_calculado_bs > (float)$interes_moratorios) {
+                        $resta_mora = $moratorio_calculado_bs - $interes_moratorios;
+                    }
                     $total_ai = $request->cancelado_bs;
                 } else {
                     $resta_mora = $interes_moratorios2 - $moratorio_calculado_sus;
@@ -1083,7 +1086,7 @@ class PagosController extends Controller
                     'fecha_pago'            => Carbon::parse($request['fecha_pago'])->format('Y-m-d'),
                     'fecha_hora'            => Carbon::now('America/La_Paz'),
                     'inicio_caja_bs'        => round($resulInicioCaja, 2),
-                    'ingreso_bs'             => round($total_cancelado, 2),
+                    'ingreso_bs'             => round($request['cancelado_bs'], 2),
                     // 'tipo_de_movimiento'    => 'PAGO TOTAL AL N° '. $datoContrato->codigo .' DEL  SR.(A) '. $datoContrato->cliente->persona->nombreCompleto() .' EN LA CAJA '. session::get('CAJA') .'.' ,
                     'tipo_de_movimiento'    => 'AMORTIZACIÓN N° ' . $codigoContrato . ' DEL SR.(A) ' . $datoContrato->cliente->persona->nombreCompleto() . ' DE LA CAJA ' . session::get('CAJA') . '.',
                     'ref'               => 'MA01',
@@ -1126,11 +1129,11 @@ class PagosController extends Controller
 
                 $total_cancelado = $request['cancelado_bs'];
                 $totalComisionInteres = $total_cancelado;
-                if ($_contrato->moneda_id == 2) {
-                    // convertir a bolivianos
-                    $valores_cambio = CambioMoneda::first();
-                    $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$total_cancelado, 2);
-                }
+                // if ($_contrato->moneda_id == 2) {
+                //     // convertir a bolivianos
+                //     $valores_cambio = CambioMoneda::first();
+                //     $totalComisionInteres = round((float)$valores_cambio->valor_bs * (float)$total_cancelado, 2);
+                // }
                 ContaDiario::create([
                     'contrato_id'        => $request['idContrato'],
                     'pagos_id'           => $idPago,
@@ -1168,8 +1171,7 @@ class PagosController extends Controller
         $existe_amortizacion_ig = Pagos::where('contrato_id', $contrato_id)
             ->where('estado', 'AMORTIZACIÓN INTERES')
             ->orderBy('id', 'ASC')
-            ->get()
-            ->last();
+            ->get();
 
         $valores_cambio = CambioMoneda::first();
 
@@ -1178,21 +1180,31 @@ class PagosController extends Controller
         $valor_amortizacion_gastos_bs = 0;
         $valor_amortizacion_gastos_sus = 0;
         $sw_amortizacion = false;
-        if ($existe_amortizacion_ig) {
+        $total_ai_bs = 0;
+        $total_ai_sus = 0;
+        if (count($existe_amortizacion_ig) > 0) {
+
             $sw_amortizacion = true;
-            $valor_amortizacion_interes_bs = (float)$desembolso_inicial->interes - (float)$existe_amortizacion_ig->interes;
-            $valor_amortizacion_gastos_bs = (float)$desembolso_inicial->comision - (float)$existe_amortizacion_ig->comision;
-
-            $valor_amortizacion_interes_sus = (float)$desembolso_inicial->interes - (float)$existe_amortizacion_ig->interes;
-            $valor_amortizacion_gastos_sus = (float)$desembolso_inicial->comision - (float)$existe_amortizacion_ig->comision;
-
-            if ($desembolso_inicial->moneda_id == 1) {
-                $valor_amortizacion_interes_sus = $valor_amortizacion_interes_sus / $valores_cambio->valor_bs;
-                $valor_amortizacion_gastos_sus = $valor_amortizacion_gastos_sus / $valores_cambio->valor_bs;
-            } else {
-                $valor_amortizacion_interes_bs = $valor_amortizacion_interes_bs / $valores_cambio->valor_bs;
-                $valor_amortizacion_gastos_bs = $valor_amortizacion_gastos_bs / $valores_cambio->valor_bs;
+            foreach ($existe_amortizacion_ig as $ea) {
+                $total_ai_bs += (float)$ea->total_ai;
             }
+            $total_ai_sus = $total_ai_bs;
+            if ($desembolso_inicial->moneda_id == 1) {
+                $total_ai_sus = $total_ai_sus / $valores_cambio->valor_bs;
+            }
+            // $valor_amortizacion_interes_bs = (float)$desembolso_inicial->interes - (float)$existe_amortizacion_ig->interes;
+            // $valor_amortizacion_gastos_bs = (float)$desembolso_inicial->comision - (float)$existe_amortizacion_ig->comision;
+            // 
+            // $valor_amortizacion_interes_sus = (float)$desembolso_inicial->interes - (float)$existe_amortizacion_ig->interes;
+            // $valor_amortizacion_gastos_sus = (float)$desembolso_inicial->comision - (float)$existe_amortizacion_ig->comision;
+            // 
+            // if ($desembolso_inicial->moneda_id == 1) {
+            // $valor_amortizacion_interes_sus = $valor_amortizacion_interes_sus / $valores_cambio->valor_bs;
+            // $valor_amortizacion_gastos_sus = $valor_amortizacion_gastos_sus / $valores_cambio->valor_bs;
+            // } else {
+            // $valor_amortizacion_interes_bs = $valor_amortizacion_interes_bs / $valores_cambio->valor_bs;
+            // $valor_amortizacion_gastos_bs = $valor_amortizacion_gastos_bs / $valores_cambio->valor_bs;
+            // }
         }
 
         return  [
@@ -1201,6 +1213,48 @@ class PagosController extends Controller
             'valor_amortizacion_interes_sus' => $valor_amortizacion_interes_sus,
             'valor_amortizacion_gastos_bs' => $valor_amortizacion_gastos_bs,
             'valor_amortizacion_gastos_sus' => $valor_amortizacion_gastos_sus,
+            'total_ai_bs' => $total_ai_bs,
+            'total_ai_sus' => $total_ai_sus,
+        ];
+    }
+
+    public static function getInteresesConAmortizacion($total_ai_bs, $interes, $comision, $cuotaMora)
+    {
+        $amortizacion_total = $total_ai_bs;
+        $nuevo_interes = $amortizacion_total - $interes;
+        $nueva_comision = 0;
+        $nueva_cuotaMora = 0;
+        if ($nuevo_interes > 0) {
+            $interes = 0;
+            $nueva_comision = $nuevo_interes - $comision;
+            if ($nueva_comision > 0) {
+                $comision = 0;
+                $nueva_cuotaMora = $nueva_comision - $cuotaMora;
+                if ($nueva_cuotaMora >= 0) {
+                    $cuotaMora = 0;
+                } else {
+                    $cuotaMora = $nueva_cuotaMora;
+                    if ($nueva_cuotaMora < 0) {
+                        $cuotaMora = $nueva_cuotaMora * -1;
+                    }
+                }
+            } else {
+                $comision = $nueva_comision;
+                if ($nueva_comision < 0) {
+                    $comision = $nueva_comision * -1;
+                }
+            }
+        } else {
+            $interes = $nuevo_interes;
+            if ($nuevo_interes < 0) {
+                $interes = $nuevo_interes * -1;
+            }
+        }
+        return [
+            "interes" => $interes,
+            "comision" => $comision,
+            "cuotaMora" => $cuotaMora,
+            "total_amortizacion_interes" => $amortizacion_total
         ];
     }
 
@@ -1220,8 +1274,7 @@ class PagosController extends Controller
             $existe_amortizacion_ig = Pagos::where('contrato_id', $request['idContrato'])
                 ->where('estado', 'AMORTIZACIÓN INTERES')
                 ->orderBy('id', 'ASC')
-                ->get()
-                ->last();
+                ->get();
 
             $valores_cambio = CambioMoneda::first();
 
@@ -1246,21 +1299,37 @@ class PagosController extends Controller
             $valor_amortizacion_interes_sus = 0;
             $valor_amortizacion_gastos_bs = 0;
             $valor_amortizacion_gastos_sus = 0;
-            if ($existe_amortizacion_ig) {
+            $valor_amortizacion_cuota_mora_bs = 0;
+            $valor_amortizacion_cuota_mora_sus = 0;
+            $total_ai_bs = 0;
+            $total_ai_sus = 0;
+            if (count($existe_amortizacion_ig) > 0) {
+
                 $sw_amortizacion = true;
-                $valor_amortizacion_interes_bs = (float)$desembolso_inicial->interes - (float)$existe_amortizacion_ig->interes;
-                $valor_amortizacion_gastos_bs = (float)$desembolso_inicial->comision - (float)$existe_amortizacion_ig->comision;
-
-                $valor_amortizacion_interes_sus = (float)$desembolso_inicial->interes - (float)$existe_amortizacion_ig->interes;
-                $valor_amortizacion_gastos_sus = (float)$desembolso_inicial->comision - (float)$existe_amortizacion_ig->comision;
-
-                if ($desembolso_inicial->moneda_id == 1) {
-                    $valor_amortizacion_interes_sus = $valor_amortizacion_interes_sus / $valores_cambio->valor_bs;
-                    $valor_amortizacion_gastos_sus = $valor_amortizacion_gastos_sus / $valores_cambio->valor_bs;
-                } else {
-                    $valor_amortizacion_interes_bs = $valor_amortizacion_interes_bs / $valores_cambio->valor_bs;
-                    $valor_amortizacion_gastos_bs = $valor_amortizacion_gastos_bs / $valores_cambio->valor_bs;
+                foreach ($existe_amortizacion_ig as $ea) {
+                    $total_ai_bs += (float)$ea->total_ai;
                 }
+                $total_ai_sus = $total_ai_bs;
+                if ($desembolso_inicial->moneda_id == 1) {
+                    $total_ai_sus = $total_ai_sus / $valores_cambio->valor_bs;
+                }
+                // $valor_amortizacion_interes_bs = (float)$desembolso_inicial->interes - (float)$existe_amortizacion_ig->interes;
+                // $valor_amortizacion_gastos_bs = (float)$desembolso_inicial->comision - (float)$existe_amortizacion_ig->comision;
+                // $valor_amortizacion_cuota_mora_bs = (float)$desembolso_inicial->cuota_mora - (float)$existe_amortizacion_ig->cuota_mora;
+                // 
+                // $valor_amortizacion_interes_sus = (float)$desembolso_inicial->interes - (float)$existe_amortizacion_ig->interes;
+                // $valor_amortizacion_gastos_sus = (float)$desembolso_inicial->comision - (float)$existe_amortizacion_ig->comision;
+                // $valor_amortizacion_cuota_mora_sus = (float)$desembolso_inicial->cuota_mora - (float)$existe_amortizacion_ig->cuota_mora;
+
+                // if ($desembolso_inicial->moneda_id == 1) {
+                //     $valor_amortizacion_interes_sus = $valor_amortizacion_interes_sus / $valores_cambio->valor_bs;
+                //     $valor_amortizacion_gastos_sus = $valor_amortizacion_gastos_sus / $valores_cambio->valor_bs;
+                //     $valor_amortizacion_cuota_mora_sus = $valor_amortizacion_cuota_mora_sus / $valores_cambio->valor_bs;
+                // } else {
+                //     $valor_amortizacion_interes_bs = $valor_amortizacion_interes_bs / $valores_cambio->valor_bs;
+                //     $valor_amortizacion_gastos_bs = $valor_amortizacion_gastos_bs / $valores_cambio->valor_bs;
+                //     $valor_amortizacion_cuota_mora_bs = $valor_amortizacion_cuota_mora_bs / $valores_cambio->valor_bs;
+                // }
             }
 
             $pagos = Pagos::select('pagos.*', 'monedas.desc_corta', 'contrato.p_interes')
@@ -1277,6 +1346,8 @@ class PagosController extends Controller
 
                     return response()->json([
                         "Resultado" => $pagos,
+                        "total_ai_bs" => $total_ai_bs,
+                        "total_ai_sus" => $total_ai_sus,
                         'txtBs' => $bs,
                         'txtSus' => $sus,
                         'cambioMonedas' => $cambio,
@@ -1285,6 +1356,8 @@ class PagosController extends Controller
                         'valor_amortizacion_interes_sus' => $valor_amortizacion_interes_sus,
                         'valor_amortizacion_gastos_bs' => $valor_amortizacion_gastos_bs,
                         'valor_amortizacion_gastos_sus' => $valor_amortizacion_gastos_sus,
+                        'valor_amortizacion_cuota_mora_bs' => $valor_amortizacion_cuota_mora_bs,
+                        'valor_amortizacion_cuota_mora_sus' => $valor_amortizacion_cuota_mora_sus,
                         'suma_moratorios_bs' => $suma_moratorios_bs,
                         'suma_moratorios_sus' => $suma_moratorios_sus,
                     ]);
@@ -1386,26 +1459,12 @@ class PagosController extends Controller
 
         $existe_amortizacion = PagosController::buscaAmortizacionContrato($pago->contrato_id);
         if ($existe_amortizacion['sw']) {
-            if ($pago->moneda_id == 1) {
-                $pago->interes = (float)$pago->interes - (float)$existe_amortizacion['valor_amortizacion_interes_bs'];
-                $pago->comision = (float)$pago->comision - (float)$existe_amortizacion['valor_amortizacion_gastos_bs'];
-
-                $interes = (float)$interes - (float)$existe_amortizacion['valor_amortizacion_interes_bs'];
-                $comision = (float)$comision - (float)$existe_amortizacion['valor_amortizacion_gastos_bs'];
-            } else {
-                $pago->interes = (float)$pago->interes - (float)$existe_amortizacion['valor_amortizacion_interes_sus'];
-                $pago->comision = (float)$pago->comision - (float)$existe_amortizacion['valor_amortizacion_gastos_sus'];
-
-                $interes = (float)$interes - (float)$existe_amortizacion['valor_amortizacion_interes_sus'];
-                $comision = (float)$comision - (float)$existe_amortizacion['valor_amortizacion_gastos_sus'];
-            }
-
+            // $nuevos_valores = self::getInteresesConAmortizacion($existe_amortizacion["total_ai_bs"], $pago->interes, $pago->comision, $pago->cuotaMora);
             $totalPagar = (float)$pago->interes + (float)$pago->comision + (float)$pago->cuota_mora;
             $totalInteres = (float)$pago->capital + (float)$interes + (float)$comision;
         }
 
         if ($pago->moneda_id == 1) {
-            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $capital_convertido = (float)$pago->capital / (float) $valores_cambio->valor_bs;
             $totalPagar_convertido = (float)$totalPagar / (float) $valores_cambio->valor_bs;
@@ -1620,20 +1679,10 @@ class PagosController extends Controller
 
         $existe_amortizacion = PagosController::buscaAmortizacionContrato($pago->contrato_id);
         if ($existe_amortizacion['sw']) {
-            if ($pago->moneda_id == 1) {
-                $pago->interes = (float)$pago->interes - (float)$existe_amortizacion['valor_amortizacion_interes_bs'];
-                $pago->comision = (float)$pago->comision - (float)$existe_amortizacion['valor_amortizacion_gastos_bs'];
-
-                $interes = (float)$interes - (float)$existe_amortizacion['valor_amortizacion_interes_bs'];
-                $comision = (float)$comision - (float)$existe_amortizacion['valor_amortizacion_gastos_bs'];
-            } else {
-                $pago->interes = (float)$pago->interes - (float)$existe_amortizacion['valor_amortizacion_interes_sus'];
-                $pago->comision = (float)$pago->comision - (float)$existe_amortizacion['valor_amortizacion_gastos_sus'];
-
-                $interes = (float)$interes - (float)$existe_amortizacion['valor_amortizacion_interes_sus'];
-                $comision = (float)$comision - (float)$existe_amortizacion['valor_amortizacion_gastos_sus'];
-            }
-
+            // $nuevos_valores = self::getInteresesConAmortizacion($existe_amortizacion["total_ai_bs"], $interes, $comision, $pago->cuotaMora);
+            // $interes = $nuevos_valores["interes"];
+            // $comision = $nuevos_valores["comision"];
+            // $cuota_mora = $nuevos_valores["cuotaMora"];
             $totalPagar = (float)$pago->interes + (float)$pago->comision + (float)$pago->cuota_mora;
             $totalInteres = (float)$pago->capital + (float)$interes + (float)$comision;
         }
@@ -1644,7 +1693,7 @@ class PagosController extends Controller
         $capital_convertido = 0;
         $totalPagar_convertido = 0;
         if ($pago->moneda_id == 1) {
-            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
+            // $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $capital_convertido = round((float)$pago->capital / (float) $valores_cambio->valor_bs, 2);
             $totalPagar_convertido = round((float)$totalPagar / (float) $valores_cambio->valor_bs, 2);
@@ -1832,19 +1881,19 @@ class PagosController extends Controller
 
         $interes_convertido = $pago->interes;
         if ($pago->moneda_id == 1) {
-            $interes_convertido = $pago->interes / $valores_cambio->valor_bs;
+            $interes_convertido = round($pago->interes / $valores_cambio->valor_bs, 2);
         }
 
         $pdf::SetFont('helvetica', 'B', 10);
         $pdf::SetXY(15, 54);
         $pdf::Cell($w = 0, $h = 0, $txt = 'Interés', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
         $pdf::SetXY(160, 54);
-        $pdf::Cell($w = 0, $h = 0, $txt = round($interes_convertido, 2) . ' $us', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
+        $pdf::Cell($w = 0, $h = 0, $txt = $interes_convertido . ' $us', $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
 
         $capital_convertido = 0;
         $totalPagar_convertido = 0;
         if ($pago->moneda_id == 1) {
-            $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
+            // $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
             // DOLARES
             $capital_convertido = number_format((float)$pago->total_capital / (float) $valores_cambio->valor_bs, 2, ".", "");
             $totalPagar_convertido = number_format((float)$totalPagar / (float) $valores_cambio->valor_bs, 2, ".", "");
@@ -3321,7 +3370,7 @@ class PagosController extends Controller
                         'consulta' => $resultado,
                     ]);
 
-                    $totalPagar = CambioMoneda::ajustaDecimal((float)$request['capital'] + (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora']);
+                    $totalPagar = (float)$request['capital'] + (float)$request['interes'] + (float)$request['comision'] + (float)$request['cuotaMora'];
 
                     /* **** REGISTRO EN LA SUCURSAL CENTRAL **** */
                     $datoInicioCaja = InicioFinCaja::where('sucursal_id', 15)
@@ -3405,11 +3454,11 @@ class PagosController extends Controller
 
                     // $totalPagar = round($totalPagar, 2);
                     $totalPagar = round($request['capital'], 2);
-                    if ($_contrato->moneda_id == 2) {
-                        // convertir a bolivianos
-                        $valores_cambio = CambioMoneda::first();
-                        $totalPagar = round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2);
-                    }
+                    // if ($_contrato->moneda_id == 2) {
+                    //     // convertir a bolivianos
+                    //     $valores_cambio = CambioMoneda::first();
+                    //     $totalPagar = round((float)$valores_cambio->valor_bs * (float)$totalPagar, 2);
+                    // }
                     ContaDiario::create([
                         'contrato_id'        => $request['idContrato'],
                         'pagos_id'           => $idPago,
@@ -3472,8 +3521,6 @@ class PagosController extends Controller
         //dd($pago);
         $totalPagar = (float)$pago->interes + (float)$pago->comision + (float)$pago->cuota_mora + (float)$pago->capital;
         //dd($totalPagar);
-
-        $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
 
         $totalInteres = (float)$pago->capital + (float)$pago->interes + (float)$pago->comision;
         //$totalSoloInteres = (float)$pago->capital + (float)$pago->interes + (float)$pago->comision;             
@@ -3623,7 +3670,6 @@ class PagosController extends Controller
         $cliente = Cliente::where('id', $pago->contrato->cliente_id)->first();
         //dd($pago);
         $totalPagar = (float)$pago->interes + (float)$pago->comision + (float)$pago->cuota_mora + (float)$pago->capital;
-        $totalPagar = CambioMoneda::ajustaDecimal($totalPagar);
         //dd($totalPagar);
         $totalInteres = (float)$pago->capital + (float)$pago->interes + (float)$pago->comision;
         //$totalSoloInteres = (float)$pago->capital + (float)$pago->interes + (float)$pago->comision;             
@@ -3816,19 +3862,134 @@ class PagosController extends Controller
     public function listadoMoras(Request $request)
     {
         $dias = $request->dias;
-        // $pagos = Pagos::where('fecha_fin', '<', Carbon::now('America/La_Paz')->format('Y-m-d H:i:s'))->get();
-        $pagos = [];
+        $contratos = [];
+        $today = Carbon::today();
         if ($dias != 'MAS') {
-            $pagos = Pagos::where('dias_atraso', '=', $dias)->get();
+            $dias_atraso = Carbon::now()->subDays($dias)->startOfDay();
+            $contratos = Contrato::where('fecha_fin', '=', $dias_atraso)
+                ->whereNotIn("contrato.estado_pago", ["Prenda Rematado", "Credito cancelado"])
+                ->paginate(20);
         } else {
-            $pagos = Pagos::where('dias_atraso', '>=', 390)->get();
+            $dias_atraso = Carbon::now()->subDays(390)->startOfDay();
+            $contratos = Contrato::where('fecha_fin', '<=', $dias_atraso)
+                ->whereNotIn("contrato.estado_pago", ["Prenda Rematado", "Credito cancelado"])
+                ->paginate(20);
         }
+        $lista_morosidad = $contratos;
 
-        $lista_morosidad = $pagos;
-
-        $html = view('pagos.modals.listaMoras', compact('lista_morosidad'))->render();
+        $html = view('pagos.modals.listaMoras', compact('lista_morosidad', 'dias_atraso'))->render();
 
         return response()->JSON($html);
+    }
+
+    public function listadoMorasExcel(Request $request)
+    {
+        $dias = $request->dias;
+        $contratos = [];
+        $today = Carbon::today();
+        if ($dias != 'MAS') {
+            $dias_atraso = Carbon::now()->subDays($dias)->startOfDay();
+            $contratos = Contrato::where('fecha_fin', '=', $dias_atraso)
+                ->whereNotIn("contrato.estado_pago", ["Prenda Rematado", "Credito cancelado"])
+                ->get();
+        } else {
+            $dias_atraso = Carbon::now()->subDays(390)->startOfDay();
+            $contratos = Contrato::where('fecha_fin', '<=', $dias_atraso)
+                ->whereNotIn("contrato.estado_pago", ["Prenda Rematado", "Credito cancelado"])
+                ->get();
+        }
+        $lista_morosidad = $contratos;
+
+        $spreadsheet = new Spreadsheet();
+        $spreadsheet->getProperties()
+            ->setCreator("PrendaSol")
+            ->setLastModifiedBy('Administración')
+            ->setTitle('Reporte de Lista de moras')
+            ->setSubject('Lista de moras')
+            ->setDescription('Excel donde muestra la Lista de moras')
+            ->setKeywords('PHPSpreadsheet')
+            ->setCategory('Listado');
+
+        $sheet = $spreadsheet->getActiveSheet();
+
+        $spreadsheet->getDefaultStyle()->getFont()->setName('Arial');
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+                'size' => 12
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+        ];
+        $sheet->getStyle('B1:J1')->applyFromArray($styleArray);
+        $spreadsheet->getDefaultStyle()->getFont()->setSize(10);
+        // LLENADO DEL REPORTE
+        $sheet->setCellValue('B1', 'LISTA MORAS');
+        $sheet->mergeCells("B1:I1");  //COMBINAR CELDAS
+        // ENCABEZADO
+        $sheet->setCellValue('B2', 'Nº');
+        $sheet->setCellValue('C2', 'NOMBRES');
+        $sheet->setCellValue('D2', 'PRIMER APELLIDO');
+        $sheet->setCellValue('E2', 'SEGUNDO APELLIDO');
+        $sheet->setCellValue('F2', 'NRO. DOCUMENTO');
+        $sheet->setCellValue('G2', 'DÍAS MORA');
+        $sheet->setCellValue('H2', 'TOTAL');
+        $sheet->setCellValue('I2', 'MONEDA');
+
+        $styleArray = [
+            'font' => [
+                'bold' => true,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ];
+        $sheet->getStyle('B2:I2')->applyFromArray($styleArray);
+
+        // RECORRER LOS REGISTROS
+        $nro_fila = 3;
+        $cont = 1;
+        $suma_total = 0;
+        foreach ($lista_morosidad as $value) {
+            $styleArray = [
+                'borders' => [
+                    'allBorders' => [
+                        'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                    ],
+                ],
+            ];
+            $sheet->setCellValue('B' . $nro_fila, $cont++);
+            $sheet->setCellValue('C' . $nro_fila, $value->cliente->persona->nombres);
+            $sheet->setCellValue('D' . $nro_fila, $value->cliente->persona->primerapellido);
+            $sheet->setCellValue('E' . $nro_fila, $value->cliente->persona->segundoapellido);
+            $sheet->setCellValue('F' . $nro_fila, $value->cliente->persona->nrodocumento);
+            $sheet->setCellValue('G' . $nro_fila, Carbon::parse($value->fecha_fin)->diffInDays());
+            $sheet->setCellValue('H' . $nro_fila, $value->total_capital);
+            $sheet->setCellValue('I' . $nro_fila, $value->moneda->desc_corta);
+            $sheet->getStyle('B' . $nro_fila . ':I' . $nro_fila)->applyFromArray($styleArray);
+            
+            $nro_fila++;
+        }
+        // $sheet->getStyle('B' . $nro_fila . ':G' . $nro_fila)->applyFromArray($styleArray);
+
+        // AJUSTAR EL ANCHO DE LAS CELDAS
+        foreach (range('B', 'I') as $columnID) {
+            $sheet->getColumnDimension($columnID)
+                ->setAutoSize(true);
+        }
+
+        // DESCARGA DEL ARCHIVO
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
+        header('Content-Disposition: attachment;filename="ReporteContratosCancelados.xlsx"');
+        header('Cache-Control: max-age=0');
+        $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
+        $writer->save('php://output');
     }
 
     public function rectificarPagosAmortizacion2()
