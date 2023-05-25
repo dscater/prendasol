@@ -2113,7 +2113,8 @@
 
                 var totalInteres = parseFloat(totalInteresValor1 + interes);
                 totalInteres = ajustaDecimal(totalInteres);
-                var totalGeneral = parseFloat(totalInteres) + parseFloat(capital);
+                console.log("TOTAL INTERES:"+(totalInteres + comision));
+                var totalGeneral = parseFloat(interes) + parseFloat(comision) + parseFloat(capital);
                 var mensaje = 'El contrato tiene <b>' + diasRango + ' dias </b> habiles,<br> ' +
                     'Tiene un capital de :<b>' + parseFloat(capital).toFixed(2) + ' ' + data.Resultado
                     .desc_corta + '</b> con un interes de <b>' + parseFloat(totalInteresValor).toFixed(
