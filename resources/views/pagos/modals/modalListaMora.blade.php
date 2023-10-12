@@ -10,7 +10,8 @@
 					<div class="col-md-12">
 						<label>Seleccione:</label>
 						<select name="txtDiasRango" id="txtDiasRango" class="form-control">
-							<option value="30" selected>30 días</option>
+							<option value="1" selected>1 día</option>
+							<option value="30">30 días</option>
 							<option value="60">60 días</option>
 							<option value="90">90 días</option>
 							<option value="120">120 días</option>

@@ -41,7 +41,7 @@
 									<td></td>
 									<td></td>
 									<td>{{ $datoCaja->fecha_hora }}</td>
-									<td>{{ $datoCaja->inicio_caja_bs }}</td>
+									<td>{{ number_format($datoCaja->inicio_caja_bs,2,".",",") }}</td>
 									<td>SALDO INICIAL</td>
 								</tr>
 								@foreach ($datoCaja->detalleIniciFinCaja($datoCaja->id) as $key1 => $detalle)
@@ -59,9 +59,9 @@
 												<td>2773500</td>
 												<td>{{ $detalle->ref }}</td>
 												<td>{{ $detalle->created_at }}</td>
-												<td>{{ $detalle->inicio_caja_bs }}</td>
-												<td>{{ $detalle->ingreso_bs }}</td>
-												<td>{{ $detalle->egreso_bs }}</td>
+												<td>{{ number_format($detalle->inicio_caja_bs,2,".",",") }}</td>
+												<td>{{ number_format($detalle->ingreso_bs,2,".",",") }}</td>
+												<td>{{ number_format($detalle->egreso_bs,2,".",",") }}</td>
 												<td>{{ $detalle->tipo_de_movimiento }}</td>
 												<td><a href="#" onClick = "fnEditarContaDiario({{ $detalle }});" data-popup="tooltip" title="Editar" data-toggle="modal" data-target="#modalUpdateContaDiario" data-keyboard="false"><i class="fa fa-fw fa-edit"></i></a>
 												<a href="#" data-popup="tooltip" title="Eliminar" onClick = "fnEliminarContaDiario({{ $detalle->id }});"><i class="fa fa-fw fa-trash-o"></i></a></td>	
@@ -91,9 +91,9 @@
 																					
 												<td>{{ $detalle->ref }}</td>
 												<td>{{ $detalle->created_at }}</td>
-												<td>{{ $detalle->inicio_caja_bs }}</td>
-												<td>{{ $detalle->ingreso_bs }}</td>
-												<td>{{ $detalle->egreso_bs }}</td>
+												<td>{{ number_format($detalle->inicio_caja_bs,2,".",",") }}</td>
+												<td>{{ number_format($detalle->ingreso_bs,2,".",",") }}</td>
+												<td>{{ number_format($detalle->egreso_bs,2,".",",") }}</td>
 												<td>{{ $detalle->tipo_de_movimiento }}</td>
 												<td><a href="#" onClick = "fnEditarContaInicioCaja({{ $detalle }});" data-popup="tooltip" title="Editar" data-toggle="modal" data-target="#modalUpdateContaInicioCaja" data-keyboard="false"><i class="fa fa-fw fa-edit"></i></a>
 												<a href="#" data-popup="tooltip" title="Eliminar" onClick = "fnEliminarContaDiario({{ $detalle->id }});"><i class="fa fa-fw fa-trash-o"></i></a></td>	
@@ -113,7 +113,7 @@
 									<td></td>
 									<td></td>
 									<td>{{ $datoCaja->fecha_cierre }}</td>
-									<td>{{ $datoCaja->fin_caja_bs }}</td>
+									<td>{{ number_format($datoCaja->fin_caja_bs,2,".",",") }}</td>
 									<td>CIERRE CAJA</td>
 								</tr>
 							@endif

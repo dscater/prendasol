@@ -43,8 +43,8 @@
 							<td>{{ $dato->num_comprobante }}</td>
 							<td>{{ $dato->cod_deno }}</td>
 							<td>{{ $dato->cuenta }}</td>						
-							<td>{{ $dato->debe }}</td>
-							<td>{{ $dato->haber }}</td>	
+							<td>{{ number_format($dato->debe,2,".",",") }}</td>
+							<td>{{ number_format($dato->haber,2,".",",") }}</td>	
 							<td>{{ $dato->tcom }}</td>
 							<td>{{ $dato->ref }}</td>				
 						</tr>

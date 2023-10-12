@@ -53,7 +53,7 @@
                                             @php
                                                 $gestion = substr($datoCaja->contrato->gestion, 2, 2);
                                                 $rescodigo = $datoCaja->contrato->sucural->nuevo_codigo . '' . $gestion . '' . $datoCaja->contrato->codigo_num;
-                                                
+
                                             @endphp
                                             <td>{{ $rescodigo }}</td>
                                         @endif
@@ -79,8 +79,8 @@
                                         <td>{{ number_format((float) $datoCaja->inicio_caja_bs / $valores_cambio->valor_bs, 2, '.', ',') }}
                                             $us</td>
                                     @endif
-                                    <td>{{ $datoCaja->ingreso_bs }}</td>
-                                    <td>{{ $datoCaja->egreso_bs }}</td>
+                                    <td>{{ number_format($datoCaja->ingreso_bs, 2, '.', ',') }}</td>
+                                    <td>{{ number_format($datoCaja->egreso_bs, 2, '.', ',') }}</td>
                                     <td>{{ $datoCaja->tipo_de_movimiento }}</td>
                                 </tr>
                             @endforeach
@@ -243,7 +243,7 @@
         function fnEliminarCierre(e, id, fecha, sucursal, caja) {
             e.preventDefault();
             console.log("asdasdasd");
-            var route = "/InicioFinCaja/" + id+ "";
+            var route = "/InicioFinCaja/" + id + "";
             Swal.fire({
                 title: `ELIMINAR REGISTRO`,
                 html: `¿Está seguro(a) de eliminar este registro?<br/><b>Fecha:</b> ${fecha}<br/><b>Sucursal:</b> ${sucursal}<br/><b>Caja:</b> ${caja}`,

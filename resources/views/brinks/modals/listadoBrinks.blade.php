@@ -35,7 +35,7 @@
 						@endif					
 					<td>{{ $contrato->peso_total }}</td>	
 					<td>{{ $contrato->totalPesoNeto($contrato->id) }}</td>	
-					<td>{{ number_format($contrato->totalTasacion, 2, ',', '.') }}</td>
+					<td>{{ number_format($contrato->totalTasacion, 2, '.', ',') }}</td>
 					<td>{{ $contrato->fecha_contrato }}</td>							
 				</tr>
 			@endforeach

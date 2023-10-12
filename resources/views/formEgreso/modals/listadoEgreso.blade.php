@@ -28,7 +28,7 @@
 					<td>{{ $dato->cuenta }}</td>
 					<td>{{ $dato->caja }}</td>
 					<td>{{ $dato->num_comprobante }}</td>
-					<td>{{ $dato->haber }}</td>	
+					<td>{{ number_format($dato->haber,2,".",",") }}</td>	
 					<td><a href="#" onClick = "fnReimprimirEgreso({{ $dato->id }});" data-popup="tooltip" title="Imprimir"><i class="fa fa-fw fa-file-pdf-o"></i></a></td>			
 				</tr>
 			@endforeach

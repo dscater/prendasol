@@ -3862,22 +3862,35 @@ class PagosController extends Controller
     public function listadoMoras(Request $request)
     {
         $dias = $request->dias;
+
+        // armar días 
+        $dias_inicial = $dias;
+        $dias_maximo = $dias + 29;
+        if ($dias_inicial == 1) {
+            $dias_maximo = 29;
+        }
+
         $contratos = [];
         $today = Carbon::today();
         if ($dias != 'MAS') {
-            $dias_atraso = Carbon::now()->subDays($dias)->startOfDay();
-            $contratos = Contrato::where('fecha_fin', '=', $dias_atraso)
+            // primera fecha sera la mas antigua usando dias maximo
+            $dias_atraso_inicio = Carbon::now()->subDays($dias_maximo)->startOfDay();
+            // segunda fecha la mas actual usando dias_inicial
+            $dias_atraso_fin = Carbon::now()->subDays($dias_inicial)->startOfDay();
+
+            $contratos = Contrato::whereBetween('fecha_fin', [$dias_atraso_inicio, $dias_atraso_fin])
                 ->whereNotIn("contrato.estado_pago", ["Prenda Rematado", "Credito cancelado"])
+                ->orderBY("fecha_fin", "asc")
                 ->paginate(20);
         } else {
-            $dias_atraso = Carbon::now()->subDays(390)->startOfDay();
-            $contratos = Contrato::where('fecha_fin', '<=', $dias_atraso)
+            $dias_atraso_inicio = Carbon::now()->subDays(420)->startOfDay();
+            $contratos = Contrato::where('fecha_fin', '<=', $dias_atraso_inicio)
                 ->whereNotIn("contrato.estado_pago", ["Prenda Rematado", "Credito cancelado"])
                 ->paginate(20);
         }
         $lista_morosidad = $contratos;
 
-        $html = view('pagos.modals.listaMoras', compact('lista_morosidad', 'dias_atraso'))->render();
+        $html = view('pagos.modals.listaMoras', compact('lista_morosidad', 'dias_atraso_inicio'))->render();
 
         return response()->JSON($html);
     }
@@ -3885,16 +3898,28 @@ class PagosController extends Controller
     public function listadoMorasExcel(Request $request)
     {
         $dias = $request->dias;
+        // armar días 
+        $dias_inicial = $dias;
+        $dias_maximo = $dias + 29;
+        if ($dias_inicial == 1) {
+            $dias_maximo = 29;
+        }
+
         $contratos = [];
         $today = Carbon::today();
         if ($dias != 'MAS') {
-            $dias_atraso = Carbon::now()->subDays($dias)->startOfDay();
-            $contratos = Contrato::where('fecha_fin', '=', $dias_atraso)
+            // primera fecha sera la mas antigua usando dias maximo
+            $dias_atraso_inicio = Carbon::now()->subDays($dias_maximo)->startOfDay();
+            // segunda fecha la mas actual usando dias_inicial
+            $dias_atraso_fin = Carbon::now()->subDays($dias_inicial)->startOfDay();
+
+            $contratos = Contrato::whereBetween('fecha_fin', [$dias_atraso_inicio, $dias_atraso_fin])
                 ->whereNotIn("contrato.estado_pago", ["Prenda Rematado", "Credito cancelado"])
+                ->orderBY("fecha_fin", "asc")
                 ->get();
         } else {
-            $dias_atraso = Carbon::now()->subDays(390)->startOfDay();
-            $contratos = Contrato::where('fecha_fin', '<=', $dias_atraso)
+            $dias_atraso_inicio = Carbon::now()->subDays(420)->startOfDay();
+            $contratos = Contrato::where('fecha_fin', '<=', $dias_atraso_inicio)
                 ->whereNotIn("contrato.estado_pago", ["Prenda Rematado", "Credito cancelado"])
                 ->get();
         }
@@ -3973,7 +3998,7 @@ class PagosController extends Controller
             $sheet->setCellValue('H' . $nro_fila, $value->total_capital);
             $sheet->setCellValue('I' . $nro_fila, $value->moneda->desc_corta);
             $sheet->getStyle('B' . $nro_fila . ':I' . $nro_fila)->applyFromArray($styleArray);
-            
+
             $nro_fila++;
         }
         // $sheet->getStyle('B' . $nro_fila . ':G' . $nro_fila)->applyFromArray($styleArray);
@@ -3986,7 +4011,7 @@ class PagosController extends Controller
 
         // DESCARGA DEL ARCHIVO
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8');
-        header('Content-Disposition: attachment;filename="ReporteContratosCancelados.xlsx"');
+        header('Content-Disposition: attachment;filename="ListaMoras.xlsx"');
         header('Cache-Control: max-age=0');
         $writer = IOFactory::createWriter($spreadsheet, 'Xlsx');
         $writer->save('php://output');

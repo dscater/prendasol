@@ -72,8 +72,8 @@
 						@endif					
 					<td>{{ $contrato->capital }}</td>	
 					<td>{{ $diff }}</td>
-					<td>{{ number_format($totalInteresValor, 2, ',', '.') }}</td>
-					<td>{{ number_format($totalMora, 2, ',', '.') }}</td>
+					<td>{{ number_format($totalInteresValor, 2, '.', ',') }}</td>
+					<td>{{ number_format($totalMora, 2, '.', ',') }}</td>
 					<td>{{ $contrato->cliente->persona->celular }}</td>							
 				</tr>
 			@endforeach
@@ -87,8 +87,8 @@
 				<td></td>	
 				<td></td>	
 				<td></td>
-				<td><strong>{{ number_format($totalInteres, 2, ',', '.') }}</strong></td>
-				<td><strong>{{ number_format($totalMorosidad, 2, ',', '.') }}</strong></td>
+				<td><strong>{{ number_format($totalInteres, 2, '.', ',') }}</strong></td>
+				<td><strong>{{ number_format($totalMorosidad, 2, '.', ',') }}</strong></td>
 				<td></td>							
 			</tr>
 		</tbody>

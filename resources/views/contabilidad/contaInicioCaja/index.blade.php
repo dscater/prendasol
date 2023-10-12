@@ -7,7 +7,7 @@
 			<section class="content-header">
 			<div class="header_title">
 				<h3>
-					REPORTE CIRRE DE CAJAS
+					REPORTE CIERRE DE CAJAS
 				</h3>
 			</div>
 			</section>

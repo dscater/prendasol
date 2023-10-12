@@ -15,7 +15,7 @@
                 <tr>
                     <td>{{ $value->sucural1->nombre }}</td>
                     <td>{{ $value->caja }}</td>
-                    <td>{{ $value->inicio_caja_bs }}</td>
+                    <td>{{ number_format($value->inicio_caja_bs,2,".",",") }}</td>
                     <td>{{ $value->fecha_cierre }}</td>
                     <td>{{ $value->usuario->usuario }}</td>
                     <td>
