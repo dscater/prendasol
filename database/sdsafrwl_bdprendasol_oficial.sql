@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: localhost:3306
--- Tiempo de generación: 11-11-2023 a las 16:36:36
+-- Tiempo de generación: 11-11-2023 a las 20:37:27
 -- Versión del servidor: 8.0.30
--- Versión de PHP: 8.1.10
+-- Versión de PHP: 7.3.29
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -798,6 +798,21 @@ CREATE TABLE `persona1` (
 -- --------------------------------------------------------
 
 --
+-- Estructura de tabla para la tabla `plazo_pagos`
+--
+
+CREATE TABLE `plazo_pagos` (
+  `id` bigint UNSIGNED NOT NULL,
+  `contrato_id` bigint UNSIGNED NOT NULL,
+  `descripcion` text COLLATE utf8mb4_general_ci NOT NULL,
+  `fecha_proximo_pago` date NOT NULL,
+  `created_at` timestamp NULL DEFAULT NULL,
+  `updated_at` timestamp NULL DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+-- --------------------------------------------------------
+
+--
 -- Estructura de tabla para la tabla `precio_oro`
 --
 
@@ -1236,6 +1251,12 @@ ALTER TABLE `persona`
   ADD PRIMARY KEY (`id`) USING BTREE;
 
 --
+-- Indices de la tabla `plazo_pagos`
+--
+ALTER TABLE `plazo_pagos`
+  ADD PRIMARY KEY (`id`);
+
+--
 -- Indices de la tabla `precio_oro`
 --
 ALTER TABLE `precio_oro`
@@ -1448,6 +1469,12 @@ ALTER TABLE `pagos`
 --
 ALTER TABLE `persona`
   MODIFY `id` int UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT de la tabla `plazo_pagos`
+--
+ALTER TABLE `plazo_pagos`
+  MODIFY `id` bigint UNSIGNED NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT de la tabla `precio_oro`

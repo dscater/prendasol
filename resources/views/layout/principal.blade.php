@@ -47,6 +47,11 @@
         .logo:hover {
             background: rgb(39, 39, 39) !important;
         }
+
+        .txt_info_span_plazo_pagos{
+            font-weight: bold;
+            margin-left: 6px;
+        }
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->

@@ -242,6 +242,9 @@ class PagosController extends Controller
                 //dd($contratos);
                 if ($contratos) {
                     if ($request->ajax()) {
+                        if (isset($request->plazo_pagos)) {
+                            return view('plazo_pagos.parcial.lista_contratos', ['contratos' => $contratos, 'cliente' => $cliente])->render();
+                        }
                         return view('pagos.modals.listadoContrato', ['contratos' => $contratos, 'datoValidarCaja' => $datoValidarCaja, 'cliente' => $cliente])->render();
                     }
                     return view('pagos.index', compact('contratos', 'cliente', 'datoValidarCaja'));
@@ -3845,6 +3848,9 @@ class PagosController extends Controller
             // dd($codigos);
             if ($codigos) {
                 if ($request->ajax()) {
+                    if (isset($request->plazo_pagos)) {
+                        return view('plazo_pagos.parcial.lista_codigos', ['codigos' => $codigos, 'cliente' => $cliente])->render();
+                    }
                     return view('pagos.modals.listadoCodigos', ['codigos' => $codigos, 'cliente' => $cliente])->render();
                 }
                 return view('pagos.index', compact('codigos', 'datoValidarCaja'));

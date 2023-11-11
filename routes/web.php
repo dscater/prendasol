@@ -10,7 +10,6 @@
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/clear-cache', function () {
   Artisan::call('cache:clear');
   return "Cache is cleared";
@@ -160,6 +159,9 @@ Route::get('Pagos/lista/Mora', 'Pagos\PagosController@listaMora')->name('pagos.l
 Route::get('Pagos/lista/listadoMoras', 'Pagos\PagosController@listadoMoras')->name('pagos.listadoMoras');
 Route::get('Pagos/lista/listadoMorasExcel', 'Pagos\PagosController@listadoMorasExcel')->name('pagos.listadoMorasExcel');
 
+
+// PLAZOS DE PAGOS
+Route::resource("plazo_pagos", 'PlazoPagoController');
 
 /*INICIO FIN CAJA*/
 Route::get('lista_cierres', 'InicioFinCaja\InicioFinCajaController@lista_cierres')->name("InicioFinCaja.lista_cierres");
