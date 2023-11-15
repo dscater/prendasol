@@ -2629,12 +2629,14 @@ class ContratoController extends Controller
 
         $contratos = Contrato::where('estado_id', 1)
             ->where('estado_pago', '!=', 'Credito cancelado')
+            ->where('estado_pago', '!=', 'Prenda Rematado')
             ->get();
 
         if ($fecha != 'todos' && $sucursal != 'todos') {
             $fecha_fin = Carbon::parse($request->fecha_fin)->format('Y-m-d');
             $contratos = Contrato::where('estado_id', 1)
                 ->where('estado_pago', '!=', 'Credito cancelado')
+                ->where('estado_pago', '!=', 'Prenda Rematado')
                 ->where('sucursal_id', $sucursal)
                 ->where('fecha_contrato', '<=', $fecha_fin)
                 ->get();
@@ -2642,11 +2644,13 @@ class ContratoController extends Controller
             $fecha_fin = Carbon::parse($request->fecha_fin)->format('Y-m-d');
             $contratos = Contrato::where('estado_id', 1)
                 ->where('estado_pago', '!=', 'Credito cancelado')
+                ->where('estado_pago', '!=', 'Prenda Rematado')
                 ->where('fecha_contrato', '<=', $fecha_fin)
                 ->get();
         } else if ($fecha == 'todos' && $sucursal != 'todos') {
             $contratos = Contrato::where('estado_id', 1)
                 ->where('estado_pago', '!=', 'Credito cancelado')
+                ->where('estado_pago', '!=', 'Prenda Rematado')
                 ->where('sucursal_id', $sucursal)
                 ->get();
         }

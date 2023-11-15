@@ -17,32 +17,33 @@ class PlazoPagoController extends Controller
     public function index(Request $request)
     {
         if (Session::has('AUTENTICADO')) {
-            $fechaActual = Carbon::now('America/La_Paz')->format('Y-m-d');
+            $fecha_actual = Carbon::now('America/La_Paz')->format('Y-m-d');
+            $fecha_comparacion = date("Y-m-d", strtotime($fecha_actual . '-1 days'));
             if ($request->ajax()) {
                 $plazo_pagos = [];
 
                 if ($request->contrato_id != 0) {
                     $plazo_pagos = PlazoPago::select("plazo_pagos.*")
                         ->where("contrato_id", $request->contrato_id)
-                        ->where("fecha_proximo_pago", ">=", $fechaActual)
+                        ->where("fecha_proximo_pago", ">=", $fecha_comparacion)
                         ->orderBy("fecha_proximo_pago", "asc")
                         ->orderBy("id", "asc")
                         ->paginate(10);
                 } else {
                     $plazo_pagos = PlazoPago::select("plazo_pagos.*")
-                        ->where("fecha_proximo_pago", ">=", $fechaActual)
+                        ->where("fecha_proximo_pago", ">=", $fecha_comparacion)
                         ->orderBy("fecha_proximo_pago", "asc")
                         ->orderBy("id", "asc")
                         ->paginate(10);
                 }
 
-                $lista_html = view("plazo_pagos.parcial.lista_registros", compact("plazo_pagos"))->render();
+                $lista_html = view("plazo_pagos.parcial.lista_registros", compact("plazo_pagos", "fecha_comparacion", "fecha_actual"))->render();
                 return response()->JSON([
                     "lista_html" => $lista_html
                 ]);
             }
 
-            return view('plazo_pagos.index', compact('fechaActual'));
+            return view('plazo_pagos.index', compact('fecha_comparacion'));
         } else {
             return view("layout.login");
         }

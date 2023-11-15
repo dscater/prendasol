@@ -48,9 +48,19 @@
             background: rgb(39, 39, 39) !important;
         }
 
-        .txt_info_span_plazo_pagos{
+        .txt_info_span_plazo_pagos {
             font-weight: bold;
             margin-left: 6px;
+        }
+
+        .bg-rojo {
+            background: rgb(172, 1, 1);
+            color: white;
+        }
+
+        .bg-amarillo {
+            background: rgb(233, 183, 19);
+            color: black;
         }
     </style>
 
@@ -621,9 +631,9 @@
             numero = numero.toString();
             // console.log(numero);
             let array_numero = numero.split(".");
-            let array_decimales = [0,0];
-            if(array_numero[1]){
-                array_decimales=array_numero[1].split("");
+            let array_decimales = [0, 0];
+            if (array_numero[1]) {
+                array_decimales = array_numero[1].split("");
             }
             let numero_ajustado = "";
             if (parseFloat(array_decimales[1]) > 0) {

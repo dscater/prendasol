@@ -17,7 +17,15 @@
             <tbody>
                 @if (count($plazo_pagos) > 0)
                     @foreach ($plazo_pagos as $value)
-                        <tr>
+                        @php
+                            $clase = '';
+                            if ($value->fecha_proximo_pago == $fecha_comparacion) {
+                                $clase = 'bg-rojo';
+                            } elseif ($value->fecha_proximo_pago == $fecha_actual) {
+                                $clase = 'bg-amarillo';
+                            }
+                        @endphp
+                        <tr class="{{ $clase }}">
                             <td>{{ $value->id }}</td>
                             <td>{{ $value->contrato->codigo }}</td>
                             <td>{{ $value->contrato->cliente->persona->nombreCompleto() }}</td>

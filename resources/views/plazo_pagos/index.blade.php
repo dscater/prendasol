@@ -1,7 +1,5 @@
 @extends('layout.principal')
 
-
-
 @section('main-content')
     @include('plazo_pagos.modal.formulario')
     <div class="row">

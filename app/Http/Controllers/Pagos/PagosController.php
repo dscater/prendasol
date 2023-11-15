@@ -243,6 +243,10 @@ class PagosController extends Controller
                 if ($contratos) {
                     if ($request->ajax()) {
                         if (isset($request->plazo_pagos)) {
+                            $contratos = Contrato::where('cliente_id', $cliente->id)->whereIn('estado_id', [1, 3])
+                                ->where('estado_pago', '!=', 'Credito cancelado')
+                                ->where('estado_pago', '!=', 'Prenda Rematado')
+                                ->orderBy('id', 'DESC')->get();
                             return view('plazo_pagos.parcial.lista_contratos', ['contratos' => $contratos, 'cliente' => $cliente])->render();
                         }
                         return view('pagos.modals.listadoContrato', ['contratos' => $contratos, 'datoValidarCaja' => $datoValidarCaja, 'cliente' => $cliente])->render();
@@ -3849,6 +3853,11 @@ class PagosController extends Controller
             if ($codigos) {
                 if ($request->ajax()) {
                     if (isset($request->plazo_pagos)) {
+                        $codigos = Contrato::where('codigo', $request['txtBuscarCodigo'])
+                            ->where('estado_pago', '!=', 'Credito cancelado')
+                            ->where('estado_pago', '!=', 'Prenda Rematado')
+                            ->whereIn('estado_id', [1, 3])
+                            ->orderBy('id', 'DESC')->get();
                         return view('plazo_pagos.parcial.lista_codigos', ['codigos' => $codigos, 'cliente' => $cliente])->render();
                     }
                     return view('pagos.modals.listadoCodigos', ['codigos' => $codigos, 'cliente' => $cliente])->render();
