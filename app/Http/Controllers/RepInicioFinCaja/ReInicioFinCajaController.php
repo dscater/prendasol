@@ -182,6 +182,13 @@ class ReInicioFinCajaController extends Controller
                 $idCaja = 172;
             }
         }
+        if ((int)$id_sucursal == 18) {
+            if ($caja == 1) {
+                $idCaja = 181;
+            } else {
+                $idCaja = 182;
+            }
+        }
         //  dd($idCaja);
         if (Session::has('AUTENTICADO')) {
             $datoValidarCaja =  InicioFinCaja::where('sucursal_id', $id_sucursal)
@@ -340,6 +347,14 @@ class ReInicioFinCajaController extends Controller
                 $idCaja = 171;
             } else {
                 $idCaja = 172;
+            }
+        }
+        
+        if ((int)$id_sucursal == 18) {
+            if ($caja == 1) {
+                $idCaja = 181;
+            } else {
+                $idCaja = 182;
             }
         }
 

@@ -195,6 +195,10 @@ class InicioFinCajaController extends Controller
                 $idCaja = [171, 172];
             }
 
+            if ($id_sucursal == 18) {
+                $idCaja = [181, 182];
+            }
+
             $array_cajas[$sucursal->id] = $idCaja;
 
             for ($i = 0; $i < count($idCaja); $i++) {
