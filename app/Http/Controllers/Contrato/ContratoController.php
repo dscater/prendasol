@@ -344,6 +344,14 @@ class ContratoController extends Controller
                         }
                     }
 
+                    if (session::get('ID_SUCURSAL') == 20) {
+                        if (Session::get('NROCAJA') == 1) {
+                            $codigo_contrato = 'OB1';
+                        } else {
+                            $codigo_contrato = 'OB2';
+                        }
+                    }
+
                     $codigo_contrato .= '-' . Carbon::parse($request['txtFechaContrato'])->format('y');
 
                     $nro_incremental = 2001;
@@ -3214,6 +3222,10 @@ class ContratoController extends Controller
                 $idCaja = [191, 192];
             }
 
+            if ($id_sucursal == 20) {
+                $idCaja = [201, 202];
+            }
+
             $array_cajas[$sucursal->id] = $idCaja;
 
             for ($i = 0; $i < count($idCaja); $i++) {
@@ -3492,6 +3504,10 @@ class ContratoController extends Controller
 
             if ($id_sucursal == 19) {
                 $idCaja = [191, 192];
+            }
+
+            if ($id_sucursal == 20) {
+                $idCaja = [201, 202];
             }
 
             $array_cajas[$sucursal->id] = $idCaja;
@@ -3813,6 +3829,10 @@ class ContratoController extends Controller
                 $idCaja = [191, 192];
             }
 
+            if ($id_sucursal == 20) {
+                $idCaja = [201, 202];
+            }
+
             $array_cajas[$sucursal->id] = $idCaja;
 
             for ($i = 0; $i < count($idCaja); $i++) {
@@ -4099,6 +4119,10 @@ class ContratoController extends Controller
 
             if ($id_sucursal == 19) {
                 $idCaja = [191, 192];
+            }
+
+            if ($id_sucursal == 20) {
+                $idCaja = [201, 202];
             }
 
             $array_cajas[$sucursal->id] = $idCaja;
