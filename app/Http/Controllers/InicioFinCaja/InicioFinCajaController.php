@@ -211,6 +211,10 @@ class InicioFinCajaController extends Controller
                 $idCaja = [211, 212];
             }
 
+            if ($id_sucursal == 22) {
+                $idCaja = [221, 222];
+            }
+
             $array_cajas[$sucursal->id] = $idCaja;
 
             for ($i = 0; $i < count($idCaja); $i++) {

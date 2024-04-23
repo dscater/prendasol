@@ -194,6 +194,13 @@ class ComprobantesController extends Controller
                 $idCaja = 212;
             }
         }
+        if ((int)$id_sucursal == 22) {
+            if ($caja == 1) {
+                $idCaja = 221;
+            } else {
+                $idCaja = 222;
+            }
+        }
         //dd($fechaI);
         $this->cajaGlobal = $idCaja;
         if (Session::has('AUTENTICADO')) {

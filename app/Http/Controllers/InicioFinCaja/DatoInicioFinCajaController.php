@@ -233,6 +233,14 @@ class DatoInicioFinCajaController extends Controller
                         }
                     }
 
+                    if ($id_sucursal == 22) {
+                        if ($caja == 1) {
+                            $idCaja = 221;
+                        } else {
+                            $idCaja = 222;
+                        }
+                    }
+
                     //dd(Carbon::parse($request['txtFecha'])->format('Y-m-d'));
                     $verificarDato = InicioFinCaja::where('sucursal_id', $request['ddlSucursal'])
                         ->where('caja', $idCaja)
