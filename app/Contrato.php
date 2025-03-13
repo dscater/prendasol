@@ -105,7 +105,7 @@ class Contrato extends Model
 		$anio = Carbon::now('America/La_Paz')->format('Y');
 
 		// A PARTIR DE ESTA GESTIÓN SE INICIARA A REGISTRAR LOS CONTRATOS CON EL NUEVO CÓDIGO
-		if ($sucursal == 10 || $sucursal == 11 || $sucursal == 12 || $sucursal == 13 || $sucursal == 14 || $sucursal == 19) {
+		if ($sucursal == 10 || $sucursal == 11 || $sucursal == 12 || $sucursal == 13 || $sucursal == 14 || $sucursal == 19 || $sucursal == 25 || $sucursal == 26 || $sucursal == 27) {
 			$ultimo = DB::select("SELECT SUBSTRING(codigo,9) as cod FROM `contrato`
 			WHERE sucursal_id = $sucursal
 			-- AND fecha_contrato LIKE '$anio-%'

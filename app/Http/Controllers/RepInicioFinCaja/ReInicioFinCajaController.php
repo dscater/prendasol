@@ -231,6 +231,27 @@ class ReInicioFinCajaController extends Controller
                 $idCaja = 242;
             }
         }
+        if ((int)$id_sucursal == 25) {
+            if ($caja == 1) {
+                $idCaja = 251;
+            } else {
+                $idCaja = 252;
+            }
+        }
+        if ((int)$id_sucursal == 26) {
+            if ($caja == 1) {
+                $idCaja = 261;
+            } else {
+                $idCaja = 262;
+            }
+        }
+        if ((int)$id_sucursal == 27) {
+            if ($caja == 1) {
+                $idCaja = 271;
+            } else {
+                $idCaja = 272;
+            }
+        }
         //  dd($idCaja);
         if (Session::has('AUTENTICADO')) {
             $datoValidarCaja =  InicioFinCaja::where('sucursal_id', $id_sucursal)
@@ -445,6 +466,30 @@ class ReInicioFinCajaController extends Controller
                 $idCaja = 241;
             } else {
                 $idCaja = 242;
+            }
+        }
+
+        if ((int)$id_sucursal == 25) {
+            if ($caja == 1) {
+                $idCaja = 251;
+            } else {
+                $idCaja = 252;
+            }
+        }
+
+        if ((int)$id_sucursal == 26) {
+            if ($caja == 1) {
+                $idCaja = 261;
+            } else {
+                $idCaja = 262;
+            }
+        }
+
+        if ((int)$id_sucursal == 27) {
+            if ($caja == 1) {
+                $idCaja = 271;
+            } else {
+                $idCaja = 272;
             }
         }
 

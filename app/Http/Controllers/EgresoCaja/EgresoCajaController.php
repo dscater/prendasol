@@ -270,6 +270,30 @@ class EgresoCajaController extends Controller
                         }
                     }
 
+                    if ($id_sucursal == 25) {
+                        if ($caja == 1) {
+                            $idCaja = 251;
+                        } else {
+                            $idCaja = 252;
+                        }
+                    }
+
+                    if ($id_sucursal == 26) {
+                        if ($caja == 1) {
+                            $idCaja = 261;
+                        } else {
+                            $idCaja = 262;
+                        }
+                    }
+
+                    if ($id_sucursal == 27) {
+                        if ($caja == 1) {
+                            $idCaja = 271;
+                        } else {
+                            $idCaja = 272;
+                        }
+                    }
+
                     /*INSERTAR INICIO FIN CAJA*/
                     $datoInicioCaja = InicioFinCaja::where('sucursal_id', $request['ddlSucursal'])
                         ->where('caja', $idCaja)
