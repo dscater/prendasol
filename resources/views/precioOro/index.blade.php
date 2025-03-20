@@ -29,7 +29,6 @@
             $("#txtVeinticuatroP").val('');
             $('#frmPrecioParametros').bootstrapValidator('frmPrecio', true);
         }
-
     </script>
 
     <div class="row">
@@ -51,17 +50,19 @@
             <label>Fecha: </label>
             <div class="input-group">
                 <span class="input-group-addon"><i class="fa fa-calendar"></i></span>
-                <input type="date" class="form-control" value="{{ Carbon\Carbon::now('America/La_Paz')->format('Y-m-d') }}"
-                    id="txtBuscaFecha" placeholder="Fecha">
+                <input type="date" class="form-control"
+                    value="{{ Carbon\Carbon::now('America/La_Paz')->format('Y-m-d') }}" id="txtBuscaFecha"
+                    placeholder="Fecha">
             </div>
         </div>
         <div class="col-md-2 form-group">
             <label>&nbsp;</label>
             <div style="display:flex;">
-                <button type="button" class="btn btn-warning btn-xs" onclick="fnBuscarPersonas()"><i
+                <button type="button" class="btn btn-warning btn-xs" onclick="fnListarPrecios('/PrecioOro')"><i
                         class="icon-search4 position-left"></i>Buscar</button>
-                <a href="#" data-toggle="modal" data-target="#modalUpdatePrecioParametros" class="btn btn-success btn-sm"
-                    id="btnParametrosCreacion" style="margin-left:3px;">Parametros de creación</a>
+                <a href="#" data-toggle="modal" data-target="#modalUpdatePrecioParametros"
+                    class="btn btn-success btn-sm" id="btnParametrosCreacion" style="margin-left:3px;">Parametros de
+                    creación</a>
             </div>
         </div>
     </div>
@@ -78,6 +79,30 @@
 
     <script type="text/javascript" src="{{ asset('template/dist/js/jquery.js') }}"></script>
     <script type="text/javascript">
+        function fnListarPrecios(url) {
+            var parametros = {
+                'fecha': $("#txtBuscaFecha").val(),
+            };
+            var route = url;
+            $.ajax({
+                type: 'GET',
+                url: route,
+                data: parametros,
+                //dataType: 'json',
+                success: function(data) {
+                    $('#contPrecios').html(data.html);
+                },
+                error: function(error) {
+                    Swal.fire({
+                        title: "PRECIO...",
+                        text: "No se pudo cargar los registros",
+                        confirmButtonColor: "#66BB6A",
+                        confirmButtonText: 'Aceptar',
+                        type: "error"
+                    });
+                }
+            });
+        }
         $(document).ready(function() {
             /*/******************** ANULAR ENTER EN FORMULARIOS ******************/
             $('form').keypress(function(e) {
@@ -103,31 +128,6 @@
                 txtSus.val(_valorSus.val());
                 txtBs.val(_valorBs.val());
             });
-
-            function fnListarPrecios(url) {
-                var parametros = {
-                    'fecha': $("#txtBuscaFecha").val(),
-                };
-                var route = url;
-                $.ajax({
-                    type: 'GET',
-                    url: route,
-                    data: parametros,
-                    //dataType: 'json',
-                    success: function(data) {
-                        $('#contPrecios').html(data.html);
-                    },
-                    error: function(error) {
-                        Swal.fire({
-                            title: "PRECIO...",
-                            text: "No se pudo cargar los registros",
-                            confirmButtonColor: "#66BB6A",
-                            confirmButtonText: 'Aceptar',
-                            type: "error"
-                        });
-                    }
-                });
-            }
 
             /******************** VALIDAR FROMULARIO PARA LA ACTUALIZACION ******************/
             $('#frmPrecio').bootstrapValidator({
@@ -310,6 +310,5 @@
 
 
         });
-
     </script>
 @endsection

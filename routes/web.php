@@ -59,6 +59,10 @@ Route::delete('categoria_clientes/destroy/{categoria_cliente}', 'CategoriaClient
 Route::get('clientes_preferenciales', 'CategoriaClienteController@clientes_preferenciales')->name('clientes_preferenciales');
 Route::get('obtiene_preferenciales', 'CategoriaClienteController@obtiene_preferenciales')->name('obtiene_preferenciales');
 
+//COMISION
+Route::get("comision/contratos", 'ComisionController@comisionContrato')->name("comision.contrato");
+Route::get("comision/prueba", 'ComisionController@prueba')->name("comision.prueba");
+
 /*CONTRATOS*/
 Route::resource('Contrato', 'Contrato\ContratoController');
 Route::get('BuscarClientes', 'Contrato\ContratoController@buscarClientes');
@@ -116,6 +120,15 @@ Route::get('retiros_pendientes/reporte', 'SolicitudRetiroController@retiros_pend
 Route::get('retiros_pendientes/reporte/pdf', 'SolicitudRetiroController@retiros_pendientes_pdf')->name('retiros_pendientes_pdf.retiros_pendientes_pdf');
 Route::get('retiros_pendientes/reporte/excel', 'SolicitudRetiroController@retiros_pendientes_excel')->name('retiros_pendientes_excel.retiros_pendientes_excel');
 
+/*INTERESES ADMINISTRABLES*/
+Route::resource("interes_administrables", 'InteresAdministrableController')->only([
+  "index",
+  "store",
+  "show",
+  "update",
+  "destroy"
+]);
+
 /*PRECIO ORO*/
 Route::resource('PrecioOro', 'Parametro\PrecioOroController');
 Route::get('ObtnerPrecioOro', 'Parametro\PrecioOroController@obtnerPrecioOro');
@@ -158,7 +171,6 @@ Route::get('BuscarContratosCodigo', 'Pagos\PagosController@buscarContratosCodigo
 Route::get('Pagos/lista/Mora', 'Pagos\PagosController@listaMora')->name('pagos.listaMora');
 Route::get('Pagos/lista/listadoMoras', 'Pagos\PagosController@listadoMoras')->name('pagos.listadoMoras');
 Route::get('Pagos/lista/listadoMorasExcel', 'Pagos\PagosController@listadoMorasExcel')->name('pagos.listadoMorasExcel');
-
 
 // PLAZOS DE PAGOS
 Route::resource("plazo_pagos", 'PlazoPagoController');
@@ -217,11 +229,9 @@ Route::resource('RepInicioFinCaja', 'RepInicioFinCaja\ReInicioFinCajaController'
 Route::get('BuscarReInicioFinCaja', 'RepInicioFinCaja\ReInicioFinCajaController@buscarReInicioFinCaja');
 Route::get('ImprimirReInicioFinCaja/{fechaC}/{id_sucursal}/{caja}', 'RepInicioFinCaja\ReInicioFinCajaController@imprimirReInicioFinCaja');
 
-
 /* SUBIR COMPROBANTES */
 Route::resource('Comprobante', 'Contabilidad\ComprobanteController');
 Route::post('StoreTemp', 'Contabilidad\ComprobanteController@storeTemp');
-
 
 /* BRINKS */
 Route::resource('Brinks', 'Reportes\BrinksController');

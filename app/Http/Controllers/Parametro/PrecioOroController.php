@@ -31,13 +31,13 @@ class PrecioOroController extends Controller
             $sucursales = Sucursal::where('estado_id', 1)->get();
 
             if ($request->ajax()) {
-                $resultado = view('precioOro.modal.listaPrecios', compact('precios', 'cambio'))->render();
+                $resultado = view('precioOro.modal.listaPrecios', compact('precios'))->render();
                 return response()->json(['html' => $resultado]);
             }
 
             $valor_oro = ValorOro::first();
 
-            return view('precioOro.index', compact('precios', 'cambio','valor_oro'));
+            return view('precioOro.index', compact('precios','valor_oro'));
         } else {
             return view("layout.login", compact('sucursales'));
         }

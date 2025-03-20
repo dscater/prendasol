@@ -90,6 +90,7 @@ class RematesController extends Controller
 
     public function imprimirRemate(Request $request)
     {
+        set_time_limit(0);
         $filtro = $request->filtro;
         $fecha_ini = date('Y-m-d', strtotime($request->fecha_ini));
         $fecha_fin = date('Y-m-d', strtotime($request->fecha_fin));

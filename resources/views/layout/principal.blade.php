@@ -62,6 +62,10 @@
             background: rgb(233, 183, 19);
             color: black;
         }
+
+        .font-weight-bold {
+            font-weight: bold;
+        }
     </style>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -657,6 +661,7 @@
         // console.log(ajustaDecimal("247.85"));//99.00
         // console.log(ajustaDecimal("247.43"));//99.00
     </script>
+    @yield('scripts')
 
     {{-- <script src="{{ asset('template/dist/js/adminlte.min.js') }}"></script>
 <!-- AdminLTE dashboard demo (This is only for demo purposes) -->

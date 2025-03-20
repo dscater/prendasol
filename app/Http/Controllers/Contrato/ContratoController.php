@@ -22,6 +22,7 @@ use PDF;
 use App\CambioMoneda;
 use App\CategoriaCliente;
 use App\ClienteCategoria;
+use App\Http\Controllers\ComisionController;
 use Illuminate\Support\Facades\DB;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
@@ -29,6 +30,13 @@ use App\PrecioOro;
 
 class ContratoController extends Controller
 {
+    public $comisionController;
+
+    public function __construct()
+    {
+        $this->comisionController = new ComisionController();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -2185,23 +2193,9 @@ class ContratoController extends Controller
         $total_piezas = DB::select("SELECT SUM(cantidad) AS total_piezas FROM detalle_contrato WHERE contrato_id = $contrato->id")[0];
         $peso_b = DB::select("SELECT SUM(peso) AS peso_b FROM detalle_contrato WHERE contrato_id = $contrato->id")[0];
 
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($contrato->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
-
-        $tasa_interes = 5;
-        if ($contrato->total_capital <= $valor_comparacion1) {
-            $tasa_interes = 9.04;
-        } elseif ($contrato->total_capital < $valor_comparacion2) {
-            $tasa_interes = 6.7;
-        } elseif ($contrato->total_capital < $valor_comparacion3) {
-            $tasa_interes = 6;
-        }
+        // OBTENER LA TASA DE INTERES
+        $datoInteres =  $this->comisionController->getInteresComision($contrato->total_capital, $contrato->p_interes, $contrato->moneda_id);
+        $tasa_interes = $datoInteres[0];
 
         $total_capital_convertido = number_format($contrato->total_capital, 2);
         if ($contrato->moneda_id == 1) {

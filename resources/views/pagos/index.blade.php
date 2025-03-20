@@ -257,6 +257,12 @@
         var global_idPago = 0;
         var sw_global_reporte = true;
         var existe_pago_total = false;
+        // async function prueba(){
+        //     const res =await calcularTotlaComision(5000,3,1);
+        //     console.log(res)
+        // }
+        // prueba();
+        
         $(document).ready(function() {
             $('#mensajePagoTotal').css('display','none');
             $('#mensajePagoInteres').css('display','none');
@@ -688,9 +694,9 @@
                 url: route,
                 data: parametros,
                 method: 'GET',
-                success: function(data) {
+                success: async function(data) {
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosPagoTotal(data, contrato);
+                    let datosPago =await getDatosPagoTotal(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -811,9 +817,9 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {          
+                success: async function(data) {          
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosPagoInteres(data, contrato);
+                    let datosPago = await getDatosPagoInteres(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -977,7 +983,7 @@
 
 
         /*************************** CALCULA LA AMORTIZACIÓN ************************************/
-        function fnCalcularAmortizacion(valor) {
+        async function fnCalcularAmortizacion(valor) {
             console.log("valor", valor);
             valorMaximo = $("#txtCapitalPagoTotalA").val();
             //var interes = $("#txtInteres").val();
@@ -986,35 +992,11 @@
             if (parseFloat(valor) <= parseFloat(valorMaximo)) {
                 var valorRestatnte = parseFloat(valorMaximo) - parseFloat(valor);
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (global_monedaContrato == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-
-                if (parseFloat(valor) <= valor_comparacion1) {
-                    var valorGarantia = (valorRestatnte * 9.04) / 100;
-                    //$('#txtNuevoInteres').val(Number(valorGarantia).toFixed(2));
-                    var interes = (valorRestatnte * globalInteresAmor) / 100;
-                    var comision = (valorRestatnte * 7.4) / 100;
-                } else if (parseFloat(valor) < valor_comparacion2) {
-                    var valorGarantia = (valorRestatnte * 6.7) / 100;
-                    var interes = (valorRestatnte * globalInteresAmor) / 100;
-                    var comision = (valorRestatnte * 4.4) / 100;
-                    //$('#txtNuevoInteres').val(Number(valorGarantia).toFixed(2));
-
-                } else if (parseFloat(valor) < valor_comparacion3) {
-                    var valorGarantia = (valorRestatnte * 6) / 100;
-                    var interes = (valorRestatnte * globalInteresAmor) / 100;
-                    var comision = (valorRestatnte * 4.4) / 100;
-                }else{
-                    var valorGarantia = (valorRestatnte * 5) / 100;
-                    var interes = (valorRestatnte * globalInteresAmor) / 100;
-                    var comision = (valorRestatnte * 4.4) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(valor,globalInteresAmor, global_monedaContrato);
+                var valorGarantia = datosTotalComision[0];
+                var interes = (valorRestatnte * globalInteresAmor) / 100;
+                var comision = datosTotalComision[1];
 
                 var txtInteresFechaAD = parseFloat($("#txtInteresFechaAD").val());
                 if (txtInteresFechaAD > 0) {
@@ -1209,9 +1191,9 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {
+                success: async function(data) {
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosPagoAmortizacion(data, contrato);
+                    let datosPago = await getDatosPagoAmortizacion(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -1368,7 +1350,7 @@
                     data: parametros,
                     method: 'GET',
                     //dataType:'json',
-                    success: function(data) {
+                    success: async function(data) {
                         var fecha = new Date();
                         var vDia;
                         var vMes;
@@ -1416,7 +1398,7 @@
                             txtInteresMoratorio = interes_moratorios2.attr('data-val');
                         }
 
-                        let datosPago = getDatosPagoAmortizacionInteres(data, contrato);
+                        let datosPago = await getDatosPagoAmortizacionInteres(data, contrato);
                         let totalGeneral = datosPago.totalGeneral;
                         // let capital = datosPago.capital;
                         let interes = datosPago.interes;
@@ -1780,9 +1762,9 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {
+                success: async function(data) {
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosPagoTotal(data, contrato);
+                    let datosPago = await getDatosPagoTotal(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -1882,7 +1864,7 @@
             });
         }
 
-        function getDatosPagoTotal(data, contrato){
+        async function getDatosPagoTotal(data, contrato){
             let txtBs = data.txtBs;
             let txtSus = data.txtSus;
             let cambioMonedas = data.cambioMonedas;
@@ -1926,32 +1908,12 @@
                 var capital = contrato.capital;
                 var fechaContrato = contrato.fecha_contrato;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
 
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
                 interes= ajustaDecimal(interes); //ajusta decimal interes
                 comision= ajustaDecimal(comision); //ajusta decimal comisión
 
@@ -1965,31 +1927,12 @@
                 var capital = contrato.capital;
                 //var fechaContrato = data.Resultado.fecha_contrato;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
+
             }
             interes= ajustaDecimal(interes); //ajusta decimal interes
             comision= ajustaDecimal(comision); //ajusta decimal comisión
@@ -2039,6 +1982,7 @@
 
             console.log("diaAtrasados", diaAtrasados);
             if (diaAtrasados > 0) {
+                console.log("ATRASADO");
                 // var diaAtrasados1 = diaAtrasados - diasDecuento;
                 var calc = diaAtrasados - diasDecuento;
                 if (calc > 0) {
@@ -2067,6 +2011,7 @@
                     .toFixed(2) + ' ' + data.Resultado.desc_corta + '</b>';
                 var valorDiasAtrasados = diaAtrasados;
             } else {
+                console.log("SIN ATRASO");
                 var diaAtrasados1 = 0;
                 var fechaFin = moment(fechaContrato, 'YYYY/MM/DD');
                 var fechaActual = moment();
@@ -2075,39 +2020,14 @@
                 console.log("diasRango", diasRango);
                 var cuotaMora = 0;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 6.04) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3.7) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }else{
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 2) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var interes1 = (capital * data.Resultado.p_interes) / 100;
+                var comision1 = datosTotalComision[1];
+                var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                var comision = (parseFloat(comision1) / diaActual) * diasRango;
+
                 interes= ajustaDecimal(interes); //ajusta decimal interes
                 comision= ajustaDecimal(comision); //ajusta decimal comisión
 
@@ -2207,8 +2127,6 @@
                 valorDiasAtrasados:valorDiasAtrasados
             };
         }
-        
-
         // FIN DATOS PAGO TOTAL
 
         function fnDatoPagoInteres(contrato) {
@@ -2237,9 +2155,9 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {
+                success: async function(data) {
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosPagoInteres(data, contrato);
+                    let datosPago = await getDatosPagoInteres(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -2342,7 +2260,7 @@
             });
         }
 
-        function getDatosPagoInteres(data,contrato){
+        async function getDatosPagoInteres(data,contrato){
             let txtBs = data.txtBs;
             let txtSus = data.txtSus;
             let cambioMonedas = data.cambioMonedas;
@@ -2386,32 +2304,11 @@
                 var capital = contrato.capital;
                 var fechaContrato = contrato.fecha_contrato;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
 
             } else {
                 console.log("con detalle", data.Resultado);
@@ -2424,32 +2321,11 @@
                 var capital = contrato.capital;
                 //var fechaContrato = data.Resultado.fecha_contrato;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
             }
             interes= ajustaDecimal(interes); //ajusta decimal interes
             comision= ajustaDecimal(comision); //ajusta decimal comisión
@@ -2542,41 +2418,14 @@
                 console.log("diasRango VALO", diasRango);
                 var cuotaMora = 0;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var interes1 = (capital * data.Resultado.p_interes) / 100;
+                var comision1 = datosTotalComision[1];
+                var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                var comision = (parseFloat(comision1) / diaActual) * diasRango;
 
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 6.04) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3.7) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }else{
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 2) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }
                 interes= ajustaDecimal(interes); //ajusta decimal interes
                 comision= ajustaDecimal(comision); //ajusta decimal comisión
 
@@ -2698,9 +2547,9 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {
+                success: async function(data) {
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosPagoAmortizacion(data, contrato);
+                    let datosPago = await getDatosPagoAmortizacion(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -2806,7 +2655,7 @@
 
         }
 
-        function getDatosPagoAmortizacion(data,contrato){
+        async function getDatosPagoAmortizacion(data,contrato){
             let amortizacion = parseFloat($("#txtAmortizacion").val().trim()!=""?$("#txtAmortizacion").val().trim():0);
             let txtBs = data.txtBs;
             let txtSus = data.txtSus;
@@ -2829,32 +2678,11 @@
                 var capital = contrato.capital;
                 var fechaContrato = contrato.fecha_contrato;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
 
             } else {
                 console.log("con detalle", data.Resultado);
@@ -2869,32 +2697,12 @@
                 // var capital = data.Resultado.capital;
                 var capital = contrato.capital;
                 //var fechaContrato = data.Resultado.fecha_contrato;
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
 
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
             }
             interes= ajustaDecimal(interes); //ajusta decimal interes
             comision= ajustaDecimal(comision); //ajusta decimal comisión
@@ -2938,24 +2746,10 @@
             //var fechaActual = moment(fecha.getFullYear() +"-" +vMes +"-"+ vDia);
             var fechaActual = moment($("#txtFechaActualA").val());
 
-            var valor_comparacion1 = 3499;
-            var valor_comparacion2 = 10000;
-            var valor_comparacion3 = 15000;
-            if (data.Resultado.moneda_id == 2) {
-                valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-            }
+            // CALCULAR MONTO TOTAL Y COMISION
+            const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+            var totalInteresValor = datosTotalComision[0];
 
-            if (parseFloat(capital) <= valor_comparacion1) {
-                var totalInteresValor = (capital * 9.04) / 100;
-            } else if (parseFloat(capital) < valor_comparacion2) {
-                var totalInteresValor = (capital * 6.7) / 100;
-            } else if (parseFloat(capital) < valor_comparacion3) {
-                var totalInteresValor = (capital * 6) / 100;
-            }else{
-                var totalInteresValor = (capital * 5) / 100;
-            }
             totalInteresValor= ajustaDecimal(totalInteresValor); //ajusta decimal interes
 
             var fechaInteresInicial = '2020-03-22';
@@ -3035,40 +2829,14 @@
                 console.log("diasRango", diasRango);
                 var cuotaMora = 0;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var interes1 = (capital * data.Resultado.p_interes) / 100;
+                var comision1 = datosTotalComision[1];
+                var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                var comision = (parseFloat(comision1) / diaActual) * diasRango;
 
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 6.04) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3.7) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }else{
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 2) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }
                 interes= ajustaDecimal(interes); //ajusta decimal interes
                 comision= ajustaDecimal(comision); //ajusta decimal comisión
 
@@ -3207,9 +2975,9 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {
+                success:async function(data) {
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosPagoAmortizacionInteres(data, contrato);
+                    let datosPago = await getDatosPagoAmortizacionInteres(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -3295,7 +3063,7 @@
             });
         }
 
-        function getDatosPagoAmortizacionInteres(data,contrato){
+        async function getDatosPagoAmortizacionInteres(data,contrato){
             let txtBs = data.txtBs;
             let txtSus = data.txtSus;
             let cambioMonedas = data.cambioMonedas;
@@ -3360,32 +3128,11 @@
                 var capital = contrato.capital;
                 var fechaContrato = contrato.fecha_contrato;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
 
             } else {
                 console.log("con detalle", data.Resultado);
@@ -3398,32 +3145,11 @@
                 var capital = contrato.capital;
                 //var fechaContrato = data.Resultado.fecha_contrato;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
             }
             interes = ajustaDecimal(interes);//ajustar decimal interes
             comision = ajustaDecimal(comision);//ajustar decimal comision
@@ -3516,41 +3242,14 @@
                 console.log("diasRango VALO", diasRango);
                 var cuotaMora = 0;
             
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var interes1 = (capital * data.Resultado.p_interes) / 100;
+                var comision1 = datosTotalComision[1];
+                var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
+                var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                var comision = (parseFloat(comision1) / diaActual) * diasRango;
 
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 6.04) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3.7) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }else{
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 2) / 100;
-                    var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }
                 interes = ajustaDecimal(interes);//ajustar decimal interes
                 comision = ajustaDecimal(comision);//ajustar decimal comision
                 totalInteresValor1 = ajustaDecimal(totalInteresValor1);//ajustar decimal comision
@@ -3725,9 +3424,9 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {
+                success:async function(data) {
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosRemate(data, contrato);
+                    let datosPago = await getDatosRemate(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -3805,7 +3504,7 @@
             });
         }
 
-        function getDatosRemate(data,contrato){
+        async function getDatosRemate(data,contrato){
             let txtBs = data.txtBs;
             let txtSus = data.txtSus;
             let cambioMonedas = data.cambioMonedas;
@@ -3850,32 +3549,11 @@
                 var capital = contrato.capital;
                 var fechaContrato = contrato.fecha_contrato;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
-
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
 
             } else {
                 console.log("con detalle", data.Resultado);
@@ -3886,32 +3564,12 @@
                 // var capital = data.Resultado.capital;
                 var capital = contrato.capital;
                 //var fechaContrato = data.Resultado.fecha_contrato;
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
 
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor = (capital * 9.04) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 6.04) / 100;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor = (capital * 6.7) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3.7) / 100;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor = (capital * 6) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 3) / 100;
-                }else{
-                    var totalInteresValor = (capital * 5) / 100;
-                    var interes = (capital * data.Resultado.p_interes) / 100;
-                    var comision = (capital * 2) / 100;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor = datosTotalComision[0];
+                var interes = (capital * data.Resultado.p_interes) / 100;
+                var comision = datosTotalComision[1];
             }
             interes = ajustaDecimal(interes)//ajustar decimal interes
             comision = ajustaDecimal(comision)//ajustar decimal comision
@@ -3960,40 +3618,14 @@
                 console.log("diasRango", diasRango);
                 var cuotaMora = 0;
 
-                var valor_comparacion1 = 3499;
-                var valor_comparacion2 = 10000;
-                var valor_comparacion3 = 15000;
-                if (data.Resultado.moneda_id == 2) {
-                    valor_comparacion1 = 3499 / data.cambioMonedas.valor_bs;
-                    valor_comparacion2 = 10000 / data.cambioMonedas.valor_bs;
-                    valor_comparacion3 = 15000 / data.cambioMonedas.valor_bs;
-                }
+                // CALCULAR MONTO TOTAL Y COMISION
+                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
+                var interes1 = (capital * data.Resultado.p_interes) / 100;
+                var comision1 = datosTotalComision[1];
+                var interes = (parseFloat(interes1) / diaActual) * diasRango;
+                var comision = (parseFloat(comision1) / diaActual) * diasRango;
 
-                if (parseFloat(capital) <= valor_comparacion1) {
-                    var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 6.04) / 100;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                } else if (parseFloat(capital) < valor_comparacion2) {
-                    var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3.7) / 100;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                } else if (parseFloat(capital) < valor_comparacion3) {
-                    var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 3) / 100;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }else{
-                    var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
-                    var interes1 = (capital * data.Resultado.p_interes) / 100;
-                    var comision1 = (capital * 2) / 100;
-                    var interes = (parseFloat(interes1) / diaActual) * diasRango;
-                    var comision = (parseFloat(comision1) / diaActual) * diasRango;
-                }
                 interes = ajustaDecimal(interes)//ajustar decimal interes
                 comision = ajustaDecimal(comision)//ajustar decimal comision
                 totalInteresValor1 = ajustaDecimal(totalInteresValor1)//ajustar decimal totalInteresValor1
@@ -4060,9 +3692,9 @@
                 data: parametros,
                 method: 'GET',
                 //dataType:'json',
-                success: function(data) {
+                success: async function(data) {
                     let moneda_pago = data.Resultado.moneda_id
-                    let datosPago = getDatosRemate(data, contrato);
+                    let datosPago = await getDatosRemate(data, contrato);
                     let totalGeneral = datosPago.totalGeneral;
                     let capital = datosPago.capital;
                     let interes = datosPago.interes;
@@ -4269,5 +3901,33 @@
             }
         });
 
+        /*
+        * Funcion para calcular el total y comision
+        */
+        async function calcularTotlaComision(monto,interes,moneda){
+            var interesAdministrable = await obtenerMontoComision(parseFloat(monto),moneda);
+			var totalInteres = parseFloat(interes??0) + interesAdministrable.porcentaje;
+            var total = (monto * totalInteres) / 100;
+            var comision = (monto * parseFloat(interesAdministrable.porcentaje)) / 100;
+            return [total,comision];
+        }
+
+        // obtener valores de intereses
+		function obtenerMontoComision(monto,moneda) {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					type: "GET",
+					url: '{{ route("comision.contrato")}}',
+					data: { monto: monto,moneda:moneda },
+					dataType: "json",
+					success: function (response) {
+						resolve(response.interes_administrable);
+					},
+					error: function (error) {
+						reject(error);
+					}
+				});
+			});
+		}
     </script>
 @endsection

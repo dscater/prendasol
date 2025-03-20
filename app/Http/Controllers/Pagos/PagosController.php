@@ -20,6 +20,7 @@ use App\NumberToLetterConverter;
 use DateTime;
 use Illuminate\Support\Facades\DB;
 use App\CambioMoneda;
+use App\Http\Controllers\ComisionController;
 use App\Http\Controllers\Contrato\ContratoController;
 use App\Moneda;
 use App\Sucursal;
@@ -30,6 +31,13 @@ use Illuminate\Support\Facades\Log;
 
 class PagosController extends Controller
 {
+    public $comisionController;
+
+    public function __construct()
+    {
+        $this->comisionController = new ComisionController();
+    }
+
     /**
      * Display a listing of the resource.
      *
@@ -1014,8 +1022,7 @@ class PagosController extends Controller
                     $resta_mora = $interes_moratorios2 - $moratorio_calculado_sus;
                     $total_ai = $request->cancelado_sus;
                 }
-                $resta_mora = \number_format($resta_mora, 2);
-
+                $resta_mora = round($resta_mora, 2);
                 $idPago = Pagos::create([
                     'contrato_id'          => $request['idContrato'],
                     'sucursal_id'          => session::get('ID_SUCURSAL'),
@@ -1439,28 +1446,10 @@ class PagosController extends Controller
         $cuota_mora_convertido = 0;
         $primer_pago_capital = Pagos::where('contrato_id', $pago->contrato_id)->get()->first();
 
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
-
-        if ((float)$pago->capital <= $valor_comparacion1) {
-            $interes = ((float)$pago->capital * $pago->contrato->p_interes) / 100;
-            $comision = ((float)$pago->capital * 6.04) / 100;
-        } elseif ($pago->capital < $valor_comparacion2) {
-            $interes = ((float)$pago->capital * $pago->contrato->p_interes) / 100;
-            $comision = ((float)$pago->capital * 3.7) / 100;
-        } elseif ($pago->capital < $valor_comparacion3) {
-            $interes = ((float)$pago->capital * $pago->contrato->p_interes) / 100;
-            $comision = ((float)$pago->capital * 3) / 100;
-        } else {
-            $interes = ((float)$pago->capital * $pago->contrato->p_interes) / 100;
-            $comision = ((float)$pago->capital * 2) / 100;
-        }
+        // OBTENER INTERES Y COMISIÓN
+        $datosMonto = $this->comisionController->calcularTotalInteresComision($pago->capital, $pago->contrato->p_interes, $pago->moneda_id);
+        $interes = $datosMonto[1];
+        $comision = $datosMonto[2];
 
         $totalInteres = (float)$pago->capital + (float)$interes + (float)$comision;
 
@@ -1487,24 +1476,6 @@ class PagosController extends Controller
             $interes_convertido = $pago->interes;
             $comision_convertido = $pago->comision;
             $cuota_mora_convertido = $pago->cuota_mora;
-        }
-
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
-
-        $tasa_interes = 5;
-        if ($totalPagar <= $valor_comparacion1) {
-            $tasa_interes = 9.04;
-        } elseif ($totalPagar < $valor_comparacion2) {
-            $tasa_interes = 6.7;
-        } elseif ($totalPagar < $valor_comparacion3) {
-            $tasa_interes = 6;
         }
 
         // $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
@@ -1659,28 +1630,10 @@ class PagosController extends Controller
             $pdf::Cell($w = 0, $h = 0, $txt = $pago->caja . '  ' . $resCodigo, $border = 0, $ln = 50, $align = '', $fill = false, $link = '', $stretch = 0, $ignore_min_height = false, $calign = 'B', $valign = 'B');
         }
 
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
-
-        if ((float)$pago->capital <= $valor_comparacion1) {
-            $interes = ((float)$pago->capital * $pago->contrato->p_interes) / 100;
-            $comision = ((float)$pago->capital * 6.04) / 100;
-        } elseif ($pago->capital < $valor_comparacion2) {
-            $interes = ((float)$pago->capital * $pago->contrato->p_interes) / 100;
-            $comision = ((float)$pago->capital * 3.7) / 100;
-        } elseif ($pago->capital < $valor_comparacion3) {
-            $interes = ((float)$pago->capital * $pago->contrato->p_interes) / 100;
-            $comision = ((float)$pago->capital * 3) / 100;
-        } else {
-            $interes = ((float)$pago->capital * $pago->contrato->p_interes) / 100;
-            $comision = ((float)$pago->capital * 2) / 100;
-        }
+        // OBTENER INTERES Y COMISIÓN
+        $datosMonto = $this->comisionController->calcularTotalInteresComision($pago->capital, $pago->contrato->p_interes, $pago->moneda_id);
+        $interes = $datosMonto[1];
+        $comision = $datosMonto[2];
 
         $totalInteres = (float)$pago->capital + (float)$interes + (float)$comision;
 
@@ -1714,24 +1667,6 @@ class PagosController extends Controller
             $totalInteres_convertido = $totalInteres;
             $interes_convertido = $pago->interes;
             $comision_convertido = $pago->comision;
-        }
-
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
-
-        $tasa_interes = 5;
-        if ($totalPagar <= $valor_comparacion1) {
-            $tasa_interes = 9.04;
-        } elseif ($totalPagar < $valor_comparacion2) {
-            $tasa_interes = 6.7;
-        } elseif ($totalPagar < $valor_comparacion3) {
-            $tasa_interes = 6;
         }
 
         // $totalPagar_convertido = CambioMoneda::ajustaDecimal($totalPagar_convertido);
@@ -1910,23 +1845,9 @@ class PagosController extends Controller
             $totalPagar_convertido = $totalPagar;
         }
 
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
-
-        $tasa_interes = 5;
-        if ($totalPagar <= $valor_comparacion1) {
-            $tasa_interes = 9.04;
-        } elseif ($totalPagar < $valor_comparacion2) {
-            $tasa_interes = 6.7;
-        } elseif ($totalPagar < $valor_comparacion3) {
-            $tasa_interes = 6;
-        }
+        // OBTENER LA TASA DE INTERES
+        $datoInteres =  $this->comisionController->getInteresComision($totalPagar, $pago->contrato->p_interes, $pago->moneda_id);
+        $tasa_interes = $datoInteres[0];
 
         $gastos_deuda = 0;
         $porcentaje_deuda = $tasa_interes - $pago->contrato->p_interes;
@@ -2100,23 +2021,10 @@ class PagosController extends Controller
             $totalPagar_convertido = $totalPagar;
         }
 
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
 
-        $tasa_interes = 5;
-        if ($totalPagar <= $valor_comparacion1) {
-            $tasa_interes = 9.04;
-        } elseif ($totalPagar < $valor_comparacion2) {
-            $tasa_interes = 6.7;
-        } elseif ($totalPagar < $valor_comparacion3) {
-            $tasa_interes = 6;
-        }
+        // OBTENER LA TASA DE INTERES
+        $datoInteres =  $this->comisionController->getInteresComision($totalPagar, $pago->contrato->p_interes, $pago->moneda_id);
+        $tasa_interes = $datoInteres[0];
 
         // $gastos_deuda = 0;
         // $porcentaje_deuda = $tasa_interes - $pago->contrato->p_interes;
@@ -2585,16 +2493,6 @@ class PagosController extends Controller
         //dd($cliente);
         $valores_cambio = CambioMoneda::first();
 
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
-
         $interes = $pago->interes;
         $comision = $pago->comision;
 
@@ -2794,15 +2692,6 @@ class PagosController extends Controller
         //dd($cliente);
 
         $valores_cambio = CambioMoneda::first();
-
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
 
         $interes = $pago->interes;
         $comision = $pago->comision;
@@ -3005,15 +2894,6 @@ class PagosController extends Controller
         $cliente = Cliente::where('id', $pago->contrato->cliente_id)->first();
         //dd($cliente);
         $valores_cambio = CambioMoneda::first();
-
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
-        if ($pago->moneda_id == 2) {
-            $valor_comparacion1 = 3499 / $valores_cambio->valor_bs;
-            $valor_comparacion2 = 10000 / $valores_cambio->valor_bs;
-            $valor_comparacion3 = 15000 / $valores_cambio->valor_bs;
-        }
 
         $totalInteres = (float)$pago->capital + (float)$pago->interes + (float)$pago->comision;
         $capitalPagado = (float)$pago->dias_atraso_total - (float)$pago->capital;
@@ -4043,15 +3923,19 @@ class PagosController extends Controller
         foreach ($pagos as $pago) {
             $comision = 0;
             $capital = $pago->dias_atraso_total;
-            if ((float)($capital) <= $valor_comparacion1) {
-                $comision = ($capital * 6.04) / 100;
-            } else if ((float)($capital) < $valor_comparacion2) {
-                $comision = ($capital * 3.7) / 100;
-            } else if ((float)($capital) < $valor_comparacion3) {
-                $comision = ($capital * 3) / 100;
-            } else {
-                $comision = ($capital * 2) / 100;
-            }
+
+            // obtener comision
+            $datosMonto = $this->comisionController->calcularTotalInteresComision($capital, $pago->contrato->p_interes, $pago->moneda_id);
+            $comision = $datosMonto[2];
+            // if ((float)($capital) <= $valor_comparacion1) {
+            //     $comision = ($capital * 6.04) / 100;
+            // } else if ((float)($capital) < $valor_comparacion2) {
+            //     $comision = ($capital * 3.7) / 100;
+            // } else if ((float)($capital) < $valor_comparacion3) {
+            //     $comision = ($capital * 3) / 100;
+            // } else {
+            //     $comision = ($capital * 2) / 100;
+            // }
             $pago->comision = $comision;
             $pago->save();
 
@@ -4107,9 +3991,7 @@ class PagosController extends Controller
         $pagos = Pagos::where('estado', 'AMORTIZACIÓN')
             ->where('dias_atraso', '<=', '0')
             ->get();
-        $valor_comparacion1 = 3499;
-        $valor_comparacion2 = 10000;
-        $valor_comparacion3 = 15000;
+
         foreach ($pagos as $pago) {
             // TABLA INICIO FIN CAJA DETALLE
             $datosCaja = InicioFinCajaDetalle::where('pago_id', $pago->id)->get()->first();

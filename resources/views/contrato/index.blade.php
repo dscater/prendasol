@@ -674,7 +674,7 @@
 	    });
 
 	    /*FUNCION ACTUALIZAR EL TOTAL DE 10 klts*/
-		function fnActualizarTotal10klts() {
+		async function fnActualizarTotal10klts() {
 	        var total10klts = 0;
 	        $('.10klts').each(function () {
 	            total10klts += +$(this).val();
@@ -695,30 +695,9 @@
 	        $('#txtCreditoMax').val(Number(maxPrecioKlts).toFixed(2));
 	        $('#txtCreditoPrestar').val(Number(maxPrecioKlts).toFixed(2));
 
-			var valor_comparacion1 = 3499;
-			var valor_comparacion2 = 10000;
-			var valor_comparacion3 = 15000;
-			if($('#txtMoneda').val() == 2)
-			{
-				valor_comparacion1 = 3499 / valor_bs;
-				valor_comparacion2 = 10000 / valor_bs;
-				valor_comparacion3 = 15000 / valor_bs;
-			}
+			// generar monto maximo de credito
+			await generarMontoCreditoMax(maxPrecioKlts);
 
-	        if (parseFloat(maxPrecioKlts)<= valor_comparacion1) {
-	        	var valorGarantia = (maxPrecioKlts * 9.04)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-	        }
-	        else if(parseFloat(maxPrecioKlts) < valor_comparacion2){
-	        	var valorGarantia = (maxPrecioKlts * 6.7)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-	        }else if(parseFloat(maxPrecioKlts) < valor_comparacion3){
-				var valorGarantia = (maxPrecioKlts * 6)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-			}else{
-				var valorGarantia = (maxPrecioKlts * 5)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-			}
 	        fnRevalidarFormulario();
 	    }
 
@@ -729,7 +708,7 @@
 	    });
 
 	    /*FUNCION ACTUALIZAR EL TOTAL DE 14 klts*/
-		function fnActualizarTotal14klts() {
+		async function fnActualizarTotal14klts() {
 	        var total14klts = 0;
 	        $('.14klts').each(function () {
 	            total14klts += +$(this).val();
@@ -744,31 +723,9 @@
 	        $('#txtCreditoMax').val(Number(maxPrecioKlts).toFixed(2));
 	        $('#txtCreditoPrestar').val(Number(maxPrecioKlts).toFixed(2));
 
-			var valor_comparacion1 = 3499;
-			var valor_comparacion2 = 10000;
-			var valor_comparacion3 = 15000;
-			if($('#txtMoneda').val() == 2)
-			{
-				valor_comparacion1 = 3499 / valor_bs;
-				valor_comparacion2 = 10000 / valor_bs;
-				valor_comparacion3 = 15000 / valor_bs;
-			}
+			// generar monto maximo de credito
+			await generarMontoCreditoMax(maxPrecioKlts);
 
-	        if (parseFloat(maxPrecioKlts)<= valor_comparacion1) {
-	        	var valorGarantia = (maxPrecioKlts * 9.04)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-	        }
-	        else if(parseFloat(maxPrecioKlts) < valor_comparacion2){
-	        	var valorGarantia = (maxPrecioKlts * 6.7)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-	        }else if(parseFloat(maxPrecioKlts) < valor_comparacion3){
-				var valorGarantia = (maxPrecioKlts * 6)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-			}else{
-				var valorGarantia = (maxPrecioKlts * 5)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-			}
-			
 	        fnRevalidarFormulario();
 	    }
 
@@ -779,7 +736,7 @@
 	    });
 
 	    /*FUNCION ACTUALIZAR EL TOTAL DE 18 klts*/
-		function fnActualizarTotal18klts() {
+		async function fnActualizarTotal18klts() {
 	        var total18klts = 0;
 
 	        $('.18klts').each(function () {
@@ -795,30 +752,8 @@
 	        $('#txtCreditoMax').val(Number(maxPrecioKlts).toFixed(2));
 	        $('#txtCreditoPrestar').val(Number(maxPrecioKlts).toFixed(2));
 
-			var valor_comparacion1 = 3499;
-			var valor_comparacion2 = 10000;
-			var valor_comparacion3 = 15000;
-			if($('#txtMoneda').val() == 2)
-			{
-				valor_comparacion1 = 3499 / valor_bs;
-				valor_comparacion2 = 10000 / valor_bs;
-				valor_comparacion3 = 15000 / valor_bs;
-			}
-
-	        if (parseFloat(maxPrecioKlts)<= valor_comparacion1) {
-	        	var valorGarantia = (maxPrecioKlts * 9.04)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-	        }
-	        else if(parseFloat(maxPrecioKlts) < valor_comparacion2){
-	        	var valorGarantia = (maxPrecioKlts * 6.7)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-	        }else if(parseFloat(maxPrecioKlts) < valor_comparacion3){
-				var valorGarantia = (maxPrecioKlts * 6)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-			}else{
-				var valorGarantia = (maxPrecioKlts * 5)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-			}
+			// generar monto maximo de credito
+			await generarMontoCreditoMax(maxPrecioKlts);
 			
 	        fnRevalidarFormulario();
 	    }
@@ -830,7 +765,7 @@
 	    });
 
 	    /*FUNCION ACTUALIZAR EL TOTAL DE 18 klts*/
-		function fnActualizarTotal24klts() {
+		async function fnActualizarTotal24klts() {
 	        var total24klts = 0;
 	        $('.24klts').each(function () {
 	            total24klts += +$(this).val();
@@ -845,30 +780,10 @@
 	        $('#txtCreditoMax').val(Number(maxPrecioKlts).toFixed(2));
 	        $('#txtCreditoPrestar').val(Number(maxPrecioKlts).toFixed(2));
 
-			var valor_comparacion1 = 3499;
-			var valor_comparacion2 = 10000;
-			var valor_comparacion3 = 15000;
-			if($('#txtMoneda').val() == 2)
-			{
-				valor_comparacion1 = 3499 / valor_bs;
-				valor_comparacion2 = 10000 / valor_bs;
-				valor_comparacion3 = 15000 / valor_bs;
-			}
-
-	        if (parseFloat(maxPrecioKlts)<= valor_comparacion1) {
-	        	var valorGarantia = (maxPrecioKlts * 9.04)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-	        }
-	        else if(parseFloat(maxPrecioKlts) < valor_comparacion2){
-	        	var valorGarantia = (maxPrecioKlts * 6.7)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-	        }else if(parseFloat(maxPrecioKlts) < valor_comparacion3){
-				var valorGarantia = (maxPrecioKlts * 6)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-			}else{
-				var valorGarantia = (maxPrecioKlts * 5)/100;
-	        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-			}
+			
+			// generar monto maximo de credito
+			await generarMontoCreditoMax(maxPrecioKlts);
+			
 	        fnRevalidarFormulario();
 	    }
 
@@ -934,7 +849,7 @@
 	    }
 
 	    /******************************** REGISTRA CONTRATOS Y DETALLES *****************************************/
-	    $("#btnRegistrar").click(function(){
+	    $("#btnRegistrar").click(async function(){
 	        
 	     	var validarContrato = $("#frmContrato").data('bootstrapValidator'); 
 	     	//console.log(validarContrato);	     	
@@ -944,31 +859,9 @@
 	        	//$(this).attr('disabled');
 	        	var valorPrestar = $("#txtCreditoPrestar").val();
 
-				var valor_comparacion1 = 3499;
-				var valor_comparacion2 = 10000;
-				var valor_comparacion3 = 15000;
-				if($('#txtMoneda').val() == 2)
-				{
-					valor_comparacion1 = 3499 / valor_bs;
-					valor_comparacion2 = 10000 / valor_bs;
-					valor_comparacion3 = 15000 / valor_bs;
-				}
-				
-		     	if (parseFloat(valorPrestar)<= valor_comparacion1) {
-		        	var nuevoInteres = (valorPrestar * parseFloat('#txtInteres').val())/100;
-		        	var nuevoComision = (valorPrestar * 6.04)/100;
-		        }
-		        else if(parseFloat(valorPrestar) < valor_comparacion2){
-		        	var nuevoInteres = (valorPrestar * parseFloat('#txtInteres').val())/100;
-		        	var nuevoComision = (valorPrestar * 3.7)/100;
-		        }
-				else if(parseFloat(valorPrestar) < valor_comparacion3){
-					var nuevoInteres = (valorPrestar * parseFloat('#txtInteres').val())/100;
-		        	var nuevoComision = (valorPrestar * 3)/100;
-				}else{
-					var nuevoInteres = (valorPrestar * parseFloat('#txtInteres').val())/100;
-		        	var nuevoComision = (valorPrestar * 2)/100;
-				}
+				// CALCULAR MONTO DE COMISION
+				var nuevoComision = await calcularMontoComisionGarantia(parseFloat(valorPrestar), $('#txtMoneda').val())
+				var nuevoInteres = (valorPrestar * parseFloat('#txtInteres').val())/100;
 
 	        	console.log("totalTasacion10klts",totalTasacion10klts);
 	        	console.log("totalTasacion14klts",totalTasacion14klts);
@@ -1122,37 +1015,17 @@
 		}
 
 		/******************************* CALCULA EL VALOR A PRESTAR *******************************************************/
-	    function fnCreditoPrestar(valor){
+	    async function fnCreditoPrestar(valor){
 			console.log("valor",valor);
 
 			valorMaximo = $("#txtCreditoMax").val();
 			console.log("valorMaximo",valorMaximo);
 			if (parseFloat(valor) <= parseFloat(valorMaximo)) {
 
-				var valor_comparacion1 = 3499;
-				var valor_comparacion2 = 10000;
-				var valor_comparacion3 = 15000;
-				if($('#txtMoneda').val() == 2)
-				{
-					valor_comparacion1 = 3499 / valor_bs;
-					valor_comparacion2 = 10000 / valor_bs;
-					valor_comparacion3 = 15000 / valor_bs;
-				}
+				// CALCULAR MONTO DE GARANTIA
+				var valorGarantia = await calcularMontoComisionGarantia(parseFloat(valor), $('#txtMoneda').val())
+				$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
 
-				if (parseFloat(valor)<= valor_comparacion1) {
-		        	var valorGarantia = (valor * 9.04)/100;
-		        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-		        }
-		        else if(parseFloat(valor) < valor_comparacion2){
-		        	var valorGarantia = (valor * 6.7)/100;
-		        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-		        }else if(parseFloat(valor) < valor_comparacion3){
-					var valorGarantia = (valor * 6)/100;
-		        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-				}else{
-					var valorGarantia = (valor * 5)/100;
-		        	$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
-				}
 			}
 			else{
 				$("#txtCreditoPrestar").val('');
@@ -1277,7 +1150,7 @@
 			fnImprimirCambioContrato(id);   
 		}
 
-	    function fnRegistrarContrato(id){
+	    async function fnRegistrarContrato(id){
 	    	
 	    	/******************************** REGISTRA CONTRATOS Y DETALLES *****************************************/
 	        var route="/Contrato";
@@ -1285,30 +1158,9 @@
 	     	console.log(validarContrato);
 	     	var valorPrestar = $("#txtCreditoPrestar").val();
 
-			var valor_comparacion1 = 3499;
-			var valor_comparacion2 = 10000;
-			var valor_comparacion3 = 15000;
-			if($('#txtMoneda').val() == 2)
-			{
-				valor_comparacion1 = 3499 / valor_bs;
-				valor_comparacion2 = 10000 / valor_bs;
-				valor_comparacion3 = 15000 / valor_bs;
-			}
-
-	     	if (parseFloat(valorPrestar)<= valor_comparacion1) {
-	        	var nuevoInteres = ((valorPrestar * parseFloat($('#txtInteres').val()))/100).toFixed(2);
-	        	var nuevoComision = ((valorPrestar * 6.04)/100).toFixed(2);
-	        }
-	        else if(parseFloat(valorPrestar) < valor_comparacion2){
-	        	var nuevoInteres = ((valorPrestar * parseFloat($('#txtInteres').val()))/100).toFixed(2);
-	        	var nuevoComision = (valorPrestar * 3.7)/100;
-	        }else if(parseFloat(valorPrestar) < valor_comparacion3){
-				var nuevoInteres = ((valorPrestar * parseFloat($('#txtInteres').val()))/100).toFixed(2);
-	        	var nuevoComision = (valorPrestar * 3)/100;
-			}else{
-				var nuevoInteres = ((valorPrestar * parseFloat($('#txtInteres').val()))/100).toFixed(2);
-	        	var nuevoComision = (valorPrestar * 2)/100;
-			}
+			// CALCULAR MONTO DE COMISION
+			var nuevoComision = await calcularMontoComisionGarantia(parseFloat(valorPrestar), $('#txtMoneda').val())
+			var nuevoInteres = ((valorPrestar * parseFloat($('#txtInteres').val()))/100).toFixed(2);
 
 			let moneda_id = $('#txtMoneda').val();
 
@@ -1510,6 +1362,43 @@
 					moneda_actual = 'bs';
 				}
 			}
+		}
+
+		/* obtener valores de interes + gastos administravos
+		*  y calcular los montos
+		*/
+		async function generarMontoCreditoMax(maxPrecioKlts){
+			var interesAdministrable = await obtenerMontoComision(parseFloat(maxPrecioKlts),$('#txtMoneda').val());
+			var totalInteres = parseFloat($("#txtInteres").val()??0) + interesAdministrable.porcentaje;
+			var valorGarantia = (maxPrecioKlts * totalInteres)/100;
+			$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
+		}
+
+		/*
+		* Calcular el monto de comision e interes que se prestara
+		*/
+		async function calcularMontoComisionGarantia(monto, moneda){
+			var interesAdministrable = await obtenerMontoComision(parseFloat(monto),$('#txtMoneda').val());
+			var resultado = (monto * parseFloat(interesAdministrable.porcentaje))/100;
+			return resultado;
+		}
+
+		// obtener valores de intereses
+		function obtenerMontoComision(monto,moneda) {
+			return new Promise((resolve, reject) => {
+				$.ajax({
+					type: "GET",
+					url: '{{ route("comision.contrato")}}',
+					data: { monto: monto,moneda:moneda },
+					dataType: "json",
+					success: function (response) {
+						resolve(response.interes_administrable);
+					},
+					error: function (error) {
+						reject(error);
+					}
+				});
+			});
 		}
 </script>
 @endsection

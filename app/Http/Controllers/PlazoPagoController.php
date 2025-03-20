@@ -17,6 +17,13 @@ class PlazoPagoController extends Controller
     public function index(Request $request)
     {
         if (Session::has('AUTENTICADO')) {
+            $datoInicioFinCaja =  InicioFinCaja::where('fecha', Carbon::now('America/La_Paz')->format('Y-m-d'))
+                ->where('sucursal_id', session::get('ID_SUCURSAL'))
+                ->where('caja', session::get('CAJA'))
+                ->whereIn('estado_id', [1, 2])
+                ->first();
+
+
             $fecha_actual = Carbon::now('America/La_Paz')->format('Y-m-d');
             $fecha_comparacion = date("Y-m-d", strtotime($fecha_actual . '-1 days'));
             if ($request->ajax()) {
@@ -43,15 +50,13 @@ class PlazoPagoController extends Controller
                 ]);
             }
 
-            return view('plazo_pagos.index', compact('fecha_comparacion'));
+            return view('plazo_pagos.index', compact('fecha_comparacion', 'datoInicioFinCaja'));
         } else {
             return view("layout.login");
         }
     }
 
-    public function create()
-    {
-    }
+    public function create() {}
 
     public function store(Request $request)
     {
@@ -76,9 +81,7 @@ class PlazoPagoController extends Controller
         }
     }
 
-    public function edit()
-    {
-    }
+    public function edit() {}
 
     public function update(PlazoPago $plazo_pago, Request $request)
     {
