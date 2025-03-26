@@ -258,7 +258,7 @@
         var sw_global_reporte = true;
         var existe_pago_total = false;
         // async function prueba(){
-        //     const res =await calcularTotlaComision(5000,3,1);
+        //     const res =await calcularMontoComisionGarantia(5000,3,1);
         //     console.log(res)
         // }
         // prueba();
@@ -993,7 +993,7 @@
                 var valorRestatnte = parseFloat(valorMaximo) - parseFloat(valor);
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(valor,globalInteresAmor, global_monedaContrato);
+                const datosTotalComision = await calcularMontoComisionGarantia(valor,globalInteresAmor, global_monedaContrato);
                 var valorGarantia = datosTotalComision[0];
                 var interes = (valorRestatnte * globalInteresAmor) / 100;
                 var comision = datosTotalComision[1];
@@ -1909,7 +1909,7 @@
                 var fechaContrato = contrato.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -1928,7 +1928,7 @@
                 //var fechaContrato = data.Resultado.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -2021,7 +2021,7 @@
                 var cuotaMora = 0;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var interes1 = (capital * data.Resultado.p_interes) / 100;
                 var comision1 = datosTotalComision[1];
                 var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
@@ -2305,7 +2305,7 @@
                 var fechaContrato = contrato.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -2322,7 +2322,7 @@
                 //var fechaContrato = data.Resultado.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -2419,7 +2419,7 @@
                 var cuotaMora = 0;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var interes1 = (capital * data.Resultado.p_interes) / 100;
                 var comision1 = datosTotalComision[1];
                 var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
@@ -2679,7 +2679,7 @@
                 var fechaContrato = contrato.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -2699,7 +2699,7 @@
                 //var fechaContrato = data.Resultado.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -2747,7 +2747,7 @@
             var fechaActual = moment($("#txtFechaActualA").val());
 
             // CALCULAR MONTO TOTAL Y COMISION
-            const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+            const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
             var totalInteresValor = datosTotalComision[0];
 
             totalInteresValor= ajustaDecimal(totalInteresValor); //ajusta decimal interes
@@ -2830,7 +2830,7 @@
                 var cuotaMora = 0;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var interes1 = (capital * data.Resultado.p_interes) / 100;
                 var comision1 = datosTotalComision[1];
                 var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
@@ -3129,7 +3129,7 @@
                 var fechaContrato = contrato.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -3146,7 +3146,7 @@
                 //var fechaContrato = data.Resultado.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -3243,7 +3243,7 @@
                 var cuotaMora = 0;
             
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var interes1 = (capital * data.Resultado.p_interes) / 100;
                 var comision1 = datosTotalComision[1];
                 var totalInteresValor1 = (parseFloat(comision1) / diaActual) * diasRango;
@@ -3550,7 +3550,7 @@
                 var fechaContrato = contrato.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -3566,7 +3566,7 @@
                 //var fechaContrato = data.Resultado.fecha_contrato;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor = datosTotalComision[0];
                 var interes = (capital * data.Resultado.p_interes) / 100;
                 var comision = datosTotalComision[1];
@@ -3619,7 +3619,7 @@
                 var cuotaMora = 0;
 
                 // CALCULAR MONTO TOTAL Y COMISION
-                const datosTotalComision = await calcularTotalComision(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
+                const datosTotalComision = await calcularMontoComisionGarantia(capital,data.Resultado.p_interes, data.Resultado.moneda_id);
                 var totalInteresValor1 = (parseFloat(totalInteresValor) / diaActual) * diasRango;
                 var interes1 = (capital * data.Resultado.p_interes) / 100;
                 var comision1 = datosTotalComision[1];
@@ -3904,7 +3904,7 @@
         /*
         * Funcion para calcular el total y comision
         */
-        async function calcularTotlaComision(monto,interes,moneda){
+        async function calcularMontoComisionGarantia(monto,interes,moneda){
             var interesAdministrable = await obtenerMontoComision(parseFloat(monto),moneda);
 			var totalInteres = parseFloat(interes??0) + interesAdministrable.porcentaje;
             var total = (monto * totalInteres) / 100;
