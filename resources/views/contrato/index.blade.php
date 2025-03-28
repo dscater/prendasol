@@ -1369,7 +1369,7 @@
 		*/
 		async function generarMontoCreditoMax(maxPrecioKlts){
 			var interesAdministrable = await obtenerMontoComision(parseFloat(maxPrecioKlts),$('#txtMoneda').val());
-			var totalInteres = parseFloat($("#txtInteres").val()??0) + interesAdministrable.porcentaje;
+			var totalInteres = parseFloat($("#txtInteres").val()??0) + parseFloat(interesAdministrable.porcentaje);
 			var valorGarantia = (maxPrecioKlts * totalInteres)/100;
 			$('#txtGarantia').val(Number(valorGarantia).toFixed(2));
 		}
