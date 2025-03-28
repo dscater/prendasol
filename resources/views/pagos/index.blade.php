@@ -3906,7 +3906,7 @@
         */
         async function calcularMontoComisionGarantia(monto,interes,moneda){
             var interesAdministrable = await obtenerMontoComision(parseFloat(monto),moneda);
-			var totalInteres = parseFloat(interes??0) + interesAdministrable.porcentaje;
+			var totalInteres = parseFloat(interes??0) + parseFloat(interesAdministrable.porcentaje);
             var total = (monto * totalInteres) / 100;
             var comision = (monto * parseFloat(interesAdministrable.porcentaje)) / 100;
             return [total,comision];
