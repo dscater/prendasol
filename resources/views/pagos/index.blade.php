@@ -253,6 +253,7 @@
             valor_bs: 0,
             valor_sus: 0
         };
+        var global_contrato = null;
         var global_monedaContrato = 1;
         var global_idPago = 0;
         var sw_global_reporte = true;
@@ -1733,6 +1734,7 @@
         /*/******************************** LISTADO DETALE DE PAGOS *****************************************/
         function fnDatoPagoTotal(contrato) {
             $('#_contrato_id').val(contrato.id);
+            global_contrato = contrato;
             console.log($('#_contrato_id').val() + "------------");
             document.getElementById('divMostrarPagoTotal').style.display = 'block';
             document.getElementById('divMostrarPagoInteres').style.display = 'none';
@@ -2131,6 +2133,7 @@
 
         function fnDatoPagoInteres(contrato) {
             console.log("contrato", contrato);
+            global_contrato = contrato;
             document.getElementById('divMostrarPagoInteres').style.display = 'block';
             //$('.clsContratos').hide();
             if ($('#ddlTipoBusqueda').val() == 'CI') {
@@ -2523,6 +2526,7 @@
 
         function fnDatoPagoAmortizacion(contrato) {
             $("#txtAmortizacion").val('');
+            global_contrato = contrato;
             document.getElementById('divMostrarPagoAmortizacion').style.display = 'block';
             // $('.clsContratos').hide();
             if ($('#ddlTipoBusqueda').val() == 'CI') {
@@ -2951,6 +2955,7 @@
 
         function fnDatoPagoAmortizacionInteres(contrato) {
             $("#txtAmortizacionInteres").val('');
+            global_contrato = contrato;
             document.getElementById('divMostrarPagoAmortizacionInteres').style.display = 'block';
             // $('.clsContratos').hide();
             if ($('#ddlTipoBusqueda').val() == 'CI') {
@@ -3396,6 +3401,7 @@
         }
 
         function fnDatoRemate(contrato) {
+            global_contrato=contrato;
             document.getElementById('divMostrarRemate').style.display = 'block';
             document.getElementById('divMostrarPagoTotal').style.display = 'none';
             document.getElementById('divMostrarPagoInteres').style.display = 'none';
@@ -3918,7 +3924,7 @@
 				$.ajax({
 					type: "GET",
 					url: '{{ route("comision.contrato")}}',
-					data: { monto: monto,moneda:moneda },
+					data: { monto: monto,moneda:moneda,contrato_id:global_contrato?global_contrato.id:0 },
 					dataType: "json",
 					success: function (response) {
 						resolve(response.interes_administrable);

@@ -1,4 +1,20 @@
 @extends('layout.principal')
+@section('css')
+    <style>
+        .nuevos {
+            background: rgb(234, 252, 234);
+        }
+
+        .antiguos {
+            background: rgb(236, 235, 218);
+        }
+
+        .oculto {
+            display: none;
+        }
+    </style>
+@endsection
+
 @include('reporte.modalReporteContratosCancelados')
 @section('main-content')
     <div class="row">
@@ -48,15 +64,29 @@
                                 <th>MONTO DESDE</th>
                                 <th>MONTO HASTA</th>
                                 <th>%</th>
+                                <th>FECHA</th>
+                                <th>CONTRATOS</th>
                                 <th width="9%"></th>
                             </tr>
                         </thead>
                         <tbody id="contenedorReg">
                             @foreach ($interes_administrables as $ia)
-                                <tr>
+                                @php
+                                    $css = 'nuevos';
+                                    if ($ia->tipo == 'ANTIGUOS') {
+                                        $css = 'antiguos';
+                                    }
+                                    $fecha = '-';
+                                    if ($ia->fecha) {
+                                        $fecha = date('d/m/Y', strtotime($ia->fecha));
+                                    }
+                                @endphp
+                                <tr class="{{ $css }}">
                                     <td>{{ $ia->monto1 }}</td>
                                     <td>{{ $ia->monto2 }}</td>
                                     <td>{{ $ia->porcentaje }}%</td>
+                                    <td>{{ $fecha }}</td>
+                                    <td>{{ $ia->tipo }}</td>
                                     <td>
                                         @include('interes_administrables.parcial.edit')
                                         <button type="button" data-toggle="modal"
@@ -71,6 +101,19 @@
                             @endforeach
                         </tbody>
                     </table>
+                    <div class="row">
+                        <form action="{{ route('actualizaFechaContratosAntiguos') }}" method="POST">
+                            @csrf
+                            <div class="col-md-4">
+                                <label>Fecha contratos antiguos: <i style="font-size: 1.1rem;display:block;">Se aplicaran a
+                                        todos los contratos
+                                        cuya fecha sea
+                                        menor o igual</i></label>
+                                <input type="date" name="fecha" class="form-control" value="{{ $fecha_antiguos }}">
+                                <button class="btn btn-primary" style="margin-top:4px;">Actualizar</button>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>
@@ -94,6 +137,21 @@
                             <label>Monto hasta:</label>
                             <input type="number" name="monto2" min="0" step="0.01" class="form-control">
                         </div>
+                        <div class="col-md-12 form-group">
+                            <label>Contratos:</label>
+                            <select name="tipo" id="" class="form-control select_sw">
+                                <option value="">- Seleccione -</option>
+                                <option value="NUEVOS">NUEVOS</option>
+                                <option value="ANTIGUOS">ANTIGUOS</option>
+                            </select>
+                        </div>
+
+                        {{-- <div class="col-md-12 form-group contenedor_fecha oculto">
+                            <label>Fecha: <i style="font-size: 1.1rem;display:block;">Se aplicaran a todos los contratos
+                                    cuya fecha sea
+                                    menor o igual</i></label>
+                            <input type="date" name="fecha" class="form-control" value="">
+                        </div> --}}
                     </div>
                     <div class="row">
                         <div class="col-md-12 form-group">
@@ -117,6 +175,20 @@
 @section('scripts')
     <script type="text/javascript" src="{{ asset('template/dist/js/jquery.js') }}"></script>
     <script>
+        // $(document).on("change", ".select_sw", function() {
+        //     const form_group = $(this).parent();
+        //     const contenedor_fecha = form_group.siblings(".contenedor_fecha");
+        //     const value = $(this).val();
+        //     contenedor_fecha.hide();
+        //     if (value) {
+        //         if (value == 'NUEVOS') {
+        //             contenedor_fecha.hide();
+        //         } else {
+        //             contenedor_fecha.show();
+        //         }
+        //     }
+        // });
+
         $("#contenedorReg").on("click", ".eliminar", function() {
             const url = $(this).attr("data-url");
             Swal.fire({

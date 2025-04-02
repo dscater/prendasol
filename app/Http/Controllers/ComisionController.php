@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\CambioMoneda;
+use App\Contrato;
 use App\InteresAdministrable;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -13,8 +14,13 @@ class ComisionController extends Controller
     {
         $monto = $request->monto;
         $moneda = $request->moneda;
+        $contrato_id = 0;
+        if (isset($request->contrato_id)) {
+            $contrato_id = $request->contrato_id ? $request->contrato_id : 0;
+        }
+        // Log::debug($request);
         return response()->JSON([
-            "interes_administrable" => $this->getInteresAdministrableMonto($monto, $moneda)
+            "interes_administrable" => $this->getInteresAdministrableMonto($monto, $moneda, $contrato_id)
         ]);
     }
 
@@ -36,9 +42,25 @@ class ComisionController extends Controller
         // return $datosValor;
     }
 
-    private function getInteresAdministrableMonto($monto, $moneda)
+    private function getInteresAdministrableMonto($monto, $moneda, $contrato_id = 0)
     {
-        $interes_administrables = InteresAdministrable::orderBy("monto2", "asc")->get();
+        $interes_administrables = InteresAdministrable::orderBy("monto2", "asc")->where("tipo", "NUEVOS")->get();
+        if ($contrato_id != 0) {
+            $contrato = Contrato::find($contrato_id);
+            if ($contrato) {
+                $fecha_contrato = $contrato->fecha_contrato;
+
+                $paraAntiguos = InteresAdministrable::orderBy("monto2", "asc")
+                    ->where("fecha", ">=", $fecha_contrato)
+                    ->where("tipo", "ANTIGUOS")
+                    ->get();
+
+                if (count($paraAntiguos) > 0) {
+                    $interes_administrables = $paraAntiguos;
+                }
+            }
+        }
+
         $cambio_moneda = CambioMoneda::first();
         $valor_bs = 0;
         if (!$cambio_moneda) {

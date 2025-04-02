@@ -121,6 +121,7 @@ Route::get('retiros_pendientes/reporte/pdf', 'SolicitudRetiroController@retiros_
 Route::get('retiros_pendientes/reporte/excel', 'SolicitudRetiroController@retiros_pendientes_excel')->name('retiros_pendientes_excel.retiros_pendientes_excel');
 
 /*INTERESES ADMINISTRABLES*/
+Route::post("actualizaFechaContratosAntiguos", "InteresAdministrableController@actualizaFechaContratosAntiguos")->name("actualizaFechaContratosAntiguos");
 Route::resource("interes_administrables", 'InteresAdministrableController')->only([
   "index",
   "store",
