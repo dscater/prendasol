@@ -64,29 +64,19 @@
                                 <th>MONTO DESDE</th>
                                 <th>MONTO HASTA</th>
                                 <th>%</th>
-                                <th>FECHA</th>
-                                <th>CONTRATOS</th>
+                                <th>FECHA INICIO</th>
+                                <th>FECHA FIN</th>
                                 <th width="9%"></th>
                             </tr>
                         </thead>
                         <tbody id="contenedorReg">
                             @foreach ($interes_administrables as $ia)
-                                @php
-                                    $css = 'nuevos';
-                                    if ($ia->tipo == 'ANTIGUOS') {
-                                        $css = 'antiguos';
-                                    }
-                                    $fecha = '-';
-                                    if ($ia->fecha) {
-                                        $fecha = date('d/m/Y', strtotime($ia->fecha));
-                                    }
-                                @endphp
-                                <tr class="{{ $css }}">
+                                <tr class="">
                                     <td>{{ $ia->monto1 }}</td>
                                     <td>{{ $ia->monto2 }}</td>
                                     <td>{{ $ia->porcentaje }}%</td>
-                                    <td>{{ $fecha }}</td>
-                                    <td>{{ $ia->tipo }}</td>
+                                    <td>{{ $ia->fecha_ini ? date('d/m/Y', strtotime($ia->fecha_ini)) : '-' }}</td>
+                                    <td>{{ $ia->fecha_fin ? date('d/m/Y', strtotime($ia->fecha_fin)) : '-' }}</td>
                                     <td>
                                         @include('interes_administrables.parcial.edit')
                                         <button type="button" data-toggle="modal"
@@ -101,19 +91,6 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="row">
-                        <form action="{{ route('actualizaFechaContratosAntiguos') }}" method="POST">
-                            @csrf
-                            <div class="col-md-4">
-                                <label>Fecha contratos antiguos: <i style="font-size: 1.1rem;display:block;">Se aplicaran a
-                                        todos los contratos
-                                        cuya fecha sea
-                                        menor o igual</i></label>
-                                <input type="date" name="fecha" class="form-control" value="{{ $fecha_antiguos }}">
-                                <button class="btn btn-primary" style="margin-top:4px;">Actualizar</button>
-                            </div>
-                        </form>
-                    </div>
                 </div>
             </div>
         </div>
@@ -138,20 +115,19 @@
                             <input type="number" name="monto2" min="0" step="0.01" class="form-control">
                         </div>
                         <div class="col-md-12 form-group">
-                            <label>Contratos:</label>
-                            <select name="tipo" id="" class="form-control select_sw">
-                                <option value="">- Seleccione -</option>
-                                <option value="NUEVOS">NUEVOS</option>
-                                <option value="ANTIGUOS">ANTIGUOS</option>
-                            </select>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <label>Fecha inicio:</label>
+                                    <input type="date" name="fecha_ini" class="form-control"
+                                        value="{{ date('Y-m-d') }}">
+                                </div>
+                                <div class="col-md-6">
+                                    <label>Fecha fin:</label>
+                                    <input type="date" name="fecha_fin" class="form-control"
+                                        value="{{ date('Y-m-d') }}">
+                                </div>
+                            </div>
                         </div>
-
-                        {{-- <div class="col-md-12 form-group contenedor_fecha oculto">
-                            <label>Fecha: <i style="font-size: 1.1rem;display:block;">Se aplicaran a todos los contratos
-                                    cuya fecha sea
-                                    menor o igual</i></label>
-                            <input type="date" name="fecha" class="form-control" value="">
-                        </div> --}}
                     </div>
                     <div class="row">
                         <div class="col-md-12 form-group">

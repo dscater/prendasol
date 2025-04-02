@@ -20,20 +20,17 @@
                             class="form-control">
                     </div>
                     <div class="col-md-12 form-group">
-                        <label>Contratos:</label>
-                        <select name="tipo" id="" class="form-control select_sw">
-                            <option value="">- Seleccione -</option>
-                            <option value="NUEVOS" {{ $ia->tipo == 'NUEVOS' ? 'selected' : '' }}>NUEVOS</option>
-                            <option value="ANTIGUOS" {{ $ia->tipo == 'ANTIGUOS' ? 'selected' : '' }}>ANTIGUOS</option>
-                        </select>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <label>Fecha inicio:</label>
+                                <input type="date" name="fecha_ini" class="form-control" value="{{ $ia->fecha_ini }}">
+                            </div>
+                            <div class="col-md-6">
+                                <label>Fecha fin:</label>
+                                <input type="date" name="fecha_fin" class="form-control" value="{{ $ia->fecha_fin }}">
+                            </div>
+                        </div>
                     </div>
-
-                    {{-- <div class="col-md-12 form-group contenedor_fecha {{ $ia->tipo != 'ANTIGUOS' ? 'oculto' : '' }}">
-                        <label>Fecha: <i style="font-size: 1.1rem;display:block;">Se aplicaran a todos los contratos
-                                cuya fecha sea
-                                menor o igual</i></label>
-                        <input type="date" name="fecha" class="form-control" value="{{ $ia->fecha }}">
-                    </div> --}}
                 </div>
                 <div class="row">
                     <div class="col-md-12 form-group">

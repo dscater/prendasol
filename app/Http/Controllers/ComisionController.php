@@ -44,19 +44,20 @@ class ComisionController extends Controller
 
     private function getInteresAdministrableMonto($monto, $moneda, $contrato_id = 0)
     {
-        $interes_administrables = InteresAdministrable::orderBy("monto2", "asc")->where("tipo", "NUEVOS")->get();
+        $interes_administrables = InteresAdministrable::orderBy("monto2", "asc")
+            ->get();
         if ($contrato_id != 0) {
             $contrato = Contrato::find($contrato_id);
             if ($contrato) {
                 $fecha_contrato = $contrato->fecha_contrato;
 
-                $paraAntiguos = InteresAdministrable::orderBy("monto2", "asc")
-                    ->where("fecha", ">=", $fecha_contrato)
-                    ->where("tipo", "ANTIGUOS")
+                $por_fechas = InteresAdministrable::orderBy("monto2", "asc")
+                    ->where("fecha_ini", "<=", $fecha_contrato)
+                    ->where("fecha_fin", ">=", $fecha_contrato)
                     ->get();
 
-                if (count($paraAntiguos) > 0) {
-                    $interes_administrables = $paraAntiguos;
+                if (count($por_fechas) > 0) {
+                    $interes_administrables = $por_fechas;
                 }
             }
         }

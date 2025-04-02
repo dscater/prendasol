@@ -12,14 +12,10 @@ class InteresAdministrableController extends Controller
 {
     public function index()
     {
-        $interes_administrables = InteresAdministrable::orderBy("tipo", "DESC")
-            ->orderBy("porcentaje", "DESC")
+        $interes_administrables = InteresAdministrable::orderBy("porcentaje", "DESC")
             ->get();
 
-        $fecha_antiguos = InteresAdministrable::select("fecha")->where("tipo", "ANTIGUOS")->where("fecha", "!=", NULL)->get()->first();
-        $fecha_antiguos = $fecha_antiguos->fecha ?? NULL;
-
-        return view("interes_administrables.index", compact("interes_administrables", "fecha_antiguos"));
+        return view("interes_administrables.index", compact("interes_administrables"));
     }
 
     public function store(Request $request)
@@ -28,8 +24,8 @@ class InteresAdministrableController extends Controller
             "monto1" => "required|numeric|min:0",
             "monto2" => "required|numeric|min:0",
             "porcentaje" => "required|numeric|min:0",
-            "tipo" => "required",
-            // "fecha" => "required_if:tipo,ANTIGUOS|nullable|date"
+            "fecha_ini" => "required|date",
+            "fecha_fin" => "required|date"
         ], [
             "monto1.required" => "Debes completar el campo Monto Desde",
             "monto1.numeric" => "Monto desde debe ser un valor númerico",
@@ -40,28 +36,28 @@ class InteresAdministrableController extends Controller
             "porcentaje.required" => "Debes completar el campo Porcentaje",
             "porcentaje.numeric" => "Porcentaje debe ser un valor númerico",
             "porcentaje.min" => "Monto desde debe ser minimo :min",
-            "tipo.required" => "Debes completar el campo Contratos",
-            "fecha.required_if" => "Debes completar el campo fecha",
-            "fecha.date" => "Debes ingresar una fecha valida en el campo Contratos",
+            "fecha_ini.required" => "Debes completar el campo fecha inicio",
+            "fecha_ini.date" => "Debes ingresar una fecha valida en el campo fecha inicio",
+            "fecha_fin.required" => "Debes completar el campo fecha fin",
+            "fecha_fin.date" => "Debes ingresar una fecha valida en el campo fecha fin",
         ]);
         DB::beginTransaction();
         try {
             $existe = InteresAdministrable::where("monto1", $request->monto1)
                 ->where("monto2", $request->monto2)
-                ->where("tipo", $request->tipo)
+                ->where("fecha_ini", $request->fecha_ini)
+                ->where("fecha_fin", $request->fecha_fin)
                 ->get()->first();
             if ($existe) {
                 throw new Exception("Existe");
             }
-            $fecha_antiguos = InteresAdministrable::select("fecha")->where("tipo", "ANTIGUOS")->where("fecha", "!=", NULL)->get()->first();
-            $fecha_antiguos = $fecha_antiguos->fecha ?? NULL;
 
             InteresAdministrable::create([
                 "monto1" => $request["monto1"],
                 "monto2" => $request["monto2"],
                 "porcentaje" => $request["porcentaje"],
-                "tipo" => $request["tipo"],
-                "fecha" => $fecha_antiguos ? $fecha_antiguos : NULL,
+                "fecha_ini" => $request["fecha_ini"],
+                "fecha_fin" => $request["fecha_fin"],
             ]);
             DB::commit();
             return redirect()->back()->with("bien", "Registro éxitoso");
@@ -83,6 +79,8 @@ class InteresAdministrableController extends Controller
             "monto1" => "required|numeric|min:0",
             "monto2" => "required|numeric|min:0",
             "porcentaje" => "required|numeric|min:0",
+            "fecha_ini" => "required|date",
+            "fecha_fin" => "required|date"
         ], [
             "monto1.required" => "Debes completar el campo Monto Desde",
             "monto1.numeric" => "Monto desde debe ser un valor númerico",
@@ -93,12 +91,17 @@ class InteresAdministrableController extends Controller
             "porcentaje.required" => "Debes completar el campo Porcentaje",
             "porcentaje.numeric" => "Porcentaje debe ser un valor númerico",
             "porcentaje.min" => "Monto desde debe ser minimo :min",
+            "fecha_ini.required" => "Debes completar el campo fecha inicio",
+            "fecha_ini.date" => "Debes ingresar una fecha valida en el campo fecha inicio",
+            "fecha_fin.required" => "Debes completar el campo fecha fin",
+            "fecha_fin.date" => "Debes ingresar una fecha valida en el campo fecha fin",
         ]);
         DB::beginTransaction();
         try {
             $existe = InteresAdministrable::where("monto1", $request->monto1)
                 ->where("monto2", $request->monto2)
-                ->where("tipo", $request->tipo)
+                ->where("fecha_ini", $request->fecha_ini)
+                ->where("fecha_fin", $request->fecha_fin)
                 ->where("id", "!=", $interes_administrable->id)
                 ->get()->first();
             if ($existe) {
@@ -108,8 +111,8 @@ class InteresAdministrableController extends Controller
                 "monto1" => $request["monto1"],
                 "monto2" => $request["monto2"],
                 "porcentaje" => $request["porcentaje"],
-                "tipo" => $request["tipo"],
-                // "fecha" => $request["tipo"] == 'ANTIGUOS' ? $request["fecha"] : NULL,
+                "fecha_ini" => $request["fecha_ini"],
+                "fecha_fin" => $request["fecha_fin"],
             ]);
             DB::commit();
             return redirect()->back()->with("bien", "Actualización éxitosa");
@@ -120,14 +123,6 @@ class InteresAdministrableController extends Controller
             }
             return redirect()->back()->with("error", "Ocurrió un error no se pudo actualizar");
         }
-    }
-
-    public function actualizaFechaContratosAntiguos(Request $request)
-    {
-        if ($request->fecha) {
-            DB::update("UPDATE interes_administrables SET fecha = '$request->fecha' WHERE tipo = 'ANTIGUOS'");
-        }
-        return redirect()->back()->with("bien", "Actualización éxitosa");
     }
 
     public function destroy(InteresAdministrable $interes_administrable, Request $request)

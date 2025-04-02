@@ -10,7 +10,7 @@ class InteresAdministrable extends Model
         "monto1",
         "monto2",
         "porcentaje",
-        "fecha",
-        "tipo"
+        "fecha_ini",
+        "fecha_fin"
     ];
 }
