@@ -270,6 +270,22 @@ class ReportesContablesController extends Controller
                 }
             }
 
+            if ($id_sucursal == 28) {
+                if ($caja == 1) {
+                    $idCaja = 281;
+                } else {
+                    $idCaja = 282;
+                }
+            }
+
+            if ($id_sucursal == 29) {
+                if ($caja == 1) {
+                    $idCaja = 291;
+                } else {
+                    $idCaja = 292;
+                }
+            }
+
             $fechaInicio = Carbon::parse($fechaI)->format('Y-m-d');
             $fechaFinal = Carbon::parse($fechaF)->format('Y-m-d');
             $datosContaDiario = ContaDiario::select('conta_diario.*')
@@ -687,6 +703,21 @@ class ReportesContablesController extends Controller
                 }
             }
 
+            if ($id_sucursal == 28) {
+                if ($caja == 1) {
+                    $idCaja = 281;
+                } else {
+                    $idCaja = 282;
+                }
+            }
+
+            if ($id_sucursal == 29) {
+                if ($caja == 1) {
+                    $idCaja = 291;
+                } else {
+                    $idCaja = 292;
+                }
+            }
 
             $fechaInicio = Carbon::parse($fechaI)->format('Y-m-d');
             $fechaFinal = Carbon::parse($fechaF)->format('Y-m-d');
@@ -1093,6 +1124,22 @@ class ReportesContablesController extends Controller
                         $idCaja = 271;
                     } else {
                         $idCaja = 272;
+                    }
+                }
+
+                if ($id_sucursal == 28) {
+                    if ($caja == 1) {
+                        $idCaja = 281;
+                    } else {
+                        $idCaja = 282;
+                    }
+                }
+
+                if ($id_sucursal == 29) {
+                    if ($caja == 1) {
+                        $idCaja = 291;
+                    } else {
+                        $idCaja = 292;
                     }
                 }
 

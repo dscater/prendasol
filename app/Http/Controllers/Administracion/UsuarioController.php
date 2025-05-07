@@ -386,6 +386,22 @@ class UsuarioController extends Controller
             }
         }
 
+        if ($id_sucursal == 28) {
+            if ($caja == 1) {
+                $idCaja = 281;
+            } else {
+                $idCaja = 282;
+            }
+        }
+
+        if ($id_sucursal == 29) {
+            if ($caja == 1) {
+                $idCaja = 291;
+            } else {
+                $idCaja = 292;
+            }
+        }
+
         /* INICIAR PRECIO DE ORO */
         $_fecha = Carbon::now('America/La_Paz')->format('Y-m-d');
         $precio_oro = PrecioOro::where('fecha', $_fecha)->get()->first();
