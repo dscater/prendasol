@@ -286,6 +286,14 @@ class ReportesContablesController extends Controller
                 }
             }
 
+            if ($id_sucursal == 30) {
+                if ($caja == 1) {
+                    $idCaja = 301;
+                } else {
+                    $idCaja = 302;
+                }
+            }
+
             $fechaInicio = Carbon::parse($fechaI)->format('Y-m-d');
             $fechaFinal = Carbon::parse($fechaF)->format('Y-m-d');
             $datosContaDiario = ContaDiario::select('conta_diario.*')
@@ -719,6 +727,14 @@ class ReportesContablesController extends Controller
                 }
             }
 
+            if ($id_sucursal == 30) {
+                if ($caja == 1) {
+                    $idCaja = 301;
+                } else {
+                    $idCaja = 302;
+                }
+            }
+
             $fechaInicio = Carbon::parse($fechaI)->format('Y-m-d');
             $fechaFinal = Carbon::parse($fechaF)->format('Y-m-d');
             $datosContaDiario = ContaDiario::distinct()->select('fecha_a', 'num_comprobante')->whereBetween('fecha_a', [$fechaInicio, $fechaFinal])
@@ -1140,6 +1156,14 @@ class ReportesContablesController extends Controller
                         $idCaja = 291;
                     } else {
                         $idCaja = 292;
+                    }
+                }
+
+                if ($id_sucursal == 30) {
+                    if ($caja == 1) {
+                        $idCaja = 301;
+                    } else {
+                        $idCaja = 302;
                     }
                 }
 
